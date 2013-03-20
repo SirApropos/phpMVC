@@ -6,7 +6,6 @@
 #include "Problem5.h"
 #include "Timer.h"
 #include "stdafx.h"
-#include <functional>
 
 using namespace Problems;
 void runProblem(Problem * &problem){
@@ -14,7 +13,7 @@ void runProblem(Problem * &problem){
 	timer->start();
 	int sol = problem->run();
 	timer->stop();
-	cout << problem->getName() << ": " << sol << " in " << timer->getTime() << " seconds." << endl;
+	std::cout << problem->getName() << ": " << sol << " in " << timer->getTime() << " seconds." << std::endl;
 }
 
 void runProblems(List<Problem *> * problems){
@@ -26,7 +25,9 @@ void runProblems(List<Problem *> * problems){
 
 void init(){
 	List<Problem *> problems;
-	problems.add(&Problem1());
+	//problems.add(&Problem1());
+	Problem *problem = &Problem1();
+	std::cout << "Testing: " << problem->getName() << std::endl;
 	//problems.add(&Problem2());
 	//problems.add(&Problem3());
 	//problems.add(&Problem4());

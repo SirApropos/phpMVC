@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-using namespace std;
 
 #ifndef Problem
 namespace Problems{
@@ -8,12 +7,12 @@ namespace Problems{
 	{
 	public:
 		Problem(void);
-		string getName(void);
+		std::string getName(void);
 		virtual int run() = 0;
 	protected:
-		void setName(string name);
+		void setName(std::string name);
 	private:
-		string name;
+		std::string name;
 	};
 }
 #endif

@@ -1,6 +1,6 @@
 #pragma once
-
-#include "Problem.h";
+#include "stdafx.h"
+#include "Problem.h"
 
 using namespace Problems;
 

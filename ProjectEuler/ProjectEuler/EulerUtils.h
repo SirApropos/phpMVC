@@ -1,5 +1,4 @@
 #pragma once
-#include "problem.h"
 #include "stdafx.h"
 
 using namespace Problems;

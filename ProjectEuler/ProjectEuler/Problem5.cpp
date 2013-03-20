@@ -4,7 +4,7 @@
 Problem5::Problem5(void)
 {
 	target = 20;
-	setName("Problem 5");
+	//setName("Problem 5");
 }
 
 

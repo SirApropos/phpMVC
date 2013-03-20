@@ -1,14 +1,14 @@
 #include "Problem.h"
-#include <iostream>
 using namespace Problems;
 
 Problem::Problem(void){};
 
-string Problem::getName(){
-	return Problem::name;
+std::string Problem::getName(){
+	return name;
 }
 
-void Problem::setName(string name){
-	cout << "Setting name to: " << name << endl;;
-	Problem::name = name;
+void Problem::setName(std::string name){
+	char * chars = new char[name.size()+1];
+	strcpy_s(chars, name.size()+1, name.c_str());
+	Problem::name = chars;
 }

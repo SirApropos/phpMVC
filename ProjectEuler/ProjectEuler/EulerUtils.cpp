@@ -1,6 +1,5 @@
 #include "EulerUtils.h"
 
-
 EulerUtils::EulerUtils(void)
 {
 }

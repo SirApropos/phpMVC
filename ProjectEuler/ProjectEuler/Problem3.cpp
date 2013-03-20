@@ -2,7 +2,7 @@
 
 Problem3::Problem3(void)
 {
-	setName("Problem 3");
+	//setName("Problem 3");
 	target = 600851475143;
 }
 

@@ -1,9 +1,8 @@
 #pragma once
+#include "stdafx.h"
+#include "problem.h"
 #ifndef Problem1
-#include "Problem.h"
-#include <iostream>
 
-using namespace std;
 using namespace Problems;
 
 namespace Problems{

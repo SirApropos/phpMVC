@@ -2,11 +2,11 @@
 
 Problem4::Problem4(void)
 {
-	setName("Problem 4");
+	//setName("Problem 4");
 	max = 999;
 }
 
-bool isPalindrome(string str){
+bool isPalindrome(std::string str){
 	int length = str.length();
 	int max = (length % 2 == 0) ? length/2 : length/2 + 1;
 	bool result = true;
