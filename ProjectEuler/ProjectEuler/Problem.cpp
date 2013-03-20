@@ -8,7 +8,7 @@ std::string Problem::getName(){
 }
 
 void Problem::setName(std::string name){
-	char * chars = new char[name.size()+1];
-	strcpy_s(chars, name.size()+1, name.c_str());
-	Problem::name = chars;
+	//char * chars = new char[name.size()+1];
+	//strcpy_s(chars, name.size()+1, name.c_str());
+	Problem::name = name;
 }

@@ -4,7 +4,6 @@
 #ifndef Problem1
 
 using namespace Problems;
-
 namespace Problems{
 	class Problem1 : public Problem{
 	private:

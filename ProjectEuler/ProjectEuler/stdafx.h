@@ -2,5 +2,4 @@
 #include <string>
 #include <iostream>
 #include "List.h"
-
-using namespace Problems;
+#include "EulerUtils.h"

@@ -1,7 +1,6 @@
 #pragma once
 #include "stdafx.h"
 
-using namespace Problems;
 namespace Problems{
 	class EulerUtils
 	{

@@ -22,7 +22,7 @@ int Problem4::run(void){
 	int result =  0;
 	for(int a = max;a*max > result;a--){		
 		for(int b = max;b>=a && b*a > result;b--){
-			if(isPalindrome(to_string(b * a))){
+			if(isPalindrome(std::to_string(b * a))){
 				result = a*b;
 			}
 		}

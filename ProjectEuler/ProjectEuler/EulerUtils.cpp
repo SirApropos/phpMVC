@@ -1,10 +1,10 @@
 #include "EulerUtils.h"
 
-EulerUtils::EulerUtils(void)
+Problems::EulerUtils::EulerUtils(void)
 {
 }
 
-int EulerUtils::findNextPrime(List<int> * &primes, __int64 target){
+int Problems::EulerUtils::findNextPrime(List<int> * &primes, __int64 target){
 	if(primes->size() == 0){
 		primes->add(2);
 	}else{
@@ -25,7 +25,7 @@ int EulerUtils::findNextPrime(List<int> * &primes, __int64 target){
 	return primes->last();
 }
 
-List<int> EulerUtils::findFactors(__int64 target, List<int> * primes){
+List<int> Problems::EulerUtils::findFactors(__int64 target, List<int> * primes){
 	if(primes->size() == 0){
 		findNextPrime(primes, target);
 	}

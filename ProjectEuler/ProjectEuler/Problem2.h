@@ -3,7 +3,6 @@
 #include "Problem.h"
 
 using namespace Problems;
-
 namespace Problems{
 	class Problem2 : public Problem
 	{
