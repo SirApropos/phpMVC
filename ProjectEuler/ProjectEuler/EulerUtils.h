@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
-
+#ifndef ProblemUtilsDef
+#define ProblemUtilsDef
 namespace Problems{
 	class EulerUtils
 	{
@@ -10,3 +11,4 @@ namespace Problems{
 		static List<int> findFactors(__int64 target, List<int> * primes = &List<int>());
 	};
 }
+#endif

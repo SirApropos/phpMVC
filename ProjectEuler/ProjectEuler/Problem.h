@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 
-#ifndef Problem
+#ifndef ProblemDef
+#define ProblemDef
 namespace Problems{
 	class Problem
 	{
@@ -12,7 +13,8 @@ namespace Problems{
 	protected:
 		void setName(std::string name);
 	private:
-		std::string name;
+		//char * name;
+		char *name;
 	};
 }
 #endif

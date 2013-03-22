@@ -1,5 +1,6 @@
 #pragma once
-
+#ifndef ListDef
+#define ListDef
 template<class T>
 class List
 {
@@ -115,10 +116,10 @@ public:
 	template<typename Func>
 	void foreach(Func& fn){
 		for(int i=0;i<index;i++){
-			if(fn(contents[i]) == true){
+			if(fn(contents[i])){
 				break;
 			}
 		}
 	}
 };
-
+#endif

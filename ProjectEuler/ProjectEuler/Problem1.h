@@ -1,8 +1,8 @@
 #pragma once
 #include "stdafx.h"
 #include "problem.h"
-#ifndef Problem1
-
+#ifndef Problem1Def
+#define Problem1Def
 using namespace Problems;
 namespace Problems{
 	class Problem1 : public Problem{

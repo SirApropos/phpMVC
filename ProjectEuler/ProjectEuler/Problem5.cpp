@@ -4,7 +4,7 @@
 Problem5::Problem5(void)
 {
 	target = 20;
-	//setName("Problem 5");
+	setName("Problem 5");
 }
 
 
@@ -14,7 +14,7 @@ int Problem5::run(void){
 	for(int i=20;i>=2;i--){
 		List<int> * factors = &EulerUtils::findFactors(i);
 		List<int> * used = &List<int>();
-		factors->foreach([&](int j){			
+		factors->foreach([&](int j){
 			int offset = 0;
 			while(true){
 				int index = allfactors->indexOf(j, offset);

@@ -1,4 +1,6 @@
 #pragma once
+#ifndef TimerDef
+#define TimerDef
 #include <windows.h>
 class Timer{
 	private:
@@ -11,3 +13,4 @@ class Timer{
 		void stop();
 		double getTime();
 };
+#endif

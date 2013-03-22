@@ -3,8 +3,6 @@
 
 Problem1::Problem1(){
 	setName("Problem 1");
-	std::cout << "Name set to " << getName() << std::endl;
-	getchar();
 	limit = 1000;
 }
 

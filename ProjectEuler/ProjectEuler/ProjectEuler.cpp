@@ -25,13 +25,11 @@ void runProblems(List<Problem *> * problems){
 
 void init(){
 	List<Problem *> problems;
-	//problems.add(&Problem1());
-	Problem *problem = &Problem1();
-	std::cout << "Testing: " << problem->getName() << std::endl;
-	//problems.add(&Problem2());
-	//problems.add(&Problem3());
-	//problems.add(&Problem4());
-	//problems.add(&Problem5());
+	problems.add(&Problem1());
+	problems.add(&Problem2());
+	problems.add(&Problem3());
+	problems.add(&Problem4());
+	problems.add(&Problem5());
 	runProblems(&problems);
 }
 

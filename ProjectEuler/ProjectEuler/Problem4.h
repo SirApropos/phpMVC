@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "Problem.h"
 
+#ifndef Problem4Def
+#define Problem4Def
 using namespace Problems;
 namespace Problems{
 	class Problem4 :
@@ -14,3 +16,4 @@ namespace Problems{
 		int run(void);
 	};
 }
+#endif

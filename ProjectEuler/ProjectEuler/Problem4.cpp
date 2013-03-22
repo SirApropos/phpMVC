@@ -2,7 +2,7 @@
 
 Problem4::Problem4(void)
 {
-	//setName("Problem 4");
+	setName("Problem 4");
 	max = 999;
 }
 

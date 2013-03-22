@@ -2,7 +2,7 @@
 #include <iostream>
 
 Problem2::Problem2(void){
-	//setName("Problem 2");
+	setName("Problem 2");
 }
 
 int Problem2::run(void){
