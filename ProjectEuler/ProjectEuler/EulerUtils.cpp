@@ -8,7 +8,7 @@ int Problems::EulerUtils::findNextPrime(List<int> * &primes, __int64 target){
 	if(primes->size() == 0){
 		primes->add(2);
 	}else{
- 		for(int i=primes->last()+1;i<=target;i++){
+ 		for(int i=primes->last()+1;i<=target || target == -1;i++){
 			bool isPrime = true;
 			primes->foreach([&](int prime){
 				if((i % prime) == 0){
