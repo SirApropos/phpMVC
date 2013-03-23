@@ -1,5 +1,5 @@
 #pragma once
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "problem.h"
 #ifndef Problem1Def
 #define Problem1Def

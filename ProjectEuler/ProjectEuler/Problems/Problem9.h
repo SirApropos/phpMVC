@@ -1,19 +1,19 @@
 #pragma once
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "problem.h"
-#ifndef Problem8def
-#define Problem8def
+#ifndef Problem9def
+#define Problem9def
 using namespace Problems;
 namespace Problems{
-class Problem8 :
+class Problem9 :
 	public Problem
 {
 public:
-	Problem8(void);
-	~Problem8(void);
+	Problem9(void);
+	~Problem9(void);
 	int run(void);
 private:
-	char * target;
+	int target;
 };
 }
 #endif

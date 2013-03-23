@@ -1,19 +1,18 @@
 #pragma once
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "Problem.h"
 
-#ifndef Problem3Def
-#define Problem3Def
+#ifndef Problem5Def
+#define Problem5Def
 using namespace Problems;
 namespace Problems{
-	class Problem3 :
+	class Problem5 :
 		public Problem
 	{
 	private:
-		__int64 target;
-		List<int> primes;
+		int target;
 	public:
-		Problem3(void);
+		Problem5(void);
 		int run(void);
 	};
 }

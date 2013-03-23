@@ -13,7 +13,6 @@ namespace Problems{
 	protected:
 		void setName(std::string name);
 	private:
-		//char * name;
 		char *name;
 	};
 }
