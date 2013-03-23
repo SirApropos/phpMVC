@@ -8,7 +8,7 @@ Problem5::Problem5(void)
 }
 
 
-int Problem5::run(void){
+__int64 Problem5::run(void){
 	List<int> * primes = &List<int>();
 	List<int> * allfactors = &List<int>();
 	for(int i=20;i>=2;i--){

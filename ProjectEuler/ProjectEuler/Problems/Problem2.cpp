@@ -5,7 +5,7 @@ Problem2::Problem2(void){
 	setName("Problem 2");
 }
 
-int Problem2::run(void){
+__int64 Problem2::run(void){
 	int total = 0;
 	int prev = 0;
 	int cur = 1;

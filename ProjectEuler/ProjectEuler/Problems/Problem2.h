@@ -9,7 +9,7 @@ namespace Problems{
 	{
 	public:
 		Problem2(void);
-		int run(void);
+		__int64 run(void);
 	};
 }
 #endif

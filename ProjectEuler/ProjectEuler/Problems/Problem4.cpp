@@ -18,7 +18,7 @@ bool isPalindrome(std::string str){
 	return result;
 }
 
-int Problem4::run(void){
+__int64 Problem4::run(void){
 	int result =  0;
 	for(int a = max;a*max > result;a--){		
 		for(int b = max;b>=a && b*a > result;b--){

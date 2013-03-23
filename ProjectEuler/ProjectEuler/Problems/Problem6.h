@@ -11,7 +11,7 @@ namespace Problems{
 	public:
 		Problem6(void);
 		~Problem6(void);
-		int run(void);
+		__int64 run(void);
 	private:
 		int target;
 	};

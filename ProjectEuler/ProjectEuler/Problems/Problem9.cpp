@@ -12,7 +12,7 @@ Problem9::~Problem9(void)
 {
 }
 
-int Problem9::run(void){
+__int64 Problem9::run(void){
 	int result = 0;
 	int a_max = target/3;
 	int b_max = target/2;

@@ -12,7 +12,7 @@ Problem7::~Problem7(void)
 {
 }
 
-int Problem7::run(void){
+__int64 Problem7::run(void){
 	List<int> * primes = &List<int>();
 	while(primes->size() < target){
 		EulerUtils::findNextPrime(primes);

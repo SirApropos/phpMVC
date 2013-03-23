@@ -12,7 +12,7 @@ Problem6::~Problem6(void)
 {
 }
 
-int Problem6::run(void){
+__int64 Problem6::run(void){
 	int sum = 0;
 	int square = 0;
 	for(int i = 1; i<=target;i++){

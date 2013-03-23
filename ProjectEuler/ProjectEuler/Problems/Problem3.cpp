@@ -6,6 +6,6 @@ Problem3::Problem3(void)
 	target = 600851475143;
 }
 
-int Problem3::run(void){
+__int64 Problem3::run(void){
 	return (EulerUtils::findFactors(target)).last();
 }

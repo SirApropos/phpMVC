@@ -31,10 +31,11 @@ Problem8::~Problem8(void)
 {
 }
 
-int Problem8::run(void){
+__int64 Problem8::run(void){
 	std::string str = target;
 	int highest = 0;
-	for(int i = 0; i<str.size()-6;i++){
+	int max = str.size()-6;
+	for(int i = 0; i<max;i++){
 		int temp =  str.at(i) - 48;
 		for(int j=i+1;j<i+5;j++){
 			temp *= str.at(j) - 48;

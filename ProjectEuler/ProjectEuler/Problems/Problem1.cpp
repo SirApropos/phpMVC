@@ -7,7 +7,7 @@ Problem1::Problem1(){
 }
 
 
-int Problem1::solution1(){
+__int64 Problem1::solution1(){
 	int a = 0;
 	for(int i=3;i<limit;i++){
 		if(i % 3 == 0 || i % 5 == 0) a+=i;
@@ -15,7 +15,7 @@ int Problem1::solution1(){
 	return a;
 }
 
-int Problem1::solution2(){
+__int64 Problem1::solution2(){
 	int a = 0;
 	for(int j=15; j>=3; j-=2){
 		for(int i=j; i<limit; i+=j){
@@ -29,7 +29,7 @@ int Problem1::solution2(){
 	return a;
 }
 
-int Problem1::run(void)
+__int64 Problem1::run(void)
 {
 	return solution2();
 }

@@ -13,7 +13,7 @@ namespace Problems{
 		int target;
 	public:
 		Problem5(void);
-		int run(void);
+		__int64 run(void);
 	};
 }
 #endif

@@ -11,7 +11,7 @@ class Problem8 :
 public:
 	Problem8(void);
 	~Problem8(void);
-	int run(void);
+	__int64 run(void);
 private:
 	char * target;
 };

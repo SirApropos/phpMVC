@@ -9,7 +9,7 @@ namespace Problems{
 	public:
 		Problem(void);
 		std::string getName(void);
-		virtual int run() = 0;
+		virtual __int64 run() = 0;
 	protected:
 		void setName(std::string name);
 	private:

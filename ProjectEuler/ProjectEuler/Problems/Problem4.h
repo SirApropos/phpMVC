@@ -13,7 +13,7 @@ namespace Problems{
 		int max;
 	public:
 		Problem4(void);
-		int run(void);
+		__int64 run(void);
 	};
 }
 #endif
