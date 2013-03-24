@@ -1,5 +1,4 @@
 #include "Problem1.h"
-#include <iostream>
 
 Problem1::Problem1(){
 	setName("Problem 1");
