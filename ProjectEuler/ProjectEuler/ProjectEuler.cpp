@@ -11,6 +11,7 @@
 #include "Problems/Problem10.h"
 #include "Problems/Problem11.h"
 #include "Problems/Problem12.h"
+#include "Problems/Problem13.h"
 #include "Utils/Timer.h"
 #include "stdafx.h"
 
@@ -42,8 +43,9 @@ void init(){
 	problems.add(&Problem8());
 	problems.add(&Problem9());
 	problems.add(&Problem10());
-	problems.add(&Problem11());*/
-	problems.add(&Problem12());
+	problems.add(&Problem11());
+	problems.add(&Problem12());*/
+	problems.add(&Problem13());
 	runProblems(&problems);
 }
 

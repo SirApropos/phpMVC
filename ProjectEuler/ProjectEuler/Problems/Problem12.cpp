@@ -7,11 +7,6 @@ Problem12::Problem12(void)
 	target = 500;
 }
 
-
-Problem12::~Problem12(void)
-{
-}
-
 __int64 Problem12::run(void){
 	List<int> * primes = &List<int>();
 	__int64 result = 0;
@@ -34,4 +29,8 @@ __int64 Problem12::run(void){
 		}
 	}
 	return result;
+}
+
+Problem12::~Problem12(void)
+{
 }
