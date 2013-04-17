@@ -24,5 +24,9 @@ public:
 		this->key = key;
 		this->value = value;
 	};
+	Pair(Pair<K,V>& other){
+		key = other.key;
+		value = other.value;
+	}
 };
 #endif

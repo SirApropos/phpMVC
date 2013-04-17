@@ -38,7 +38,7 @@ __int64 Problem14::runSequence(__int64 pos){
 				steps += runSequence(pos>>1);
 			}
 			if(pos <= cacheSize){
-				cache[pos] = steps;
+				cache[(int)pos] = (int)steps;
 			}
 		}
 	}

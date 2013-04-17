@@ -5,8 +5,8 @@ Problems::EulerUtils::EulerUtils(void)
 }
 
 
-int Problems::EulerUtils::modularPow(__int64 base, int exponent, int modulus){
-	int result = 1;
+int Problems::EulerUtils::modularPow(__int64 base, __int64 exponent, __int64 modulus){
+	__int64 result = 1;
 	while(exponent > 0){
 			if(exponent % 2 == 1){
 				result = (result * base) % modulus;

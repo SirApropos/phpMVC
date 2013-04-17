@@ -37,7 +37,7 @@ __int64 Problem16::run(void){
 		for(int j = 0;j<buckets;j++){
 			temp += ((int)maxIntStr[i] - (int)'0');
 		}
-		if(i < currentStr.size()){
+		if((unsigned int)i < currentStr.size()){
 			temp += ((int)maxIntStr[i + maxIntStr.size() - currentStr.size()] - (int)'0');
 		}
 		while(temp > 10){

@@ -30,6 +30,14 @@ public:
 		index=0;
 		curSize=10;
 	};
+
+	List(List<T>& other){
+		contents = new T[other.curSize];
+		memcpy(contents, other.contents, sizeof(other.contents));
+		index = other.index;
+		curSize = other.curSize;
+	}
+
 	T first(){
 		return index > 0 ? contents[0] : NULL;
 	}
@@ -82,6 +90,15 @@ public:
 	T get(int index){
 		return (index < this->index) ? contents[index] : NULL;
 	}
+	void set(int index, T obj){
+		if(index >= size()){
+			for(int i=size();i<index;i++){
+				add(NULL);
+			}
+		}
+		contents[index] = obj;
+	}
+
 	int size(){
 		return index;
 	}
