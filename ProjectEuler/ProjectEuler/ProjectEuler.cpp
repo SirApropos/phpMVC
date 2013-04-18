@@ -30,26 +30,11 @@ void runProblem(Problem * &problem){
 void runProblems(List<Problem *> * problems){
 	problems->foreach([&](Problem * problem){
 		runProblem(problem);
-		return NULL;
+		return false;
 	});
 }
 
 void init(){
-	//std::cout << "Sanity Check: " << (MININT == -MININT) << std::endl;
-	//getchar();
-	//BigInt a = BigInt(MAXINT64);
-	//for(int i=0;i<2;i++){
-	//	a = a + BigInt(MAXINT64);
-	//}
-	//std::cout << "Created: " << a.toString() << std::endl;
-	//std::cout << "True: " << true << " / False: " << false << std::endl;
-	//getchar();
-	/*BigInt b = BigInt(1);
-	for(int i=0;i<10;i++){
-		a = a + b;
-	}*/
-	/*std::cout << "A: " << a.toString();
-	getchar();*/
 	List<Problem *> problems;
 	/*problems.add(&Problem1());
 	problems.add(&Problem2());
@@ -64,10 +49,10 @@ void init(){
 	problems.add(&Problem11());
 	problems.add(&Problem12());
 	problems.add(&Problem13());
-	problems.add(&Problem16());*/
-	//problems.add(&Problem14());
+	problems.add(&Problem14());
+	problems.add(&Problem15());*/
 	//runProblems(&problems);
-	problems.add(&Problem15());
+	problems.add(&Problem16());
 	runProblems(&problems);
 }
 

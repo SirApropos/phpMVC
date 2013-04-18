@@ -15,8 +15,6 @@ namespace Problems{
 		__int64 run(void);
 	private:
 		int target;
-		List<unsigned __int64> * buckets;
-		void nextStep(void);
 	};
 }
 #endif

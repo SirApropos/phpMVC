@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #ifndef ListDef
 #define ListDef
 template<class T>
@@ -33,9 +34,11 @@ public:
 
 	List(List<T>& other){
 		contents = new T[other.curSize];
-		memcpy(contents, other.contents, sizeof(other.contents));
 		index = other.index;
 		curSize = other.curSize;
+		for(int i=0;i<size();i++){
+			contents[i] = other.contents[i];
+		}
 	}
 
 	T first(){
@@ -130,8 +133,7 @@ public:
 		});
 	}
 
-	template<typename Func>
-	void foreach(Func& fn){
+	void foreach(std::function<bool(T obj)> fn){
 		for(int i=0;i<index;i++){
 			if(fn(contents[i])){
 				break;
