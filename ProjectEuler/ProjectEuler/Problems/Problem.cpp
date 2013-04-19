@@ -2,7 +2,9 @@
 #include <iostream>
 using namespace Problems;
 
-Problem::Problem(void){};
+Problem::Problem(void){
+	setName("Default Name");
+};
 
 std::string Problem::getName(){
 	return name;

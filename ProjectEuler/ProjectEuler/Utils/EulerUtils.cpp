@@ -1,9 +1,21 @@
 #include "EulerUtils.h"
 #include <cmath>
+
+List<BigInt *> * Problems::EulerUtils::factorialCache = new List<BigInt *>();
+
 Problems::EulerUtils::EulerUtils(void)
 {
 }
 
+BigInt Problems::EulerUtils::factorial(int target){
+	if(factorialCache->size() == 0){
+		factorialCache->add(new BigInt(1));
+	}
+	for(int i=factorialCache->size();i<=target;i++){
+		factorialCache->add(&(*factorialCache->last() * BigInt(i)));
+	}
+	return *factorialCache->last();
+}
 
 int Problems::EulerUtils::modularPow(__int64 base, __int64 exponent, __int64 modulus){
 	__int64 result = 1;

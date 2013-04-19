@@ -1,20 +1,4 @@
-#include "Problems/Problem.h"
-#include "Problems/Problem1.h"
-#include "Problems/Problem2.h"
-#include "Problems/Problem3.h"
-#include "Problems/Problem4.h"
-#include "Problems/Problem5.h"
-#include "Problems/Problem6.h"
-#include "Problems/Problem7.h"
-#include "Problems/Problem8.h"
-#include "Problems/Problem9.h"
-#include "Problems/Problem10.h"
-#include "Problems/Problem11.h"
-#include "Problems/Problem12.h"
-#include "Problems/Problem13.h"
-#include "Problems/Problem14.h"
-#include "Problems/Problem15.h"
-#include "Problems/Problem16.h"
+#include "ProblemList.h"
 #include "Utils/Timer.h"
 #include "stdafx.h"
 
@@ -50,9 +34,11 @@ void init(){
 	problems.add(&Problem12());
 	problems.add(&Problem13());
 	problems.add(&Problem14());
-	problems.add(&Problem15());*/
-	//runProblems(&problems);
+	problems.add(&Problem15());
 	problems.add(&Problem16());
+	problems.add(&Problem17());
+	*/
+	problems.add(&Problem20());
 	runProblems(&problems);
 }
 

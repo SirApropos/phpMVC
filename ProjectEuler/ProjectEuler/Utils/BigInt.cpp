@@ -90,7 +90,7 @@ void BigInt::normalize(int bucket){
 	int i=0;
 	buckets->foreach([&](__int64 value){
 		int carry = 0;
-		while(value > MAX_SIZE){
+		while(value >= MAX_SIZE){
 			carry++;
 			value-=MAX_SIZE;
 		}
@@ -255,7 +255,7 @@ bool BigInt::operator== (BigInt& param){
 bool BigInt::operator!= (BigInt& param){ return !(*this == param); }
 bool BigInt::operator== (__int64 param){
 	bool result = false;
-	if(param > MAX_SIZE){
+	if(param >= MAX_SIZE){
 		result = BigInt(param) == *this;
 	}else{
 		result = (buckets->size() == 1 && buckets->get(0) == param);
