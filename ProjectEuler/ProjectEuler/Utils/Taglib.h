@@ -6,6 +6,11 @@
 #define Taglibdef
 template <class T>
 void println(T obj){
-	std::cout << obj << std::endl; 
+	print(obj);
+	std::cout << std::endl;
+}
+template <class T>
+void print(T obj){
+	std::cout << obj;
 }
 #endif

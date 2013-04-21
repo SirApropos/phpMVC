@@ -1,5 +1,4 @@
 #include "EulerUtils.h"
-#include <cmath>
 
 List<BigInt *> * Problems::EulerUtils::factorialCache = new List<BigInt *>();
 
@@ -7,7 +6,7 @@ Problems::EulerUtils::EulerUtils(void)
 {
 }
 
-BigInt Problems::EulerUtils::factorial(int target){
+BigInt& Problems::EulerUtils::factorial(int target){
 	if(factorialCache->size() == 0){
 		factorialCache->add(new BigInt(1));
 	}
@@ -110,6 +109,23 @@ List<int> Problems::EulerUtils::findFactors(__int64 target, List<int> * primes){
 			}
 		}
 		result.add((int)remainder);
+	}
+	return result;
+}
+
+List<std::string *> Problems::EulerUtils::readFile(std::string filename){
+	std::ifstream file(filename);
+	List<std::string *> result = List<std::string *>();
+	if (file.is_open())
+	{
+		while(file.good()){
+			std::string line;
+			std::getline(file,line);
+			result.add(new std::string(line));
+		}
+		file.close();
+	}else{
+		println("Could not open file.");
 	}
 	return result;
 }

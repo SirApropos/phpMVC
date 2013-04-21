@@ -133,6 +133,12 @@ public:
 		});
 	}
 
+	void vforeach(std::function<void(T obj)> fn){
+		for(int i=0;i<index;i++){
+			fn(contents[i]);
+		}
+	}
+
 	void foreach(std::function<bool(T obj)> fn){
 		for(int i=0;i<index;i++){
 			if(fn(contents[i])){

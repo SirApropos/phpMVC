@@ -12,9 +12,8 @@ void runProblem(Problem * &problem){
 }
 
 void runProblems(List<Problem *> * problems){
-	problems->foreach([&](Problem * problem){
+	problems->vforeach([&](Problem * problem){
 		runProblem(problem);
-		return false;
 	});
 }
 
@@ -37,8 +36,10 @@ void init(){
 	problems.add(&Problem15());
 	problems.add(&Problem16());
 	problems.add(&Problem17());
-	*/
+	problems.add(&Problem18());
 	problems.add(&Problem20());
+	*/
+	problems.add(&Problem67());
 	runProblems(&problems);
 }
 

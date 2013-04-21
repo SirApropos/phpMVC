@@ -1,6 +1,5 @@
 #pragma once
 #include "List.h"
-#include "../stdafx.h"
 #include <sstream>
 #ifndef BigIntDef
 #define BigIntDef

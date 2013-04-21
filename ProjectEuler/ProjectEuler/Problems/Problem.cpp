@@ -7,9 +7,9 @@ Problem::Problem(void){
 };
 
 std::string Problem::getName(){
-	return name;
+	return *name;
 }
 
 void Problem::setName(std::string name){
-	this->name = _strdup(name.data());
+	this->name = new std::string(name);
 }
