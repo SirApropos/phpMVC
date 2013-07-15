@@ -30,7 +30,7 @@ class IOCContainer
         if(!$this->exists($clazz)){
             $this->findClass($clazz);
         }
-        if($this->container[$clazz]){
+        if(isset($this->container[$clazz])){
             $result = $this->container[$clazz];
         }else{
             foreach($this->container as $obj){

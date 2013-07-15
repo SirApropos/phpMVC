@@ -13,9 +13,7 @@ class ReflectionUtils
      * @return ReflectionProperty
      */
     public static function getProperty($obj, $name){
-        $clazz = is_object($obj) ? get_class($obj) : $obj;
-        $clazz = new ReflectionClass($clazz);
-        $field = $clazz->getProperty($name);;
+        $field = self::getReflectionClass($obj)->getProperty($name);;
         $field->setAccessible(true);
         return $field;
     }
@@ -25,11 +23,22 @@ class ReflectionUtils
     }
 
     public static function getMapping($obj){
-        return self::getPropertyValue($obj, "mapping");
+        $clazz = self::getReflectionClass($obj);
+        return $clazz->hasProperty("mapping") ? self::getPropertyValue($obj, "mapping") : null;
     }
 
     public static function setProperty($obj, $field, $value){
         $prop = self::getProperty($obj, $field);
-        $prop->setValue($obj, $field);
+        $prop->setValue($obj, $value);
+    }
+
+    /**
+     * @param $obj
+     * @return ReflectionClass
+     */
+    private static function getReflectionClass($obj){
+        $clazz = is_object($obj) ? get_class($obj) : $obj;
+        $clazz = new ReflectionClass($clazz);
+        return $clazz;
     }
 }

@@ -6,7 +6,6 @@
  */
 
 class JsonMapper implements Mapper {
-
     /**
      * @param string $contentType
      * @return bool
@@ -31,15 +30,18 @@ class JsonMapper implements Mapper {
      */
     public function write($obj)
     {
-        // TODO: Implement write() method.
+        return JsonUtils::toJson($obj);
     }
 
     /**
-     * @param string $str
-     * @return object
+     * @param $str
+     * @param ReflectionClass $clazz
+     * @return mixed
      */
-    public function read($str)
+    public function read($str, ReflectionClass $clazz)
     {
-        // TODO: Implement read() method.
+        return JsonUtils::bindJson($str, $clazz);
     }
+
+
 }

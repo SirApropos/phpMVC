@@ -6,8 +6,6 @@
  */
 class JsonView implements View
 {
-    use JsonUtils;
-
     private $obj;
 
     /**
@@ -21,6 +19,6 @@ class JsonView implements View
      */
     public function render()
     {
-        echo $this->toJson($this->obj);
+        echo JsonUtils::toJson($this->obj);
     }
 }

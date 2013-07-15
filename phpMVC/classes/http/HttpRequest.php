@@ -10,6 +10,8 @@ class HttpRequest
 
     private $path;
 
+    private $body;
+
     /**
      * @var HttpHeaders
      */
@@ -20,10 +22,11 @@ class HttpRequest
         $this->path = $this->buildPath($_SERVER['REQUEST_URI']);
         $this->headers = new HttpHeaders();
         if(isset($server['CONTENT_TYPE'])){
-            $this->headers->setContentType($_SERVER['CONTENT_TYPE']);
+            $this->headers->setContentType(preg_replace("`;.*$`","",$_SERVER['CONTENT_TYPE']));
         }else{
             $this->headers->setContentType("text/plain");
         }
+        $this->body = file_get_contents('php://input');
     }
 
     private function buildPath($path){
@@ -69,6 +72,10 @@ class HttpRequest
      * @return HttpHeaders
      */
     public function getHeaders(){
-        return $this->head;
+        return $this->headers;
+    }
+
+    public function getBody(){
+        return $this->body;
     }
 }

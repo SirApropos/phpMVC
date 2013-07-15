@@ -30,8 +30,8 @@ class MyTestController extends Controller
         ]
     ];
 
-    public function doTest(HttpRequest $request, HttpResponse $response, $test){
-        print_r($_SERVER);
+    public function doTest(HttpRequest $request, HttpResponse $response, TestModel $model){
+        print_r($model);
         return "Hello world: ".$request->getPath();
     }
 

@@ -35,10 +35,11 @@ class XmlMapper implements Mapper {
     }
 
     /**
-     * @param string $str
-     * @return object
+     * @param $str
+     * @param ReflectionClass $clazz
+     * @return mixed
      */
-    public function read($str)
+    public function read($str, ReflectionClass $clazz)
     {
         // TODO: Implement read() method.
     }

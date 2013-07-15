@@ -6,12 +6,17 @@ try{
     include "./classes/exceptions/AutoloadingException.php";
 
     //TODO: Optimize or remove autoloading entirely.
+    //Probably build a class cache mapping classes to their respective files.
+    //Then the directory scan only needs to be done once.
+    //Probably as good as it would get while still allowing autoloading.
     class AutoLoader{
         use ClassLoader;
 
         public function autoload($name){
             if(!$this->findClass($name,"./classes/")){
-                 throw new AutoloadingException($name);
+                if(!$this->findClass($name, "./models/")){
+                     throw new AutoloadingException($name);
+                }
             }
         }
     }

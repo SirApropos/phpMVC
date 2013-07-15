@@ -12,12 +12,15 @@ class MappingUtils {
      * @return mixed
      */
     public static function bindObject(array $arr, $clazz){
-        $mapping = ReflectionUtils::getMapping($clazz);
+        if($clazz instanceof ReflectionClass){
+            $clazzName = $clazz->getName();
+        }
+        $mapping = ReflectionUtils::getMapping($clazzName);
         $fields = $mapping ? $mapping['fields'] : [];
         if(!$fields){
             $fields = [];
         }
-        $obj = new $clazz();
+        $obj = $clazz->newInstance();
         foreach($arr as $key => $value){
             if($fields[$key]){
                 $value = self::bindObject($value, $fields[$key]);

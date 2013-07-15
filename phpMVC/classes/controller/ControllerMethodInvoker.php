@@ -11,18 +11,46 @@ class ControllerMethodInvoker
      */
     private $mappers = [];
 
+    function __construct()
+    {
+        array_push($this->mappers,new BasicMapper());
+        array_push($this->mappers,new JsonMapper());
+    }
+
     public function invoke(ControllerMethod $cmethod){
         $method = $cmethod->getMethod();
         $args = [];
         $params =$method->getParameters();
         $container = IOCContainer::getInstance();
+        $request = $container->resolve("HttpRequest");
         foreach($params as $param){
             $clazz = $param->getClass();
+            $value = null;
             if($clazz){
-                array_push($args, $container->resolve($clazz->getName()));
-            }else{
-                array_push($args, null);
+                if($clazz->implementsInterface("Model")){
+                    if($request->getBody()){
+                        $contentType = $request->getHeaders()->getContentType();
+                        foreach($this->mappers as $mapper){
+                            if($mapper->canRead($contentType)){
+                                $value = $mapper->read($request->getBody(), $clazz);
+                                break;
+                            }
+                        }
+                        if(is_null($value)){
+                            throw new ModelBindException("No object mapper available to read type: ".$contentType);
+                        }
+                    }else{
+                        if($param->isOptional()){
+                            $value = $param->getDefaultValue();
+                        }else{
+                            throw new ModelBindException("No request body provided.");
+                        }
+                    }
+                }else{
+                    $value = $container->resolve($clazz->getName());
+                }
             }
+            array_push($args, $value);
         }
         $response = $container->resolve("HttpResponse");
         $value = $method->invokeArgs($cmethod->getController(), $args);
