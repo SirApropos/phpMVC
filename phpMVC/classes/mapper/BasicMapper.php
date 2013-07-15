@@ -14,7 +14,7 @@ class BasicMapper implements Mapper{
      */
     public function canRead($contentType)
     {
-        return $contentType == ContentType::TEXT_HTML || $contentType == ContentType::TEXT_PLAIN;
+        return $contentType == ContentType::TEXT_PLAIN;
     }
 
     /**

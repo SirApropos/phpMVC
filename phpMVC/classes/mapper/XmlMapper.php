@@ -13,7 +13,7 @@ class XmlMapper implements Mapper {
      */
     public function canRead($contentType)
     {
-        return $contentType == ContentType::TEXT_XML;
+        return $contentType == ContentType::TEXT_HTML || $contentType == ContentType::TEXT_XML;
     }
 
     /**
