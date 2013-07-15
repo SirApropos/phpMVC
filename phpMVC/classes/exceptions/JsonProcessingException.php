@@ -4,7 +4,7 @@
  * Date: 7/13/13
  * Time: 3:48 PM
  */
-class JsonProcessingException extends MVCException
+class JsonProcessingException extends IOException
 {
 
 }

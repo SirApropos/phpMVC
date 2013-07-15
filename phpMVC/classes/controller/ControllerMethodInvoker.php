@@ -15,6 +15,7 @@ class ControllerMethodInvoker
     {
         array_push($this->mappers,new BasicMapper());
         array_push($this->mappers,new JsonMapper());
+        array_push($this->mappers,new XmlMapper());
     }
 
     public function invoke(ControllerMethod $cmethod){

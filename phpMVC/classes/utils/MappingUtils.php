@@ -22,7 +22,7 @@ class MappingUtils {
         }
         $obj = $clazz->newInstance();
         foreach($arr as $key => $value){
-            if($fields[$key]){
+            if(isset($fields[$key])){
                 $value = self::bindObject($value, $fields[$key]);
             }
             ReflectionUtils::setProperty($obj, $key, $value);

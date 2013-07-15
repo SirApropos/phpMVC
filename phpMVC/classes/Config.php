@@ -13,7 +13,7 @@ class Config
 
     public static $VIEW_DIR;
 }
-Config::$BASE_PATH = "/mvc";
+Config::$BASE_PATH = "/phpMVC/";
 Config::$BASE_DIR = "./";
 Config::$CONTROLLER_DIR = Config::$BASE_DIR."controllers/";
 Config::$VIEW_DIR = Config::$BASE_DIR."views/";

@@ -36,7 +36,7 @@ class MyTestController extends Controller
     }
 
     public function doOtherTest(){
-        return new JsonView(self::$mapping);
+        return new XmlView(self::$mapping);
     }
 
     public function yetAnotherTest(){

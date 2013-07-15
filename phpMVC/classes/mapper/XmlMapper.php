@@ -13,7 +13,7 @@ class XmlMapper implements Mapper {
      */
     public function canRead($contentType)
     {
-        // TODO: Implement canRead() method.
+        return $contentType == ContentType::TEXT_XML;
     }
 
     /**
@@ -22,7 +22,7 @@ class XmlMapper implements Mapper {
      */
     public function canWrite($contentType)
     {
-        // TODO: Implement canWrite() method.
+        return canRead($contentType);
     }
 
     /**
@@ -31,7 +31,7 @@ class XmlMapper implements Mapper {
      */
     public function write($obj)
     {
-        // TODO: Implement write() method.
+        return XmlUtils::toXml($obj);
     }
 
     /**
@@ -41,6 +41,6 @@ class XmlMapper implements Mapper {
      */
     public function read($str, ReflectionClass $clazz)
     {
-        // TODO: Implement read() method.
+        return XmlUtils::bindXml($str, $clazz);
     }
 }
