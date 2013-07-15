@@ -18,7 +18,7 @@ class HttpRequest
     private $headers;
 
     public function HttpRequest($server){
-        $this->method = constant("RequestMethod::".$server['REQUEST_METHOD']);
+        $this->method = constant("HttpMethod::".$server['REQUEST_METHOD']);
         $this->path = $this->buildPath($_SERVER['REQUEST_URI']);
         $this->headers = new HttpHeaders();
         if(isset($server['CONTENT_TYPE'])){
@@ -37,15 +37,15 @@ class HttpRequest
     }
 
     /**
-     * @param RequestMethod $method
+     * @param HttpMethod $method
      */
-    public function setMethod(RequestMethod $method)
+    public function setMethod(HttpMethod $method)
     {
         $this->method = $method;
     }
 
     /**
-     * @return RequestMethod
+     * @return HttpMethod
      */
     public function getMethod()
     {

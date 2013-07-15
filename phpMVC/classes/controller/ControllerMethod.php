@@ -6,33 +6,58 @@
  */
 class ControllerMethod
 {
+    /**
+     * @var Controller
+     */
     private $controller;
-    private $method;
 
-    public function setController(Controller $controller)
+    /**
+     * @var ReflectionClass
+     */
+    private $clazz;
+
+    /**
+     * @var RequestMapping
+     */
+    private $mapping;
+
+    /**
+     * @param \Controller $controller
+     */
+    public function setController($controller)
     {
         $this->controller = $controller;
+        $this->clazz = new ReflectionClass($controller);
     }
 
     /**
-     * @return Controller
+     * @return \Controller
      */
     public function getController()
     {
         return $this->controller;
     }
 
-    public function setMethod(ReflectionMethod $method)
+    /**
+     * @param \RequestMapping $mapping
+     */
+    public function setMapping($mapping)
     {
-        $method->setAccessible(true);
-        $this->method = $method;
+        $this->mapping = $mapping;
+    }
+
+    /**
+     * @return \RequestMapping
+     */
+    public function getMapping()
+    {
+        return $this->mapping;
     }
 
     /**
      * @return ReflectionMethod
      */
-    public function getMethod()
-    {
-        return $this->method;
+    public function getMethod(){
+        return $this->clazz->getMethod($this->mapping->getMethod()->getName());
     }
 }

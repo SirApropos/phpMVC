@@ -12,20 +12,31 @@ class MappingUtils {
      * @return mixed
      */
     public static function bindObject(array $arr, $clazz){
-        if($clazz instanceof ReflectionClass){
-            $clazzName = $clazz->getName();
+        if(!$clazz instanceof ReflectionClass){
+            $clazz = new ReflectionClass($clazz);
         }
-        $mapping = ReflectionUtils::getMapping($clazzName);
-        $fields = $mapping ? $mapping['fields'] : [];
-        if(!$fields){
-            $fields = [];
-        }
+        $clazzName = $clazz->getName();
+        $mapping = ReflectionUtils::getMapping($clazzName, "ModelMapping");
+        /**
+         * @var ModelMapping $mapping
+         */
+        $fields = $mapping->getMappings();
         $obj = $clazz->newInstance();
         foreach($arr as $key => $value){
+            $val = null;
             if(isset($fields[$key])){
-                $value = self::bindObject($value, $fields[$key]);
+                if($fields[$key]->getIsArray()){
+                    $val = [];
+                    foreach($value as $vKey => $vValue){
+                        $val[$vKey] = self::bindObject($vValue, $fields[$key]->getType());
+                    }
+                }else{
+                    $val = self::bindObject($value, $fields[$key]->getType());
+                }
+            }else{
+                $val = $value;
             }
-            ReflectionUtils::setProperty($obj, $key, $value);
+            ReflectionUtils::setProperty($obj, $key, $val);
         }
         return $obj;
     }

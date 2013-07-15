@@ -4,7 +4,7 @@
  * Date: 7/12/13
  * Time: 11:47 PM
  */
-class RequestMethod{
+class HttpMethod{
     const GET = 1;
     const POST = 2;
     const PUT = 3;

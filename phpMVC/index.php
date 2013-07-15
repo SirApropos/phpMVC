@@ -1,5 +1,13 @@
 <pre>
 <?php
+set_error_handler(function($errno , $errstr, $errfile, $errline){
+    echo "$errstr in file $errfile on line: $errline\n\n";
+    $allowed = [E_NOTICE, E_STRICT];
+    if(!in_array($errno, $allowed)){
+        debug_print_backtrace();
+        die();
+    }
+});
 try{
     include "./classes/Config.php";
     include "./classes/utils/ClassLoader.php";

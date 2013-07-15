@@ -42,18 +42,19 @@ class SimpleControllerFactory implements ControllerFactory
 
     private function getControllerMethod($name){
         $clazz = new ReflectionClass($name);
-        $mappings = ReflectionUtils::getMapping($name);
+        $mappings = ReflectionUtils::getMapping($name,"ControllerMapping")->getMappings();
         $method = null;
         $pathFound = false;
         foreach($mappings as $mapping){
-            $regex = str_replace("`","",$mapping['path']);
-            $regex = preg_replace("#([\[\]\{\}\.\(\)\?\*])#","\\\\$1",$regex);
+            $regex = str_replace("`","",$mapping->getPath());
+            $regex = preg_replace("`\{[^\}]+\}`", "*", $regex);
+            $regex = preg_replace("`([\[\]\{\}\.\(\)\?\*])`","\\\\$1",$regex);
             $regex = str_replace("\\*\\*",".*",$regex);
             $regex = str_replace("\\*","[^/]*", $regex);
             $regex = "`^".$regex."$`";
             if(preg_match($regex, $this->request->getPath())){
                 $pathFound = true;
-                $allowed_methods = $mapping['allowed_methods'];
+                $allowed_methods = $mapping->getAllowedMethods();
                 if(is_array($allowed_methods)){
                     if(!in_array($this->request->getMethod(), $allowed_methods)){
                         continue;
@@ -61,7 +62,7 @@ class SimpleControllerFactory implements ControllerFactory
                 }
                 $method = new ControllerMethod();
                 $method->setController($clazz->newInstance());
-                $method->setMethod($clazz->getMethod($mapping['method']['name']));
+                $method->setMapping($mapping);
             }
         }
         if($pathFound && !$method){

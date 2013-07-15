@@ -9,25 +9,25 @@ class MyTestController extends Controller
     private static $mapping = [
         [
             "path" => "/test**",
-            "allowed_methods" => [RequestMethod::GET, RequestMethod::POST],
+            "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
             "method" => [
                 "name" => "doTest"
             ]
         ],
         [
             "path" => "/blah**/test",
-            "allowed_methods" => [RequestMethod::GET, RequestMethod::POST],
+            "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
             "method" => [
                 "name" => "doOtherTest"
             ]
         ],
         [
-            "path" => "/asd/*/test",
-            "allowed_methods" => [RequestMethod::GET, RequestMethod::POST],
+            "path" => "/asd/{testing}/test",
+            "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
             "method" => [
                 "name" => "yetAnotherTest"
             ]
-        ]
+        ],
     ];
 
     public function doTest(HttpRequest $request, HttpResponse $response, TestModel $model){
