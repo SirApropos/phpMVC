@@ -1,3 +1,6 @@
+v0.0.2 (Unreleased)
+-Automatic model binding (plain/text, application/x-www-form-urlencoded, application/json)
+
 v0.0.1 (07/14/2013)
 -Initial Version
 -Ability to map methods to certain paths and request methods
