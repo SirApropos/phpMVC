@@ -4,6 +4,10 @@ v0.0.2 (Unreleased)
 -Added XMLView
 -Added XMLUtils
 -Added XMLMapper
+-Changed how the 'mapping' field is structured -- it now may contain a 'methods' 
+and/or 'fields' key. These should both be arrays, where the keys are the names of the 
+corresponding field/method and the values correspond to a RequestMapping and FieldMapping, respecively.
+-Added constructor and field-based dependency injection.
 
 v0.0.1 (07/14/2013)
 -Initial Version

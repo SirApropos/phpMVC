@@ -7,32 +7,36 @@
 class MyTestController extends Controller
 {
     private static $mapping = [
-        [
-            "path" => "/test**",
-            "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
-            "method" => [
-                "name" => "doTest"
+        "methods" => [
+            "doTest" => [
+                "path" => "/test**",
+                "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
+            ],
+            "doOtherTest" => [
+                "path" => "/blah**/test",
+                "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
+            ],
+            "yetAnotherTest" => [
+                "path" => "/asd/{testing}/test",
+                "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
             ]
         ],
-        [
-            "path" => "/blah**/test",
-            "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
-            "method" => [
-                "name" => "doOtherTest"
+        "fields" => [
+            "request" => [
+                "autowired" => true,
+                "type" => "HttpRequest"
             ]
-        ],
-        [
-            "path" => "/asd/{testing}/test",
-            "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
-            "method" => [
-                "name" => "yetAnotherTest"
-            ]
-        ],
+        ]
     ];
 
-    public function doTest(HttpRequest $request, HttpResponse $response, TestModel $model){
+    /**
+     * @var HttpRequest
+     */
+    private $request;
+
+    public function doTest(HttpResponse $response, TestModel $model){
         print_r($model);
-        return "Hello world: ".$request->getPath();
+        return "Hello world: ".$this->request->getPath();
     }
 
     public function doOtherTest(){

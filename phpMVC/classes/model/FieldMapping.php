@@ -16,6 +16,11 @@ class FieldMapping {
     private $isArray;
 
     /**
+     * @var bool
+     */
+    private $autowired;
+
+    /**
      * @param boolean $isArray
      */
     public function setIsArray($isArray)
@@ -45,6 +50,22 @@ class FieldMapping {
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @param boolean $autowired
+     */
+    public function setAutowired($autowired)
+    {
+        $this->autowired = $autowired;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getAutowired()
+    {
+        return $this->autowired;
     }
 
 }

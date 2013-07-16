@@ -40,10 +40,57 @@ class IOCContainer
                 }
             }
         }
-        if(!$result){
-            $result = new $clazz();
+        if(is_null($result)){
+            $result = $this->newInstance($clazz);
         }
         return $result;
+    }
+
+    public function newInstance($clazz){
+        if(!$clazz instanceof ReflectionClass){
+            $clazz = new ReflectionClass($clazz);
+        }
+        $constructor = $clazz->getConstructor();
+        $args = [];
+        if($constructor){
+            foreach($constructor->getParameters() as $param){
+                $paramClazz = $param->getClass();
+                if(!is_null($paramClazz)){
+                    array_push($args, $this->resolve($param->getClass()));
+                }else{
+                    if($param->isDefaultValueAvailable()){
+                        array_push($args, $param->getDefaultValue());
+                    }else{
+                        throw new ModelBindException("Could not construct object of type ".$clazz->getName().
+                           ": could not satisfy constructor. Constructor arguments must all have a type or default value.");
+                    }
+                }
+            }
+        }
+        $result = $clazz->newInstanceArgs($args);
+        $this->autowire($result);
+        return $result;
+    }
+
+    public function autowire($object){
+        $mapping = ReflectionUtils::getMapping($object, "ModelMapping");
+        /**
+         * @var ModelMapping mapping
+         */
+        if(!is_null($mapping)){
+            foreach($mapping->getMappings() as $name => $field){
+                /**
+                 * @var FieldMapping $field
+                 */
+                if($field->getAutowired()){
+                    if($field->getType()){
+                        ReflectionUtils::setProperty($object, $name, $this->resolve($field->getType()));
+                    }else{
+                        throw new ModelBindException(get_class($object)."::".$name." is marked as autowired but no type is specified.");
+                    }
+                }
+            }
+        }
     }
 
     public function register($object, $name=null){

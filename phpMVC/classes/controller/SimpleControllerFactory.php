@@ -10,6 +10,14 @@ class SimpleControllerFactory implements ControllerFactory
 
     private $request;
 
+    private $container;
+
+    function __construct()
+    {
+        $this->container = IOCContainer::getInstance();
+    }
+
+
     function getController(HttpRequest $request)
     {
         $this->request = $request;
@@ -61,7 +69,7 @@ class SimpleControllerFactory implements ControllerFactory
                     }
                 }
                 $method = new ControllerMethod();
-                $method->setController($clazz->newInstance());
+                $method->setController($this->container->newInstance($clazz));
                 $method->setMapping($mapping);
             }
         }

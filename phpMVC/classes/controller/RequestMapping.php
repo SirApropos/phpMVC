@@ -20,8 +20,10 @@ class RequestMapping {
     private $path;
 
     public static $mapping = [
-        "method" => [
-            "type" => "RequestMethod"
+        "fields" => [
+            "method" => [
+                "type" => "RequestMethod"
+            ]
         ]
     ];
 

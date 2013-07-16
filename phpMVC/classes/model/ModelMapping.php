@@ -17,9 +17,11 @@ class ModelMapping implements Mapping {
      */
     function bind($obj)
     {
-        foreach($obj as $name => $mapping){
-            $mapping = MappingUtils::bindObject($mapping, "FieldMapping");
-            $this->mappings[$name] = $mapping;
+        if(isset($obj['fields'])){
+            foreach($obj['fields'] as $name => $mapping){
+                $mapping = MappingUtils::bindObject($mapping, "FieldMapping");
+                $this->mappings[$name] = $mapping;
+            }
         }
     }
 

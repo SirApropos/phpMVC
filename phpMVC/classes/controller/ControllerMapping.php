@@ -12,6 +12,17 @@ class ControllerMapping implements Mapping {
     private $mappings = [];
 
     /**
+     * @var IOCContainer $container
+     */
+    private $container;
+
+    function __construct()
+    {
+        $this->container = IOCContainer::getInstance();
+    }
+
+
+    /**
      * @param RequestMapping $mapping
      */
     public function addMapping(RequestMapping $mapping){
@@ -31,8 +42,18 @@ class ControllerMapping implements Mapping {
      */
     function bind($obj)
     {
-        foreach($obj as $mapping){
-            $this->addMapping(MappingUtils::bindObject($mapping, "RequestMapping"));
+        if(isset($obj['methods'])){
+            foreach($obj['methods'] as $name => $mapping){
+                $requestMapping = MappingUtils::bindObject($mapping, "RequestMapping");
+                /**
+                 * @var RequestMapping $requestMapping
+                 */
+                if(is_null($requestMapping->getMethod())){
+                    $requestMapping->setMethod($this->container->newInstance("RequestMethod"));
+                }
+                $requestMapping->getMethod()->setName($name);
+                $this->addMapping($requestMapping);
+            }
         }
     }
 }

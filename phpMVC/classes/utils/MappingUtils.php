@@ -21,7 +21,7 @@ class MappingUtils {
          * @var ModelMapping $mapping
          */
         $fields = $mapping->getMappings();
-        $obj = $clazz->newInstance();
+        $obj = IOCContainer::getInstance()->newInstance($clazz);
         foreach($arr as $key => $value){
             $val = null;
             if(isset($fields[$key])){
