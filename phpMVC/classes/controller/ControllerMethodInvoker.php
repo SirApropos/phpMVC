@@ -24,6 +24,19 @@ class ControllerMethodInvoker
         $params =$method->getParameters();
         $container = IOCContainer::getInstance();
         $request = $container->resolve("HttpRequest");
+        $pathParts = preg_split("`/`",$request->getPath());
+        $mappingParts = preg_split("`/`", $cmethod->getMapping()->getPath());
+        $urlvars = [];
+        foreach($mappingParts as $key => $part){
+            //Should always be the case, but let's make sure.
+            if(isset($pathParts[$key])){
+                $matches = [];
+                if(preg_match('`\{(.+)\}`',$part, $matches)){
+                    $replacer = str_replace($matches[0], "", $part);
+                    $urlvars[$matches[1]] = preg_replace("`^".$replacer."`","",$pathParts[$key]);
+                }
+            }
+        }
         foreach($params as $param){
             $clazz = $param->getClass();
             $value = null;
@@ -49,6 +62,18 @@ class ControllerMethodInvoker
                     }
                 }else{
                     $value = $container->resolve($clazz->getName());
+                }
+            }else{
+                $name = $param->getName();
+                if(isset($urlvars[$name])){
+                    $value = $urlvars[$name];
+                }else{
+                    if($param->isDefaultValueAvailable()){
+                        $value = $param->getDefaultValue();
+                    }else{
+                        throw new ModelBindException("Could not satisfy dependency: ".get_class($cmethod->getController())."::".
+                            $method->getName().'::$'.$name);
+                    }
                 }
             }
             array_push($args, $value);

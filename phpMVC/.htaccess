@@ -1,4 +1,3 @@
-ErrorDocument 404 /Errdocs/404.php
 RewriteEngine On
 RewriteBase /phpMVC/
 RewriteRule .* index.php [NC,L]

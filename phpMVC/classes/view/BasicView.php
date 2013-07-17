@@ -14,10 +14,21 @@ class BasicView implements View
     }
 
     /**
-     * @return void
+     * @return mixed
      */
     public function render()
     {
         echo "".$this->obj;
     }
+
+    /**
+     * @param HttpResponse $response
+     * @return mixed
+     */
+    public function prepareResponse(HttpResponse $response)
+    {
+        // TODO: Implement prepareResponse() method.
+    }
+
+
 }

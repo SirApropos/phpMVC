@@ -7,7 +7,13 @@
 interface View
 {
     /**
-     * @return void
+     * @param HttpResponse $response
+     * @return mixed
+     */
+    public function prepareResponse(HttpResponse $response);
+
+    /**
+     * @return mixed
      */
     public function render();
 }

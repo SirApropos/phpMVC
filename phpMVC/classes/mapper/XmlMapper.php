@@ -41,6 +41,6 @@ class XmlMapper implements Mapper {
      */
     public function read($str, ReflectionClass $clazz)
     {
-        return XmlUtils::bindXml($str, $clazz);
+        return XmlUtils::bindToElement($str, $clazz);
     }
 }

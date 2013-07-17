@@ -6,10 +6,37 @@
  */
 
 class XmlUtils {
+    /**
+     * @param SimpleXMLElement $element
+     * @param array $arr
+     */
+    private static function bindToElement(SimpleXMLElement $element, array $arr){
+        foreach($arr as $key => $obj){
+            if(is_numeric($key)){
+                $key = "value";
+            }
+            $value = null;
+            if(is_object($obj)){
+                $value = MappingUtils::getObjectVars($obj);
+            }else if(is_array($obj)){
+                $value = $obj;
+            }
+            if(!is_null($value)){
+                $node = $element->addChild($key);
+                self::bindToElement($node, $value);
+            }else{
+                $element->addChild($key, $obj);
+            }
+        }
+    }
+
+    /**
+     * @param $obj
+     * @return string
+     */
     public static function toXml($obj){
-        $arr = (array)$obj;
-        $xml = new SimpleXMLElement('<object/>');
-        array_walk_recursive($obj, array ($xml, 'addChild'));
+        $xml = new SimpleXMLElement("<object/>");
+        self::bindToElement($xml, MappingUtils::getObjectVars($obj),"object");
         return $xml->asXML();
     }
 

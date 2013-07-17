@@ -13,7 +13,7 @@ class MyTestController extends Controller
                 "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
             ],
             "doOtherTest" => [
-                "path" => "/blah**/test",
+                "path" => "/blah/*/test",
                 "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
             ],
             "yetAnotherTest" => [
@@ -40,10 +40,10 @@ class MyTestController extends Controller
     }
 
     public function doOtherTest(){
-        return new XmlView(self::$mapping);
+        return new XmlView($this);
     }
 
-    public function yetAnotherTest(){
-        return new PageView("Test");
+    public function yetAnotherTest($tesating){
+        return $testing;
     }
 }

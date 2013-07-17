@@ -21,6 +21,10 @@ class HttpResponse
      */
     private $headers;
 
+    function __construct(){
+        $this->headers = new HttpHeaders();
+    }
+
     /**
      * @param \HttpHeaders $headers
      */
@@ -73,9 +77,24 @@ class HttpResponse
      *  @return void
      */
     public function send(){
-        http_response_code($this->responseCode);
         if($this->view){
+            $this->view->prepareResponse($this);
+            $this->sendHeaders();
             $this->view->render();
+        }else{
+            $this->sendHeaders();
+        }
+    }
+
+    protected function sendHeaders(){
+        http_response_code($this->responseCode);
+        foreach($this->headers->getAllHeaders() as $key => $headers){
+            if(!is_array($headers)){
+                $headers = [$headers];
+            }
+            foreach($headers as $header){
+                header($key.": ".$header);
+            }
         }
     }
 }

@@ -14,11 +14,24 @@ class JsonView implements View
     function __construct($obj){
         $this->obj = $obj;
     }
+
     /**
-     * @return void
+     * @return mixed
      */
     public function render()
     {
         echo JsonUtils::toJson($this->obj);
     }
+
+    /**
+     * @param HttpResponse $response
+     * @return mixed
+     */
+    public function prepareResponse(HttpResponse $response)
+    {
+        if(is_null($response->getHeaders()->getContentType())){
+            $response->getHeaders()->setContentType(ContentType::APPLICATION_JSON);
+        }
+    }
+
 }

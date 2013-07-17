@@ -1,4 +1,3 @@
-<pre>
 <?php
 set_error_handler(function($errno , $errstr, $errfile, $errline){
     echo "$errstr in file $errfile on line: $errline\n\n";
@@ -48,6 +47,30 @@ try{
         http_response_code(500);
     }
     echo $ex->getMessage();
+    $arr = [];
+    foreach($ex->getTrace() as $key => $trace){
+        $message = "#$key ";
+        $message .= $trace['class'].$trace['type'].$trace['function'];
+        $message .= "(";
+        $first = true;
+        foreach($trace['args'] as $arg){
+            if(!$first){
+                $message.=", ";
+            }else{
+                $first = false;
+            }
+            if(is_object($arg)){
+                $message .= get_class($arg)." ".JsonUtils::toJson($arg);
+            }else{
+                $message .= $arg;
+            }
+        }
+        $message .=") called at [".$trace['file'].":".$trace['line']."]";
+        array_push($arr, $message);
+    }
+    echo "\n\n";
+    foreach($arr as $trace){
+        echo $trace."\n";
+    }
 }
 ?>
-</pre>

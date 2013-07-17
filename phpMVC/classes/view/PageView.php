@@ -19,7 +19,8 @@ class PageView implements View
     }
 
     /**
-     * @return void
+     * @throws ViewResolverException
+     * @return mixed
      */
     public function render()
     {
@@ -33,4 +34,14 @@ class PageView implements View
         $contents = file_get_contents($path);
         echo $contents;
     }
+
+    /**
+     * @param HttpResponse $response
+     * @return mixed
+     */
+    public function prepareResponse(HttpResponse $response)
+    {
+        // TODO: Implement prepareResponse() method.
+    }
+
 }

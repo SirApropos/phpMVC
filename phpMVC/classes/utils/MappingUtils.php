@@ -40,4 +40,17 @@ class MappingUtils {
         }
         return $obj;
     }
+
+    public static function getObjectVars($obj){
+        $result = $obj;
+        if(is_object($obj)){
+            $result = [];
+            $clazz = new ReflectionClass(get_class($obj));
+            foreach($clazz->getProperties() as $property){
+                $property->setAccessible(true);
+                $result[$property->getName()] = self::getObjectVars($property->getValue($obj));
+            }
+        }
+        return $result;
+    }
 }

@@ -16,10 +16,21 @@ class XmlView implements View{
 
 
     /**
-     * @return void
+     * @return mixed
      */
     public function render()
     {
         echo XmlUtils::toXml($this->obj);
+    }
+
+    /**
+     * @param HttpResponse $response
+     * @return mixed
+     */
+    public function prepareResponse(HttpResponse $response)
+    {
+        if(is_null($response->getHeaders()->getContentType())){
+            $response->getHeaders()->setContentType(ContentType::TEXT_XML);
+        }
     }
 }
