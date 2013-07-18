@@ -1,4 +1,4 @@
-v0.0.2 (Unreleased)
+v0.0.2 (07/18/2013)
 -Automatic model binding (plain/text, application/x-www-form-urlencoded, application/json, text/html, text/xml)
 -Config::BASE_PATH can now have trailing slash
 -Added XMLView
