@@ -44,6 +44,6 @@ class MyTestController extends Controller
     }
 
     public function yetAnotherTest($testing){
-        return new PageView("Test.psp", ["testing" => $testing]);
+        return new PageView("Test.psp", ["testing" => $testing, "arr" => ["Test","Hello","Blah"]]);
     }
 }

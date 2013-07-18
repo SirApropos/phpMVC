@@ -28,11 +28,18 @@ class TagLibraryProcessor {
     private $xml;
 
     /**
+     * @var string
+     */
+    private $path;
+
+    /**
      * @param string $xml
      * @param array $vars
+     * @param string path;
      */
-    function __construct($xml, array $vars)
+    function __construct($xml, array $vars, $path)
     {
+        $this->path = dirname($path);
         libxml_use_internal_errors();
         $matches = [];
         preg_match_all("`<%@ *import([^>]+)>`", $xml, $matches, PREG_SET_ORDER);
@@ -45,7 +52,7 @@ class TagLibraryProcessor {
         $this->xml = $str;
     }
 
-    function process(array $vars){
+    function process(){
         $manager = IOCContainer::getInstance()->resolve("TagLibraryManager");
         /**
          * @var TagLibraryManager $manager
@@ -56,7 +63,7 @@ class TagLibraryProcessor {
             }
             $this->taglibs[(string)$import['prefix']] = $manager->resolve((string)$import['schema']);
         }
-        $event = new TagLibraryEvent($this, $this->xml, $vars);
+        $event = new TagLibraryEvent($this, $this->xml, $this->vars);
         $event->process();
     }
 
@@ -66,5 +73,13 @@ class TagLibraryProcessor {
      */
     function getTagLibrary($prefix){
         return isset($this->taglibs[$prefix]) ? $this->taglibs[$prefix] : null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
     }
 }

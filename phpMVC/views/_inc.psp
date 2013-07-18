@@ -1,0 +1,4 @@
+<%@import prefix="c" schema="http://www.caiyern.net/psp/taglibs/core">
+<c:for var="x" start="1" end="2">
+    ${x}
+</c:for>

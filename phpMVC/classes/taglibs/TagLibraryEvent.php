@@ -27,6 +27,11 @@ class TagLibraryEvent {
     private static $invoker;
 
     /**
+     * @var string
+     */
+    private $tagName;
+
+    /**
      * @param TagLibraryProcessor $processor
      * @param string $xml
      * @param array $vars
@@ -110,6 +115,8 @@ class TagLibraryEvent {
                 preg_match_all("`([a-zA-Z0-9]+)\s*=\s*\'([^']+)'`", $openTag, $matches, PREG_SET_ORDER);
                 $this->addAttributesToArr($attributes, $matches);
                 self::$invoker->invoke($taglib, $method, $attributes, $event);
+            }else{
+                throw new NoSuchTagLibraryException("No Tag Library loaded with prefix: ".$prefix);
             }
         }
         $this->printWithReplacers($str);
@@ -122,11 +129,11 @@ class TagLibraryEvent {
 
     private function printWithReplacers($str){
         $matches = [];
-        preg_match_all("`\{\\$([a-zA-Z0-9_]+)\}`", $str, $matches, PREG_SET_ORDER);
+        preg_match_all("`\\$\{([a-zA-Z0-9_]+)\}`", $str, $matches, PREG_SET_ORDER);
         foreach($matches as $match){
             $key = $match[1];
-            $value = isset($this->vars[$key]) ? $this->vars[$key] : "";
-            $str = str_replace('{$'.$key.'}',$value, $str);
+            $value = $this->getVar($key);
+            $str = str_replace('${'.$key.'}',$value, $str);
         }
         echo $str;
     }
@@ -139,5 +146,34 @@ class TagLibraryEvent {
         if(isset($this->vars[$key])){
             unset($this->vars[$key]);
         }
+    }
+
+    public function getVar($key){
+        $key = preg_replace("`\\$\{(.+)\}`","$1", $key);
+        return isset($this->vars[$key]) ? $this->vars[$key] : null;
+    }
+
+    /**
+     * @param string $tagName
+     */
+    public function setTagName($tagName)
+    {
+        $this->tagName = $tagName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTagName()
+    {
+        return $this->tagName;
+    }
+
+    /**
+     * @return \TagLibraryProcessor
+     */
+    public function getProcessor()
+    {
+        return $this->processor;
     }
 }

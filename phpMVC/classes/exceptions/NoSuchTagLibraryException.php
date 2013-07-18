@@ -5,6 +5,6 @@
  * Time: 11:59 PM
  */
 
-class NoSuchTagLibraryException extends MVCException{
+class NoSuchTagLibraryException extends TagLibException{
 
 }

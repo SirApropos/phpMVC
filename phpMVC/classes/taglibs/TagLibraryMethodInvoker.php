@@ -16,10 +16,10 @@ class TagLibraryMethodInvoker {
     public function invoke(TagLibrary $taglib, $method, array $attributes, TagLibraryEvent $event){
         $mapping = $taglib->getMapping()->getMappings();
         $method = isset($mapping[$method]) ? $mapping[$method] : $method;
+        $event->setTagName($method);
         $clazz = new ReflectionClass(get_class($taglib));
         if($clazz->hasMethod($method)){
             $clazz->getMethod($method)->invokeArgs($clazz, [$event, $attributes]);
-            $event->process();
         }else{
             throw new NoSuchTagLibraryException("Tag Library ".$clazz->getName()." does not contain tag: ".$method);
         }

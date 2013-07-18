@@ -22,7 +22,7 @@ class PageView implements View
      */
     function __construct($page, $vars=[]){
         $this->page = $page;
-        $this->vars = [];
+        $this->vars = $vars;
     }
 
     /**
@@ -38,8 +38,8 @@ class PageView implements View
         if(!file_exists($path)){
             throw new ViewResolverException("Could not locate page: ".$path);
         }
-        $processor = new TagLibraryProcessor(file_get_contents($path), $this->vars);
-        $processor->process($this->vars);
+        $processor = new TagLibraryProcessor(file_get_contents($path), $this->vars, $path);
+        $processor->process();
     }
 
     /**
