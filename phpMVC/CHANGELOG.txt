@@ -12,6 +12,7 @@ corresponding field/method and the values correspond to a RequestMapping and Fie
 -Improved XmlUtils::toXml -- the proper structure is now maintained
 -added MappingUtils::getObjectVars() to get all object vars, including private and protected.
 -added support for Tag Libraries
+-Added StandardTagLibrary with the following basic functions: foreach, for, include
 
 v0.0.1 (07/14/2013)
 -Initial Version
