@@ -13,7 +13,7 @@ interface Mapping {
     function bind($obj);
 
     /**
-     * @return []
+     * @return array
      */
     function getMappings();
 }

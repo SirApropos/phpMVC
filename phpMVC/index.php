@@ -1,3 +1,4 @@
+<pre>
 <?php
 set_error_handler(function($errno , $errstr, $errfile, $errline){
     echo "$errstr in file $errfile on line: $errline\n\n";
@@ -74,3 +75,4 @@ try{
     }
 }
 ?>
+</pre>

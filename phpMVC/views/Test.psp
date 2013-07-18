@@ -1,1 +1,14 @@
-Hello World.
+<%@import prefix="c" schema="http://www.caiyern.net/psp/taglibs/core">
+<html>
+    <foreach>
+        Testing.
+    </foreach>
+    <c:foreach key="{$key}">
+        {$key}
+        <c:foreach>
+            <test>Hello World</test>
+        </c:foreach>
+    </c:foreach>
+<head>
+</head>
+</html>

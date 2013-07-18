@@ -43,7 +43,7 @@ class MyTestController extends Controller
         return new XmlView($this);
     }
 
-    public function yetAnotherTest($tesating){
-        return $testing;
+    public function yetAnotherTest($testing){
+        return new PageView("Test.psp", ["testing" => $testing]);
     }
 }

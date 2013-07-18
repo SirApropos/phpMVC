@@ -11,6 +11,7 @@ corresponding field/method and the values correspond to a RequestMapping and Fie
 -adding prepareResponse(HttpResponse) to the View interface -- this will be called before render().
 -Improved XmlUtils::toXml -- the proper structure is now maintained
 -added MappingUtils::getObjectVars() to get all object vars, including private and protected.
+-added support for Tag Libraries
 
 v0.0.1 (07/14/2013)
 -Initial Version

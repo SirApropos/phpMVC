@@ -12,10 +12,17 @@ class PageView implements View
     private $page;
 
     /**
-     * @param string $page
+     * @var array
      */
-    function __construct($page){
+    private $vars;
+
+    /**
+     * @param $page
+     * @param array $vars
+     */
+    function __construct($page, $vars=[]){
         $this->page = $page;
+        $this->vars = [];
     }
 
     /**
@@ -31,8 +38,8 @@ class PageView implements View
         if(!file_exists($path)){
             throw new ViewResolverException("Could not locate page: ".$path);
         }
-        $contents = file_get_contents($path);
-        echo $contents;
+        $processor = new TagLibraryProcessor(file_get_contents($path), $this->vars);
+        $processor->process($this->vars);
     }
 
     /**
@@ -41,7 +48,6 @@ class PageView implements View
      */
     public function prepareResponse(HttpResponse $response)
     {
-        // TODO: Implement prepareResponse() method.
     }
 
 }
