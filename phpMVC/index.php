@@ -37,9 +37,26 @@ try{
     $container = IOCContainer::getInstance();
     $request = new HttpRequest($_SERVER);
     $container->register($request);
-    $controllerFactory = new SimpleControllerFactory();
+    /**
+     * @var MVCConfig $config
+     */
+    $config = $container->resolve("MVCConfig");
+    $config->initialize();
+    /**
+     * @var FilterManager $filterManager
+     */
+    $filterManager = $container->resolve("FilterManager");
+    $grantedAuthority = $filterManager->doFilter($request);
+    /**
+     * @var ControllerFactory controllerFactory
+     */
+    $controllerFactory = $container->resolve("ControllerFactory");
     $cmethod = $controllerFactory->getController($request);
-    $invoker->invoke($cmethod);
+    if($invoker->canInvoke($cmethod, $grantedAuthority)){
+        $invoker->invoke($cmethod);
+    }else{
+        throw new InvalidGrantException("Access Denied");
+    }
 }catch(Exception $ex){
     if($ex instanceof HttpException){
         http_response_code($ex->getResponseCode());

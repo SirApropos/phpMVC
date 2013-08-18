@@ -19,10 +19,18 @@ class RequestMapping {
      */
     private $path;
 
+    /**
+     * @var SecurityMapping
+     */
+    private $security;
+
     public static $mapping = [
         "fields" => [
             "method" => [
                 "type" => "RequestMethod"
+            ],
+            "security" =>[
+                "type" => "SecurityMapping"
             ]
         ]
     ];
@@ -73,5 +81,53 @@ class RequestMapping {
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * @param array $allowed_roles
+     */
+    public function setAllowedRoles($allowed_roles)
+    {
+        $this->allowed_roles = $allowed_roles;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllowedRoles()
+    {
+        return $this->allowed_roles;
+    }
+
+    /**
+     * @param array $denied_roles
+     */
+    public function setDeniedRoles($denied_roles)
+    {
+        $this->denied_roles = $denied_roles;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDeniedRoles()
+    {
+        return $this->denied_roles;
+    }
+
+    /**
+     * @param \SecurityMapping $security
+     */
+    public function setSecurity($security)
+    {
+        $this->security = $security;
+    }
+
+    /**
+     * @return \SecurityMapping
+     */
+    public function getSecurity()
+    {
+        return $this->security;
     }
 }

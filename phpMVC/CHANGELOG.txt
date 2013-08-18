@@ -1,3 +1,10 @@
+v0.0.3 (Unreleased)
+-Adding Filters
+-Adding SimpleAuthenticationFilter
+-Adding ability to add security field to request mapping.
+-Fixed bug with IOCContainer's resolution of subclasses.
+-Adding config file with overrideable configuration methods.
+
 v0.0.2 (07/18/2013)
 -Automatic model binding (plain/text, application/x-www-form-urlencoded, application/json, text/html, text/xml)
 -Config::BASE_PATH can now have trailing slash

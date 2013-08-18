@@ -87,4 +87,46 @@ class ControllerMethodInvoker
         }
         $response->send();
     }
+
+    private function _containsRole(GrantedAuthority $authority, array $roles=null){
+        $result = false;
+        if(!is_null($roles)){
+            foreach($authority->getRoles() as $role){
+                if(in_array($role, $roles)){
+                    $result = true;
+                    break;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param ControllerMethod $method
+     * @param GrantedAuthority $authority
+     * @return bool
+     */
+    public function canInvoke(ControllerMethod $method, GrantedAuthority $authority){
+        $result = false;
+        $security = $method->getMapping()->getSecurity();
+        if(!is_null($security)){
+            $allowed_roles = $security->getAllowedRoles();
+            if(!is_null($allowed_roles)){
+                //If allowed roles is defined, make sure the user has
+                //a role that is allowed.
+                $result = $this->_containsRole($authority, $allowed_roles);
+            }else{
+                //If allowed_roles is not defined, allow all.
+                $result = true;
+            }
+            if($result){
+                //Now, deny the request if user contains a role that is denied.
+                $result = !$this->_containsRole($authority, $security->getDeniedRoles());
+            }
+        }else{
+            //No security mapping defined. Allow the request.
+            $result = true;
+        }
+        return $result;
+    }
 }

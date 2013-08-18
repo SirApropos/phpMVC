@@ -58,6 +58,11 @@ class ControllerMethod
      * @return ReflectionMethod
      */
     public function getMethod(){
-        return $this->clazz->getMethod($this->mapping->getMethod()->getName());
+        $methodName = $this->mapping->getMethod()->getName();
+        if($this->clazz->hasMethod($methodName)){
+            return $this->clazz->getMethod($methodName);
+        }else{
+            throw new InvocationException("No such method: ".$methodName." in controller ".$this->clazz->getName());
+        }
     }
 }

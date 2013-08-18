@@ -11,6 +11,10 @@ class MyTestController extends Controller
             "doTest" => [
                 "path" => "/test**",
                 "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
+                "security" => [
+                    "allowed_roles" => ["user","admin"],
+                    "denied_roles" => ["admin"]
+                ]
             ],
             "doOtherTest" => [
                 "path" => "/blah/*/test",

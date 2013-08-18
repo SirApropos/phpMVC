@@ -23,9 +23,13 @@ class IOCContainer
 
     /**
      * @param $clazz
-     * @return object
+     * @return bool
      */
-    public function resolve($clazz){
+    public function contains($clazz){
+        return !is_null($this->_findClass($clazz));
+    }
+
+    private function _findClass($clazz){
         $result = null;
         if(!$this->exists($clazz)){
             $this->findClass($clazz);
@@ -40,6 +44,15 @@ class IOCContainer
                 }
             }
         }
+        return $result;
+    }
+
+    /**
+     * @param $clazz
+     * @return object
+     */
+    public function resolve($clazz){
+        $result = $this->_findClass($clazz);
         if(is_null($result)){
             $result = $this->newInstance($clazz);
         }
@@ -49,6 +62,9 @@ class IOCContainer
     public function newInstance($clazz){
         if(!$clazz instanceof ReflectionClass){
             $clazz = new ReflectionClass($clazz);
+        }
+        if(!$clazz->isInstantiable()){
+            throw new ModelBindException("Cannot instantiate object of type: ".$clazz->getName());
         }
         $constructor = $clazz->getConstructor();
         $args = [];
