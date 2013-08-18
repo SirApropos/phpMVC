@@ -43,8 +43,7 @@ class BasicMapper implements Mapper{
     public function read($str, ReflectionClass $clazz)
     {
         $vars = [];
-		echo parse_str($str, $vars);
-		print_r($vars);
+		parse_str($str, $vars);
         return MappingUtils::bindObject($vars, $clazz);
     }
 

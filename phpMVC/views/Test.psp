@@ -1,14 +1,19 @@
 <%@import prefix="c" schema="http://www.caiyern.net/psp/taglibs/core">
 <html>
-<head>
-</head>
-<body>
-    Here.
-    <c:foreach in="${arr}" as="myVar" key="key">
-        ${key} : ${myVar}
-        <c:include path="_inc.psp" />
-    </c:foreach>
-    There.
-</body>
+    <head>
+        <title>${title}</title>
+    </head>
+    <body>
+        <pre>
+        Here.
+        Testing: ${testing}
+        Blah: ${blah}
+        <c:foreach in="${arr}" as="myVar" key="key">
+            ${key} : ${myVar}<!-- This is a test -->
+            <c:include path="_inc.psp" />
+        </c:foreach>
+        There.
+        </pre>
+    </body>
 </html>
 

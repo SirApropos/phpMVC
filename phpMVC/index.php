@@ -1,4 +1,3 @@
-<pre>
 <?php
 set_error_handler(function($errno , $errstr, $errfile, $errline){
     echo "$errstr in file $errfile on line: $errline\n\n";
@@ -69,10 +68,9 @@ try{
         $message .=") called at [".$trace['file'].":".$trace['line']."]";
         array_push($arr, $message);
     }
-    echo "\n\n";
-    foreach($arr as $trace){
-        echo $trace."\n";
-    }
+//    echo "\n\n";
+//    foreach($arr as $trace){
+//        echo $trace."\n";
+//    }
 }
 ?>
-</pre>

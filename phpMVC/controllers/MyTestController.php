@@ -16,8 +16,12 @@ class MyTestController extends Controller
                 "path" => "/blah/*/test",
                 "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
             ],
-            "yetAnotherTest" => [
+            "someOtherTest" => [
                 "path" => "/asd/{testing}/test",
+                "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
+            ],
+            "yetAnotherTest" => [
+                "path" => "/asd/{testing}/{myVar}/test",
                 "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
             ]
         ],
@@ -25,6 +29,10 @@ class MyTestController extends Controller
             "request" => [
                 "autowired" => true,
                 "type" => "HttpRequest"
+            ],
+            "response" => [
+                "autowired" => true,
+                "type" => "HttpResponse"
             ]
         ]
     ];
@@ -34,16 +42,22 @@ class MyTestController extends Controller
      */
     private $request;
 
-    public function doTest(HttpResponse $response, TestModel $model){
-        print_r($model);
-        return "Hello world: ".$this->request->getPath();
+    /**
+     * @var HttpResponse
+     */
+    private $response;
+
+    public function doTest(TestModel $model){
+        return new XmlView($model);
     }
 
     public function doOtherTest(){
-        return new XmlView($this);
+        $query = SimpleQueryFactory::getInstance()->createQuery();
+        $query->select("*")->from("myTable")->where("myColumn")->equals("blah")->also("myOtherColumn")->equals("test");
     }
 
-    public function yetAnotherTest($testing){
-        return new PageView("Test.psp", ["testing" => $testing, "arr" => ["Test","Hello","Blah"]]);
+    public function yetAnotherTest($testing, $myVar){
+        echo $this->request->getPath();
+        return new PageView("Test.psp", ["title" => "Test Page", "blah" => $myVar, "testing" => $testing, "arr" => ["Test","Hello","Blah"]]);
     }
 }
