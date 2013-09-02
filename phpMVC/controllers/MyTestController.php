@@ -48,11 +48,10 @@ class MyTestController extends Controller
     private $response;
 
     public function doTest(){
-	    echo "Here";
 	    $ds = new MysqliDatasource("localhost","phpMVC","Pj42MPNADDb99auF","phpMVC");
-	    $result = $ds->query("SELECT * FROM `accounts` WHERE `username`=:username AND `id`=:id", array("username" => "Caiyern", "id" => 1));
+	    $result = $ds->queryForObject("TestAccountModel","SELECT * FROM `accounts` WHERE `username`=:username AND `id`=:id", array("username" => "Caiyern", "id" => 1));
 //	    $result = $ds->query("SELECT * FROM `accounts` WHERE `id`=1");
-	    print_r($result->fetch_assoc());
+	    print_r($result);
 	    $myArr = array("username" => "Test");
 	    $ds->insert("accounts", $myArr);
 	    print_r($ds->getLog());

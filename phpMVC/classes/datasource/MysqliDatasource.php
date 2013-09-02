@@ -42,7 +42,7 @@ class MysqliDatasource implements DataSource{
 	 */
 	public function queryForObject($clazz, $query, array $params = null)
 	{
-		return MappingUtils::bindObject($clazz, $this->fetchAssoc($query, $params));
+		return MappingUtils::bindObject($this->fetchAssoc($query, $params), $clazz);
 	}
 
 	/**
