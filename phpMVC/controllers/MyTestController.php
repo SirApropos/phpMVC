@@ -10,11 +10,7 @@ class MyTestController extends Controller
         "methods" => [
             "doTest" => [
                 "path" => "/test**",
-                "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
-                "security" => [
-                    "allowed_roles" => ["user","admin"],
-                    "denied_roles" => ["admin"]
-                ]
+                "allowed_methods" => [HttpMethod::GET, HttpMethod::POST]
             ],
             "doOtherTest" => [
                 "path" => "/blah/*/test",
@@ -51,13 +47,20 @@ class MyTestController extends Controller
      */
     private $response;
 
-    public function doTest(TestModel $model){
-        return new XmlView($model);
+    public function doTest(){
+	    echo "Here";
+	    $ds = new MysqliDatasource("localhost","phpMVC","Pj42MPNADDb99auF","phpMVC");
+	    $result = $ds->query("SELECT * FROM `accounts` WHERE `username`=:username AND `id`=:id", array("username" => "Caiyern", "id" => 1));
+//	    $result = $ds->query("SELECT * FROM `accounts` WHERE `id`=1");
+	    print_r($result->fetch_assoc());
+	    $myArr = array("username" => "Test");
+	    $ds->insert("accounts", $myArr);
+	    print_r($ds->getLog());
     }
 
     public function doOtherTest(){
-        $query = SimpleQueryFactory::getInstance()->createQuery();
-        $query->select("*")->from("myTable")->where("myColumn")->equals("blah")->also("myOtherColumn")->equals("test");
+//        $query = SimpleQueryFactory::getInstance()->createQuery();
+//        $query->select("*")->from("myTable")->where("myColumn")->equals("blah")->also("myOtherColumn")->equals("test");
     }
 
     public function yetAnotherTest($testing, $myVar){
