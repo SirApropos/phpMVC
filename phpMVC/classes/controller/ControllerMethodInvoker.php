@@ -19,6 +19,7 @@ class ControllerMethodInvoker
     }
 
     public function invoke(ControllerMethod $cmethod){
+	    $timer = Timer::create("Invoker", "invoking");
         $method = $cmethod->getMethod();
         $args = [];
         $params =$method->getParameters();
@@ -85,6 +86,7 @@ class ControllerMethodInvoker
         }else{
             $response->setView(new BasicView($value));
         }
+	    $timer->stop();
         $response->send();
     }
 

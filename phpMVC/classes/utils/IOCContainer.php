@@ -6,10 +6,19 @@
  */
 class IOCContainer
 {
-    use ClassLoader;
     private static $instance;
 
     private $container = [];
+
+	/**
+	 * @var ClassLoader
+	 */
+	private $classloader;
+
+	private function __construct(){
+		$this->classloader = ClassLoader::getInstance();
+		$this->register($this->classloader);
+	}
 
     /**
      * @return IOCContainer
@@ -26,23 +35,24 @@ class IOCContainer
      * @return bool
      */
     public function contains($clazz){
-        return !is_null($this->_findClass($clazz));
+        return !is_null($this->_findObject($clazz));
     }
 
-    private function _findClass($clazz){
+    private function _findObject($clazz){
         $result = null;
-        if(!$this->exists($clazz)){
-            $this->findClass($clazz);
-        }
-        if(isset($this->container[$clazz])){
-            $result = $this->container[$clazz];
+        if(!$this->classloader->classExists($clazz)){
+            $this->classloader->loadClass($clazz);
         }else{
-            foreach($this->container as $obj){
-                if(is_a($obj, $clazz)){
-                    $result = $obj;
-                    $this->register($obj, $clazz);
-                }
-            }
+	        if(isset($this->container[$clazz])){
+	            $result = $this->container[$clazz];
+	        }else{
+	            foreach($this->container as $obj){
+	                if(is_a($obj, $clazz)){
+	                    $result = $obj;
+	                    $this->register($obj, $clazz);
+	                }
+	            }
+	        }
         }
         return $result;
     }
@@ -52,7 +62,7 @@ class IOCContainer
      * @return object
      */
     public function resolve($clazz){
-        $result = $this->_findClass($clazz);
+        $result = $this->_findObject($clazz);
         if(is_null($result)){
             $result = $this->newInstance($clazz);
         }

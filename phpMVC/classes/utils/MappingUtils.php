@@ -12,6 +12,7 @@ class MappingUtils {
      * @return mixed
      */
     public static function bindObject(array $arr, $clazz){
+	    $timer = Timer::create("Binding $clazz", "binding");
         if(!$clazz instanceof ReflectionClass){
             $clazz = new ReflectionClass($clazz);
         }
@@ -38,6 +39,7 @@ class MappingUtils {
             }
             ReflectionUtils::setProperty($obj, $key, $val);
         }
+	    $timer->stop();
         return $obj;
     }
 

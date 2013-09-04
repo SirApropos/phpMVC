@@ -16,6 +16,7 @@ class Config
     public static $CLASSES_DIR;
 
     public static $TAGLIB_DIR;
+
 }
 Config::$BASE_PATH = "/phpMVC/";
 Config::$BASE_DIR = "./";
@@ -23,4 +24,5 @@ Config::$CONTROLLER_DIR = Config::$BASE_DIR."controllers/";
 Config::$VIEW_DIR = Config::$BASE_DIR."views/";
 Config::$CLASSES_DIR = Config::$BASE_DIR."classes/";
 Config::$TAGLIB_DIR = Config::$CLASSES_DIR."taglibs/impl/";
-
+include "./classes/utils/SimpleClassLoader.php";
+new SimpleClassLoader();

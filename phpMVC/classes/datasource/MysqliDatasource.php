@@ -100,11 +100,14 @@ class MysqliDatasource implements DataSource{
 	 */
 	private function _executeQuery($query, array $params=null){
 		$this->_logQuery($query, $params);
+		$i = sizeof($this->queries);
+		$timer = Timer::create("Query $i", "queries");
 		if(!is_null($params)){
 			$result = $this->_executePreparedStatement($query, $params);
 		}else{
 			$result = $this->mysqli->query($query);
 		}
+		$timer->stop();
 		return $result;
 	}
 

@@ -8,40 +8,43 @@ set_error_handler(function($errno , $errstr, $errfile, $errline){
     }
 });
 try{
+	include "./classes/utils/Timer.php";
+	$timer = Timer::create("Main","main");
+	include "./classes/utils/ClassLoader.php";
     include "./classes/Config.php";
-    include "./classes/utils/ClassLoader.php";
+	include "./classes/utils/IOCContainer.php";
     include "./classes/exceptions/AutoloadingException.php";
 
-    //TODO: Optimize or remove autoloading entirely.
-    //Probably build a class cache mapping classes to their respective files.
-    //Then the directory scan only needs to be done once.
-    //Probably as good as it would get while still allowing autoloading.
-    class AutoLoader{
-        use ClassLoader;
-
-        public function autoload($name){
-            if(!$this->findClass($name,"./classes/")){
-                if(!$this->findClass($name, "./models/")){
-                     throw new AutoloadingException($name);
-                }
-            }
-        }
-    }
-
-    function __autoload($name){
-        $autoloader = new AutoLoader();
-        $autoloader->autoload($name);
-    }
-
-    $invoker = new ControllerMethodInvoker();
     $container = IOCContainer::getInstance();
-    $request = new HttpRequest($_SERVER);
-    $container->register($request);
-    /**
-     * @var MVCConfig $config
-     */
-    $config = $container->resolve("MVCConfig");
-    $config->initialize();
+	//TODO: Optimize or remove autoloading entirely.
+	//Probably build a class cache mapping classes to their respective files.
+	//Then the directory scan only needs to be done once.
+	//Probably as good as it would get while still allowing autoloading.
+	function __autoload($name){
+		static $dirs = array("./classes/","./controllers/","./models/");
+		/**
+		 * @var ClassLoader $classLoader
+		 */
+		$classLoader = IOCContainer::getInstance()->resolve("ClassLoader");
+		$timer = Timer::create("Autoloading $name","autoloading");
+		foreach($dirs as $dir){
+			if($classLoader->loadClass($name, $dir)){
+				$timer->stop();
+				return;
+			}
+		}
+		throw new AutoloadingException($name);
+	}
+	/**
+	 * @var MVCConfig $config
+	 */
+	$config = $container->resolve("MVCConfig");
+
+	$config->initialize();
+
+	$invoker = new ControllerMethodInvoker();
+	$request = new HttpRequest($_SERVER);
+	$container->register($request);
     /**
      * @var FilterManager $filterManager
      */
@@ -57,6 +60,16 @@ try{
     }else{
         throw new InvalidGrantException("Access Denied");
     }
+	$timer->stop();
+	$times = array();
+	foreach(Timer::getTimers() as $time){
+		if(!isset($times[$time->getCategory()])){
+			$times[$time->getCategory()] = 0;
+		}
+		$times[$time->getCategory()] += $time->getTime();
+	}
+	print_r(Timer::getTimers());
+	print_r($times);
 }catch(Exception $ex){
     if($ex instanceof HttpException){
         http_response_code($ex->getResponseCode());

@@ -6,15 +6,30 @@
  */
 class SimpleControllerFactory implements ControllerFactory
 {
-    use ClassLoader;
+	/**
+	 * @var HttpRequest
+	 */
+	private $request;
 
-    private $request;
+	/**
+	 * @var array
+	 */
+	private $list_ignore = array(".","..");
 
-    private $container;
+	/**
+	 * @var IOCContainer
+	 */
+	private $container;
+
+	/**
+	 * @var ClassLoader
+	 */
+	private $classLoader;
 
     function __construct()
     {
         $this->container = IOCContainer::getInstance();
+	    $this->classLoader = ClassLoader::getInstance();
     }
 
 
@@ -36,8 +51,8 @@ class SimpleControllerFactory implements ControllerFactory
                 if(is_dir($file)){
                     $result = $this->findController($path.$file."/");
                 }else{
-                    $this->loadClass($file, $path);
-                    $result = $this->getControllerMethod($this->getClassName($file));
+                    $this->classLoader->loadClass($file, $path);
+                    $result = $this->getControllerMethod($this->classLoader->getClassName($file));
                 }
             }
             if($result){
@@ -49,12 +64,16 @@ class SimpleControllerFactory implements ControllerFactory
     }
 
     private function getControllerMethod($name){
+	    $timer = Timer::create("Controller $name", "controller");
         $clazz = new ReflectionClass($name);
         $mappings = ReflectionUtils::getMapping($name,"ControllerMapping")->getMappings();
         $method = null;
         $pathFound = false;
         foreach($mappings as $mapping){
-            $regex = str_replace("`","",$mapping->getPath());
+	        /**
+	         * @var RequestMapping $mapping
+	         */
+	        $regex = str_replace("`","",$mapping->getPath());
             $regex = preg_replace("`\{[^\}]+\}`", "*", $regex);
             $regex = preg_replace("`([\[\]\{\}\.\(\)\?\*])`","\\\\$1",$regex);
             $regex = str_replace("\\*\\*",".*",$regex);
@@ -73,6 +92,7 @@ class SimpleControllerFactory implements ControllerFactory
                 $method->setMapping($mapping);
             }
         }
+	    $timer->stop();
         if($pathFound && !$method){
             throw new HttpMethodNotAllowedException();
         }
