@@ -29,6 +29,19 @@ abstract class ClassLoader {
 		return preg_replace("/^(.+?)\..+/","$1",$filename);
 	}
 
+	/**
+	 * @param $name
+	 * @param null $path
+	 * @return bool
+	 */
 	abstract function loadClass($name, $path=null);
-	abstract function classExists($name);
+
+	/**
+	 * @param $name
+	 * @return bool
+	 */
+	public function classExists($name){
+		return class_exists($name, false) || interface_exists($name, false) || trait_exists($name, false);
+	}
+
 }

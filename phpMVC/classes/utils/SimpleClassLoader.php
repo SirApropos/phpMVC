@@ -13,6 +13,11 @@ class SimpleClassLoader extends ClassLoader
 		parent::__construct($this);
 	}
 
+	/**
+	 * @param $name
+	 * @param null $path
+	 * @return bool
+	 */
 	function loadClass($name, $path=null){
         if(is_null($path)){
             $path = Config::$BASE_DIR;
@@ -52,9 +57,5 @@ class SimpleClassLoader extends ClassLoader
                 throw new AutoloadingException($name, $path);
             }
         }
-    }
-
-    public function classExists($name){
-        return class_exists($name, false) || interface_exists($name, false) || trait_exists($name, false);
     }
 }

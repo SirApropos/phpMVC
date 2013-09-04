@@ -10,6 +10,7 @@ set_error_handler(function($errno , $errstr, $errfile, $errline){
 try{
 	include "./classes/utils/Timer.php";
 	$timer = Timer::create("Main","main");
+	$initTimer = Timer::create("Initialization", "initialization");
 	include "./classes/utils/ClassLoader.php";
     include "./classes/Config.php";
 	include "./classes/utils/IOCContainer.php";
@@ -42,9 +43,13 @@ try{
 
 	$config->initialize();
 
-	$invoker = new ControllerMethodInvoker();
+	/**
+	 * @var ControllerMethodInvoker $invoker
+	 */
+	$invoker = $container->resolve("ControllerMethodInvoker");
 	$request = new HttpRequest($_SERVER);
 	$container->register($request);
+	$initTimer->stop();
     /**
      * @var FilterManager $filterManager
      */

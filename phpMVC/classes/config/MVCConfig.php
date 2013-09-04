@@ -17,17 +17,22 @@ class MVCConfig {
         $this->container->register($filterManager);
         $this->configureFilters($filterManager);
         $this->container->register($this->createControllerFactory());
+	    $this->container->register($this->createControllerMethodInvoker());
     }
 
-    protected function createFilterManager(){
+    public function createFilterManager(){
         return new FilterManager();
     }
 
-    protected function configureFilters(FilterManager $filterManager){
+	public function configureFilters(FilterManager $filterManager){
         $filterManager->addFilter(new SimpleAuthenticationFilter());
     }
 
-    protected function createControllerFactory(){
+	public function createControllerFactory(){
         return new SimpleControllerFactory();
     }
+
+	public function createControllerMethodInvoker(){
+		return new ControllerMethodInvoker();
+	}
 }

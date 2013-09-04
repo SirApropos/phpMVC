@@ -15,8 +15,9 @@ class Config
 
     public static $CLASSES_DIR;
 
-    public static $TAGLIB_DIR;
+	public static $MODELS_DIR;
 
+    public static $TAGLIB_DIR;
 }
 Config::$BASE_PATH = "/phpMVC/";
 Config::$BASE_DIR = "./";
@@ -24,5 +25,8 @@ Config::$CONTROLLER_DIR = Config::$BASE_DIR."controllers/";
 Config::$VIEW_DIR = Config::$BASE_DIR."views/";
 Config::$CLASSES_DIR = Config::$BASE_DIR."classes/";
 Config::$TAGLIB_DIR = Config::$CLASSES_DIR."taglibs/impl/";
-include "./classes/utils/SimpleClassLoader.php";
-new SimpleClassLoader();
+Config::$MODELS_DIR = Config::$BASE_DIR."models/";
+//include "./classes/utils/SimpleClassLoader.php";
+//new SimpleClassLoader();
+include "./classes/utils/CachingClassLoader.php";
+new CachingClassLoader(Config::$BASE_DIR."classes.cache");
