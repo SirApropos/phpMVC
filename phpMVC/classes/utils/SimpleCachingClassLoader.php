@@ -5,7 +5,7 @@
  * Time: 10:42 PM
  */
 
-class CachingClassLoader extends ClassLoader{
+class SimpleCachingClassLoader extends ClassLoader{
 	private $cache;
 
 	private $cachefile;

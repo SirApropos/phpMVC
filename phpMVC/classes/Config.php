@@ -29,5 +29,5 @@ Config::$MODELS_DIR = Config::$BASE_DIR."models/";
 //include "./classes/utils/SimpleClassLoader.php";
 //new SimpleClassLoader();
 include "./classes/utils/SimpleCachingClassLoader.php";
-new CachingClassLoader(null);
-//new CachingClassLoader(Config::$BASE_DIR."classes.cache");
+new SimpleCachingClassLoader(null);
+//new SimpleCachingClassLoader(Config::$BASE_DIR."classes.cache");
