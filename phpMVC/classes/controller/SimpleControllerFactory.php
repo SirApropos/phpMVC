@@ -36,7 +36,7 @@ class SimpleControllerFactory implements ControllerFactory
     function getController(HttpRequest $request)
     {
         $this->request = $request;
-        $method = $this->findController(Config::$BASE_DIR."controllers/");
+        $method = $this->findController(Config::$CONTROLLER_DIR);
         if(!$method){
             throw new HttpNotFoundException();
         }
@@ -51,8 +51,9 @@ class SimpleControllerFactory implements ControllerFactory
                 if(is_dir($file)){
                     $result = $this->findController($path.$file."/");
                 }else{
-                    $this->classLoader->loadClass($file, $path);
-                    $result = $this->getControllerMethod($this->classLoader->getClassName($file));
+	                $clazz = $this->classLoader->getClassName($file);
+                    $this->classLoader->loadClass($clazz);
+                    $result = $this->getControllerMethod($clazz);
                 }
             }
             if($result){

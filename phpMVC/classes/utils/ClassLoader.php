@@ -16,6 +16,18 @@ abstract class ClassLoader {
 	 */
 	protected function __construct(ClassLoader $classLoader){
 		self::$classLoader = $classLoader;
+		spl_autoload_register(function($name){
+			/**
+			 * @var ClassLoader $classLoader
+			 */
+			$classLoader = IOCContainer::getInstance()->resolve("ClassLoader");
+			$timer = Timer::create("Autoloading $name","autoloading");
+			if($classLoader->loadClass($name)){
+				$timer->stop();
+				return;
+			}
+			throw new AutoloadingException($name);
+		});
 	}
 
 	/**
@@ -31,10 +43,9 @@ abstract class ClassLoader {
 
 	/**
 	 * @param $name
-	 * @param null $path
 	 * @return bool
 	 */
-	abstract function loadClass($name, $path=null);
+	abstract function loadClass($name);
 
 	/**
 	 * @param $name

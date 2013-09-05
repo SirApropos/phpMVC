@@ -17,25 +17,7 @@ try{
     include "./classes/exceptions/AutoloadingException.php";
 
     $container = IOCContainer::getInstance();
-	//TODO: Optimize or remove autoloading entirely.
-	//Probably build a class cache mapping classes to their respective files.
-	//Then the directory scan only needs to be done once.
-	//Probably as good as it would get while still allowing autoloading.
-	function __autoload($name){
-		static $dirs = array("./classes/","./controllers/","./models/");
-		/**
-		 * @var ClassLoader $classLoader
-		 */
-		$classLoader = IOCContainer::getInstance()->resolve("ClassLoader");
-		$timer = Timer::create("Autoloading $name","autoloading");
-		foreach($dirs as $dir){
-			if($classLoader->loadClass($name, $dir)){
-				$timer->stop();
-				return;
-			}
-		}
-		throw new AutoloadingException($name);
-	}
+
 	/**
 	 * @var MVCConfig $config
 	 */

@@ -68,11 +68,11 @@ class Timer {
 	}
 
 	public function start(){
-		$this->start = microtime();
+		$this->start = $this->_getCurrentTime();
 	}
 
 	public function stop(){
-		$this->stop = microtime();
+		$this->stop = $this->_getCurrentTime();
 	}
 
 	public static function getTimers(){
@@ -96,6 +96,10 @@ class Timer {
 	}
 
 	public function getTime(){
-		return (isset($this->stop) ? $this->stop : microtime()) - $this->start;
+		return (isset($this->stop) ? $this->stop : $this->_getCurrentTime()) - $this->start;
+	}
+
+	private function _getCurrentTime(){
+		return time() + microtime();
 	}
 }

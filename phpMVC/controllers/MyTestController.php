@@ -4,7 +4,7 @@
  * Date: 7/12/13
  * Time: 11:49 PM
  */
-class MyTestController extends Controller
+class MyTestController implements Controller
 {
     private static $mapping = [
         "methods" => [

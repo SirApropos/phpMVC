@@ -14,22 +14,22 @@ class CachingClassLoader extends ClassLoader{
 	{
 		parent::__construct($this);
 		$this->cachefile = $cachefile;
-		if(!file_exists($cachefile)){
+		if(is_null($cachefile) || !file_exists($cachefile)){
 			$this->_buildCache();
 		}else{
 			$this->_loadCache();
 		}
 	}
 
-	function loadClass($name, $path = null)
+	function loadClass($name)
 	{
 		$result = true;
 		if(!$this->classExists($name)){
-			if(!$this->_loadInternal($name)){
+			if(!$this->loadInternal($name)){
 				//Can't find the class. Try rebuilding the cache.
 				$this->_buildCache();
 				//Can we find it now?
-				if(!$this->_loadInternal($name)){
+				if(!$this->loadInternal($name)){
 					$result = false;
 				}
 			}
@@ -37,7 +37,7 @@ class CachingClassLoader extends ClassLoader{
 		return $result;
 	}
 
-	private function _loadInternal($name){
+	protected function loadInternal($name){
 		$result = false;
 		foreach($this->cache as $subcache){
 			if(isset($subcache[$name])){
@@ -48,15 +48,23 @@ class CachingClassLoader extends ClassLoader{
 		return $result;
 	}
 
-	private function _buildCache(){
-		$cache = array();
-		$directories = array("models" => Config::$MODELS_DIR, "classes" => Config::$CLASSES_DIR,
+	protected function getDirectories(){
+		return array("models" => Config::$MODELS_DIR, "classes" => Config::$CLASSES_DIR,
 			"controllers" => Config::$CONTROLLER_DIR, "taglibs" => Config::$TAGLIB_DIR);
+	}
+
+	private function _buildCache(){
+		$timer = Timer::create("Building Cache","caching");
+		$cache = array();
+		$directories = $this->getDirectories();
 		foreach($directories as $key => $dir){
 			$cache[$key] = $this->_loadClasses($dir);
 		}
-		file_put_contents($this->cachefile, serialize($cache));
+		if(!is_null($this->cachefile)){
+			file_put_contents($this->cachefile, serialize($cache));
+		}
 		$this->cache = $cache;
+		$timer->stop();
 	}
 
 	private function _loadCache(){
