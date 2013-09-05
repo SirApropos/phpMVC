@@ -5,7 +5,7 @@
  * Time: 12:30 AM
  */
 
-class MysqliDatasource implements DataSource{
+class MysqliDataSource implements DataSource{
 	/**
 	 * @var mysqli
 	 */

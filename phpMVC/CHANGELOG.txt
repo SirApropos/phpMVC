@@ -4,6 +4,11 @@ v0.0.3 (Unreleased)
 -Adding ability to add security field to request mapping.
 -Fixed bug with IOCContainer's resolution of subclasses.
 -Adding config file with overrideable configuration methods.
+-Adding DataSource interface
+-Adding MysqliDataSource
+-Removing __autoload() and creating ClassLoader abstract class
+-Adding SimpleCachingClassLoader (much more optimized than previous autoloading)
+-Added Timer class, creating timers throughout the code for debugging.
 
 v0.0.2 (07/18/2013)
 -Automatic model binding (plain/text, application/x-www-form-urlencoded, application/json, text/html, text/xml)
