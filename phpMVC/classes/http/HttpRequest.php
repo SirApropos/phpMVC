@@ -12,12 +12,18 @@ class HttpRequest
 
     private $body;
 
+	/**
+	 * @var
+	 */
+	private $config;
+
     /**
      * @var HttpHeaders
      */
     private $headers;
 
     public function HttpRequest($server){
+	    $this->config = MVCConfig::getInstance();
         $this->method = constant("HttpMethod::".$server['REQUEST_METHOD']);
         $this->path = $this->buildPath($_SERVER['REQUEST_URI']);
         $this->headers = new HttpHeaders();
@@ -32,7 +38,7 @@ class HttpRequest
     private function buildPath($path){
         $path = str_replace("`","",$path);
         $path = preg_replace("`^(.+?)\?.*`","$1",$path);
-        $path = preg_replace("`^".rtrim(Config::$BASE_PATH, "/")."(.*)`","$1",$path);
+        $path = preg_replace("`^".rtrim($this->config->getBasePath(), "/")."(.*)`","$1",$path);
         return $path;
     }
 

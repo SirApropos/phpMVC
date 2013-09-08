@@ -8,22 +8,24 @@ set_error_handler(function($errno , $errstr, $errfile, $errline){
     }
 });
 try{
-	include "./classes/utils/Timer.php";
-	$timer = Timer::create("Main","main");
-	$initTimer = Timer::create("Initialization", "initialization");
-	include "./classes/utils/ClassLoader.php";
-    include "./classes/Config.php";
-	include "./classes/utils/IOCContainer.php";
-    include "./classes/exceptions/AutoloadingException.php";
-
-    $container = IOCContainer::getInstance();
-
+	$config = array();
+	include("./mvcconfig.inc.php");
+	include $config['classes_dir']."utils/Timer.php";
+	include $config['config_path'];
+	$clazz = new ReflectionClass($config['config_class']);
 	/**
 	 * @var MVCConfig $config
 	 */
-	$config = $container->resolve("MVCConfig");
+	$config = $clazz->newInstanceArgs([$config]);
+	$timer = Timer::create("Main","main");
+	$initTimer = Timer::create("Initialization", "initialization");
+	include $config->getClassesDir()."utils/ClassLoader.php";
+	include $config->getClassesDir()."utils/IOCContainer.php";
+	include $config->getClassesDir()."exceptions/AutoloadingException.php";
 
 	$config->initialize();
+
+	$container = IOCContainer::getInstance();
 
 	/**
 	 * @var ControllerMethodInvoker $invoker
@@ -41,53 +43,60 @@ try{
      * @var ControllerFactory controllerFactory
      */
     $controllerFactory = $container->resolve("ControllerFactory");
-    $cmethod = $controllerFactory->getController($request);
-    if($invoker->canInvoke($cmethod, $grantedAuthority)){
-        $invoker->invoke($cmethod);
-    }else{
-        throw new InvalidGrantException("Access Denied");
-    }
-	$timer->stop();
-	$times = array();
-	foreach(Timer::getTimers() as $time){
-		if(!isset($times[$time->getCategory()])){
-			$times[$time->getCategory()] = 0;
+
+	try{
+		$cmethod = $controllerFactory->getController($request);
+
+		if($invoker->canInvoke($cmethod, $grantedAuthority)){
+			$invoker->invoke($cmethod);
+		}else{
+			throw new InvalidGrantException("Access Denied");
 		}
-		$times[$time->getCategory()] += $time->getTime();
+	}catch(HttpException $ex){
+		if(($ex instanceof HttpNotFoundException) || $request->getMethod() != HttpMethod::OPTIONS){
+			throw $ex;
+		}
 	}
-	print_r(Timer::getTimers());
-	print_r($times);
+
+	$timer->stop();
+	if(isset($_GET['debug'])){
+		$times = array();
+		foreach(Timer::getTimers() as $time){
+			if(!isset($times[$time->getCategory()])){
+				$times[$time->getCategory()] = 0;
+			}
+			$times[$time->getCategory()] += $time->getTime();
+		}
+		print_r(Timer::getTimers());
+		print_r($times);
+	}
 }catch(Exception $ex){
+	echo $ex->getMessage();
     if($ex instanceof HttpException){
         http_response_code($ex->getResponseCode());
     }else{
         http_response_code(500);
+	    $arr = [];
+	    foreach($ex->getTrace() as $key => $trace){
+		    $message = "#$key ";
+		    $message .= $trace['class'].$trace['type'].$trace['function'];
+		    $message .= "(";
+		    $first = true;
+		    foreach($trace['args'] as $arg){
+			    if(!$first){
+				    $message.=", ";
+			    }else{
+				    $first = false;
+			    }
+			    if(is_object($arg)){
+				    $message .= get_class($arg)." ".JsonUtils::toJson($arg);
+			    }else{
+				    $message .= $arg;
+			    }
+		    }
+		    $message .=") called at [".$trace['file'].":".$trace['line']."]";
+		    array_push($arr, $message);
+	    }
     }
-    echo $ex->getMessage();
-    $arr = [];
-    foreach($ex->getTrace() as $key => $trace){
-        $message = "#$key ";
-        $message .= $trace['class'].$trace['type'].$trace['function'];
-        $message .= "(";
-        $first = true;
-        foreach($trace['args'] as $arg){
-            if(!$first){
-                $message.=", ";
-            }else{
-                $first = false;
-            }
-            if(is_object($arg)){
-                $message .= get_class($arg)." ".JsonUtils::toJson($arg);
-            }else{
-                $message .= $arg;
-            }
-        }
-        $message .=") called at [".$trace['file'].":".$trace['line']."]";
-        array_push($arr, $message);
-    }
-//    echo "\n\n";
-//    foreach($arr as $trace){
-//        echo $trace."\n";
-//    }
 }
 ?>

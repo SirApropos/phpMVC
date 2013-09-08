@@ -11,16 +11,16 @@ abstract class ClassLoader {
 	 */
 	private static $classLoader;
 
-	/**
-	 * @param ClassLoader $classLoader
-	 */
-	protected function __construct(ClassLoader $classLoader){
-		self::$classLoader = $classLoader;
+	private $config;
+
+	protected function __construct(){
+		self::$classLoader = $this;
+		$this->config = MVCConfig::getInstance();
 		spl_autoload_register(function($name){
 			/**
 			 * @var ClassLoader $classLoader
 			 */
-			$classLoader = IOCContainer::getInstance()->resolve("ClassLoader");
+			$classLoader = self::$classLoader;
 			$timer = Timer::create("Autoloading $name","autoloading");
 			if($classLoader->loadClass($name)){
 				$timer->stop();
@@ -53,6 +53,14 @@ abstract class ClassLoader {
 	 */
 	public function classExists($name){
 		return class_exists($name, false) || interface_exists($name, false) || trait_exists($name, false);
+	}
+
+	/**
+	 * @return \MVCConfig
+	 */
+	protected function getConfig()
+	{
+		return $this->config;
 	}
 
 }

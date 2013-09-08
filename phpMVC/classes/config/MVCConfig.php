@@ -11,8 +11,19 @@ class MVCConfig {
      */
     private $container;
 
-    public function initialize(){
+	private $conf;
+
+	private static $instance;
+
+	public function __construct($conf){
+		$this->conf = $conf;
+		self::$instance = $this;
+	}
+
+	public function initialize(){
+	    $classLoader = $this->createClassLoader();
         $this->container = IOCContainer::getInstance();
+	    $this->container->register($classLoader);
         $filterManager = $this->createFilterManager();
         $this->container->register($filterManager);
         $this->configureFilters($filterManager);
@@ -34,5 +45,51 @@ class MVCConfig {
 
 	public function createControllerMethodInvoker(){
 		return new ControllerMethodInvoker();
+	}
+
+	/**
+	 * @return ClassLoader
+	 */
+	public function createClassLoader(){
+		include_once($this->getClassesDir()."utils/SimpleCachingClassLoader.php");
+		return new SimpleCachingClassLoader(null);
+	}
+
+	public function getClassesDir()
+	{
+		return $this->conf['classes_dir'];
+	}
+
+	public function getControllerDir()
+	{
+		return $this->conf['controller_dir'];
+	}
+
+	public function getModelDir()
+	{
+		return $this->conf['model_dir'];
+	}
+
+	public function getTaglibDir()
+	{
+		return $this->conf['taglib_dir'];
+	}
+
+	public function getViewDir()
+	{
+		return $this->conf['view_dir'];
+	}
+
+	public function getCacheDir()
+	{
+		return $this->conf['cache_dir'];
+	}
+
+	public function getBasePath(){
+		return $this->conf['base_path'];
+	}
+
+	public static function getInstance(){
+		return self::$instance;
 	}
 }

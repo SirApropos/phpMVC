@@ -26,17 +26,23 @@ class SimpleControllerFactory implements ControllerFactory
 	 */
 	private $classLoader;
 
+	/**
+	 * @var MVCConfig
+	 */
+	private $config;
+
     function __construct()
     {
         $this->container = IOCContainer::getInstance();
 	    $this->classLoader = ClassLoader::getInstance();
+	    $this->config = MVCConfig::getInstance();
     }
 
 
     function getController(HttpRequest $request)
     {
         $this->request = $request;
-        $method = $this->findController(Config::$CONTROLLER_DIR);
+        $method = $this->findController($this->config->getControllerDir());
         if(!$method){
             throw new HttpNotFoundException();
         }

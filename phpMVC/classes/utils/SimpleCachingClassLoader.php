@@ -12,7 +12,8 @@ class SimpleCachingClassLoader extends ClassLoader{
 
 	function __construct($cachefile)
 	{
-		parent::__construct($this);
+		parent::__construct();
+
 		$this->cachefile = $cachefile;
 		if(is_null($cachefile) || !file_exists($cachefile)){
 			$this->_buildCache();
@@ -49,8 +50,11 @@ class SimpleCachingClassLoader extends ClassLoader{
 	}
 
 	protected function getDirectories(){
-		return array("models" => Config::$MODELS_DIR, "classes" => Config::$CLASSES_DIR,
-			"controllers" => Config::$CONTROLLER_DIR, "taglibs" => Config::$TAGLIB_DIR);
+		return array("models" => $this->getConfig()->getModelDir(),
+			"classes" => $this->getConfig()->getClassesDir(),
+			"controllers" =>$this->getConfig()->getControllerDir(),
+			"taglibs" => $this->getConfig()->getTaglibDir(),
+			"views" => $this->getConfig()->getViewDir());
 	}
 
 	private function _buildCache(){
