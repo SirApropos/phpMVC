@@ -38,8 +38,9 @@ void init(){
 	problems.add(&Problem17());
 	problems.add(&Problem18());
 	problems.add(&Problem20());
-	*/
 	problems.add(&Problem67());
+	*/
+	problems.add(&Problem22());
 	runProblems(&problems);
 }
 

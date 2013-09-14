@@ -114,18 +114,52 @@ List<int> Problems::EulerUtils::findFactors(__int64 target, List<int> * primes){
 }
 
 List<std::string *> Problems::EulerUtils::readFile(std::string filename){
-	std::ifstream file(filename);
 	List<std::string *> result = List<std::string *>();
+	return readFile(filename, result);
+}
+
+List<std::string *> Problems::EulerUtils::readFile(std::string filename, List<std::string *>& list){
+	std::ifstream file(filename);
 	if (file.is_open())
 	{
 		while(file.good()){
 			std::string line;
 			std::getline(file,line);
-			result.add(new std::string(line));
+			list.add(new std::string(line));
 		}
 		file.close();
 	}else{
 		println("Could not open file.");
 	}
-	return result;
+	return list;
+}
+
+std::function<int(std::string, std::string)> Problems::EulerUtils::getStringComparator(void){
+	return [&](std::string first, std::string second)->int{
+		int maxLength = (first.length() > second.length()) ? second.length() : first.length();
+		int result = 0;
+		for(int i=0; i<maxLength && result == 0;i++){
+			if(first[i] > second[i]){
+				result = 1;
+				break;
+			}else if(first[i] < second[i]){
+				result = -1;
+				break;
+			}
+		}
+		if(result == 0){
+			if(first.length() > second.length()){
+				result = 1;
+			}else if(second.length() > first.length()){
+				result = -1;
+			}
+		}
+		return result;
+	};
+}
+
+std::function<int(std::string *, std::string *)> Problems::EulerUtils::getStringPointerComparator(void){
+	return [&](std::string * first, std::string * second)->int{
+		return getStringComparator()(*first, *second);
+	};
 }
