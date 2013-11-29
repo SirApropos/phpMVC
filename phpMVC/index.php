@@ -19,9 +19,8 @@ try{
 	$config = $clazz->newInstanceArgs([$config]);
 	$timer = Timer::create("Main","main");
 	$initTimer = Timer::create("Initialization", "initialization");
-	include $config->getClassesDir()."utils/ClassLoader.php";
-	include $config->getClassesDir()."utils/IOCContainer.php";
-	include $config->getClassesDir()."exceptions/AutoloadingException.php";
+	include $config->classes_dir."utils/ClassLoader.php";
+	include $config->classes_dir."utils/IOCContainer.php";
 
 	$config->initialize();
 
