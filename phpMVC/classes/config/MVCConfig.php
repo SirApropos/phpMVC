@@ -10,6 +10,7 @@
  * @property-read string $taglib_dir
  * @property-read string $view_dir
  * @property-read string $cache_dir
+ * @property-read string $base_dir
  */
 class MVCConfig {
     /**

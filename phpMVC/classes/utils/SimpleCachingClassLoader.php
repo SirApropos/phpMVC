@@ -54,7 +54,8 @@ class SimpleCachingClassLoader extends ClassLoader{
 			"classes" => $this->getConfig()->classes_dir,
 			"controllers" =>$this->getConfig()->controller_dir,
 			"taglibs" => $this->getConfig()->taglib_dir,
-			"views" => $this->getConfig()->view_dir);
+			"views" => $this->getConfig()->view_dir,
+			"base_dir" => $this->getConfig()->base_dir);
 	}
 
 	private function _buildCache(){

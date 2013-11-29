@@ -132,7 +132,7 @@ class TagLibraryEvent {
 
 	private function printWithReplacers($str){
 		$matches = [];
-		preg_match_all("`\\$\{([a-zA-Z0-9_]+)\}`", $str, $matches, PREG_SET_ORDER);
+		preg_match_all("`\\$\{([a-zA-Z_0-9]+(\\.\\$?[a-zA-Z_0-9]+(\(\))?)*)\}`", $str, $matches, PREG_SET_ORDER);
 		foreach($matches as $match){
 			$key = $match[1];
 			$value = $this->getVar($key);
@@ -153,7 +153,16 @@ class TagLibraryEvent {
 
 	public function getVar($key){
 		$key = preg_replace("`\\$\{(.+)\}`","$1", $key);
-		return isset($this->vars[$key]) ? $this->vars[$key] : null;
+		$var = null;
+		$match = array();
+		if(isset($this->vars[$key])){
+			$var = $this->vars[$key];
+		}else if(preg_match("/^([a-zA-Z_0-9]+)((\\.\\$?[a-zA-Z_0-9]+(\(\))?)+)$/",$key, $match)){
+			if(isset($this->vars[$match[1]])){
+				$var = eval('return $this->vars[$match[1]]'.str_replace(".","->", $match[2]).";");
+			}
+		}
+		return $var;
 	}
 
 	/**
