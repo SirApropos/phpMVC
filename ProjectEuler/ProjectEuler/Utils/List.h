@@ -1,5 +1,7 @@
 #pragma once
 #include <functional>
+#include <iostream>
+#include <string>
 #ifndef ListDef
 #define ListDef
 template<class T>
@@ -20,10 +22,39 @@ private:
 	}
 	void copyToScale(){
 		T * copy = new T[curSize];
-		for(int i=0;i<=index;i++){
+		for(int i=0;i<index;i++){
 			copy[i] = contents[i];
 		}
 		contents = copy;
+	}
+	T*& sort(std::function<int(T first, T second)> fn, T*& data, int length){
+		T * result = new T[length];
+		if(length > 1){
+			int firstLength = length/2;
+			int secondLength = length-firstLength;
+			T * first = new T[firstLength];
+			T * second = new T[length - firstLength];
+			for(int i=0;i<(firstLength);i++){				
+				first[i] = data[i];
+			}
+			for(int i=0;i<secondLength;i++){
+				second[i] = data[i+(firstLength)];
+			}
+			first = sort(fn, first, firstLength);
+			second = sort(fn, second, secondLength);
+			int firstIndex = 0;
+			int secondIndex = 0;
+			for(int i=0;i<length;i++){
+				if(firstIndex == firstLength || (secondLength != secondIndex && fn(first[firstIndex],second[secondIndex]) == 1)){
+					result[i] = second[secondIndex++];
+				}else{
+					result[i] = first[firstIndex++];				
+				}
+			}
+		}else{
+			result = data;
+		}
+		return result;
 	}
 public:
 	List(void){
@@ -47,6 +78,14 @@ public:
 	T last(){
 		return index > 0 ? contents[index-1] : NULL;
 	}
+
+	void scaleTo(int size){
+		if(size > curSize){
+			curSize = size;
+			copyToScale();
+		}
+	}
+
 	bool contains(T obj){
 		return (indexOf(obj) >= 0);
 	}
@@ -144,6 +183,13 @@ public:
 			if(fn(contents[i])){
 				break;
 			}
+		}
+	}
+
+	void sort(std::function<int(T first, T second)> fn){
+		T * sorted = sort(fn, contents, size());
+		for(int i=0;i<index;i++){
+			contents[i] = sorted[i];
 		}
 	}
 };

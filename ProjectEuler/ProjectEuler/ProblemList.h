@@ -18,4 +18,5 @@
 #include "Problems/Problem17.h"
 #include "Problems/Problem18.h"
 #include "Problems/Problem20.h"
+#include "Problems/Problem22.h"
 #include "Problems/Problem67.h"
