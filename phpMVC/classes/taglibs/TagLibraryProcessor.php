@@ -42,8 +42,8 @@ class TagLibraryProcessor {
         $this->path = dirname($path);
         libxml_use_internal_errors();
         $matches = [];
-        preg_match_all("`<%@ *import([^>]+)>`", $xml, $matches, PREG_SET_ORDER);
-        $str = preg_replace("`<%@ *import[^>]+>`","",$xml);
+        preg_match_all("`<%@ *import([^>]+)@%>`", $xml, $matches, PREG_SET_ORDER);
+        $str = preg_replace("`<%@ *import[^>]+@%>`","",$xml);
         $this->imports = [];
         foreach($matches as $match){
             $this->imports[] = simplexml_load_string("<import ".$match[1]." />");

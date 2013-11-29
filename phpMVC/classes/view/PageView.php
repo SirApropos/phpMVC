@@ -31,7 +31,7 @@ class PageView implements View
      */
     public function render()
     {
-        $path = MVCConfig::$VIEW_DIR.$this->page;
+        $path = MVCConfig::getInstance()->view_dir.$this->page;
         if(!preg_match("`^.+\\.psp$`", $path)){
             $path.=".psp";
         }

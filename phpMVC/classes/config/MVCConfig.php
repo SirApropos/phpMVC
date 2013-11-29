@@ -3,8 +3,14 @@
  * Created by Apropos (sir.apropos.of.nothing@gmail.com).
  * Date: 8/17/13
  * Time: 11:03 PM
+ *
+ * @property-read string $classes_dir
+ * @property-read string $controller_dir
+ * @property-read string $model_dir
+ * @property-read string $taglib_dir
+ * @property-read string $view_dir
+ * @property-read string $cache_dir
  */
-
 class MVCConfig {
     /**
      * @var IOCContainer
@@ -51,42 +57,16 @@ class MVCConfig {
 	 * @return ClassLoader
 	 */
 	public function createClassLoader(){
-		include_once($this->getClassesDir()."utils/SimpleCachingClassLoader.php");
+		include_once($this->classes_dir."utils/SimpleCachingClassLoader.php");
 		return new SimpleCachingClassLoader(null);
 	}
 
-	public function getClassesDir()
-	{
-		return $this->conf['classes_dir'];
-	}
-
-	public function getControllerDir()
-	{
-		return $this->conf['controller_dir'];
-	}
-
-	public function getModelDir()
-	{
-		return $this->conf['model_dir'];
-	}
-
-	public function getTaglibDir()
-	{
-		return $this->conf['taglib_dir'];
-	}
-
-	public function getViewDir()
-	{
-		return $this->conf['view_dir'];
-	}
-
-	public function getCacheDir()
-	{
-		return $this->conf['cache_dir'];
-	}
-
-	public function getBasePath(){
-		return $this->conf['base_path'];
+	/**
+	 * @param $var
+	 * @return mixed
+	 */
+	public function __get($var){
+		return isset($this->conf[$var]) ? $this->conf[$var] : null;
 	}
 
 	public static function getInstance(){

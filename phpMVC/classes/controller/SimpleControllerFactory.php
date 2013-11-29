@@ -42,7 +42,7 @@ class SimpleControllerFactory implements ControllerFactory
     function getController(HttpRequest $request)
     {
         $this->request = $request;
-        $method = $this->findController($this->config->getControllerDir());
+        $method = $this->findController($this->config->controller_dir);
         if(!$method){
             throw new HttpNotFoundException();
         }
