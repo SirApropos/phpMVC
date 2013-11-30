@@ -44,21 +44,28 @@ class MappingUtils {
     }
 
     public static function getObjectVars($obj, array &$hasMapped = array()){
-        $result = $obj;
         if(is_object($obj)){
-            $result = [];
             $clazz = new ReflectionClass(get_class($obj));
-            foreach($clazz->getProperties() as $property){
-	            if(!in_array($obj, $hasMapped)){
+	        if(!in_array($obj, $hasMapped)){
+		        $hasMapped[] = $obj;
+		        $result = [];
+	            foreach($clazz->getProperties() as $property){
 	                $property->setAccessible(true);
 	                $value = self::getObjectVars($property->getValue($obj), $hasMapped);
-		            $hasMapped[] = $obj;
-	            }else{
-		            $value = "[".$clazz->getName()." Recursion]";
+	                $result[$property->getName()] = $value;
 	            }
-	            $result[$property->getName()] = $value;
-            }
+            }else{
+	            $result = "[".$clazz->getName()." Recursion]";
+	        }
+        }else if(is_array($obj)){
+			$result = [];
+	        foreach($obj as $key => $value){
+		        $result[$key] = self::getObjectVars($value, $hasMapped);
+	        }
+        }else{
+	        $result = $obj;
         }
         return $result;
     }
 }
+?>

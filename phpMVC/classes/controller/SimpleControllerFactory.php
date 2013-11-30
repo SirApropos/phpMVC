@@ -94,9 +94,28 @@ class SimpleControllerFactory implements ControllerFactory
                         continue;
                     }
                 }
-                $method = new ControllerMethod();
-                $method->setController($this->container->newInstance($clazz));
-                $method->setMapping($mapping);
+	            $required_attributes = $mapping->getRequiredAttributes();
+	            if(is_array($required_attributes)){
+		            $params = $_REQUEST;
+		            foreach($required_attributes as $key => $attribute){
+			            if(is_numeric($key)){
+				            if(!isset($params[$attribute])){
+					            $pathFound = false;
+					            break;
+				            }
+			            }else{
+				            if(!isset($params[$key]) || !preg_match("`".$attribute."`", $params[$key])){
+					            $pathFound = false;
+					            break;
+				            }
+			            }
+		            }
+	            }
+	            if($pathFound){
+	                $method = new ControllerMethod();
+	                $method->setController($this->container->newInstance($clazz));
+	                $method->setMapping($mapping);
+	            }
             }
         }
 	    $timer->stop();

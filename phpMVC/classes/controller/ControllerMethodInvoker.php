@@ -68,13 +68,18 @@ class ControllerMethodInvoker
                 $name = $param->getName();
                 if(isset($urlvars[$name])){
                     $value = $urlvars[$name];
+                }else if(isset($_REQUEST[$name])){
+
                 }else{
-                    if($param->isDefaultValueAvailable()){
-                        $value = $param->getDefaultValue();
-                    }else{
-                        throw new ModelBindException("Could not satisfy dependency: ".get_class($cmethod->getController())."::".
-                            $method->getName().'::$'.$name);
-                    }
+	                if($param->isDefaultValueAvailable()){
+		                $value = $param->getDefaultValue();
+	                }else{
+		                if($param->getClass() && is_a($param->getClass()->getName(), "Model", true)){
+			                throw new ModelBindException("Could not satisfy dependency: ".get_class($cmethod->getController())."::".$method->getName().'::$'.$name);
+		                }else{
+			                throw new HttpBadRequestException();
+		                }
+	                }
                 }
             }
             array_push($args, $value);

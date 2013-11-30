@@ -10,10 +10,39 @@ class StandardTagLibrary extends TagLibrary {
         "methods" => [
             "foreach" => "_foreach",
             "for" => "_for",
-            "include" => "_include"
+            "include" => "_include",
+	        "if" => "_if",
+	        "then" => "_then",
+	        "else" => "_else",
         ]
     ];
-    public static function _foreach(TagLibraryEvent $event, $attr){
+
+
+	public static function _if(TagLibraryEvent $event, $attr){
+		self::requireAttributes(["test"], $attr, $event);
+		$test = $event->getVar($attr["test"]);
+		if(!$test){
+			$test = $attr['test'];
+		}
+		echo $test;
+		die();
+		$event->setVar("test_result",eval("return ".$test.";"));
+		$event->process();
+	}
+
+	public static function _then(TagLibraryEvent $event, $attr){
+		if($event->getVar("test_result")){
+			$event->process();
+		}
+	}
+
+	public static function _else(TagLibraryEvent $event, $attr){
+		if(!$event->getVar("test_result")){
+			$event->process();
+		}
+	}
+
+	public static function _foreach(TagLibraryEvent $event, $attr){
         self::requireAttributes(['in','as'], $attr, $event);
         $arr = $event->getVar($attr['in']);
         if(is_object($arr)){

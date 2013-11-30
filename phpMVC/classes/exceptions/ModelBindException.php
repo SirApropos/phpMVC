@@ -5,7 +5,7 @@
  * Time: 1:05 AM
  */
 
-class ModelBindException extends HttpException {
+class ModelBindException extends HttpBadRequestException {
 
     function __construct($message)
     {
