@@ -9,6 +9,9 @@ v0.0.3 (Unreleased)
 -Removing __autoload() and creating ClassLoader abstract class
 -Adding SimpleCachingClassLoader (much more optimized than previous autoloading)
 -Added Timer class, creating timers throughout the code for debugging.
+-Added "required_attributes" directive as an option for request mappings.
+-Adding HttpBadRequestException.
+-Adding if/then/else to the StandardTagLibrary functions.
 
 v0.0.2 (07/18/2013)
 -Automatic model binding (plain/text, application/x-www-form-urlencoded, application/json, text/html, text/xml)
