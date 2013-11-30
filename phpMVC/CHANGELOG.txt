@@ -12,6 +12,7 @@ v0.0.3 (Unreleased)
 -Added "required_attributes" directive as an option for request mappings.
 -Adding HttpBadRequestException.
 -Adding if/then/else to the StandardTagLibrary functions.
+-Fixing major bug with tag libraries not properly working with duplicated non-nested tags.
 
 v0.0.2 (07/18/2013)
 -Automatic model binding (plain/text, application/x-www-form-urlencoded, application/json, text/html, text/xml)
