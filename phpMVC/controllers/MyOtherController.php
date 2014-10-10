@@ -15,8 +15,8 @@ class MyOtherController implements Controller
         ]
     ];
 
-    public function doTest(){
-	   return new JsonView(array("Test","Blah"));
+    public function doTest(TestAccountModel $model){
+	   return new JsonView($model);
     }
 
 }

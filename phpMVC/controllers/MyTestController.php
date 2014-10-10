@@ -15,6 +15,9 @@ class MyTestController implements Controller
             "doOtherTest" => [
                 "path" => "/blah/*/test",
                 "allowed_methods" => [HttpMethod::GET, HttpMethod::POST],
+                "security" => [
+                  "allowed_roles" => ["User","Admin"] //User must be authenticated for this method
+                ]
             ],
             "someOtherTest" => [
                 "path" => "/asd/{testing}/test",
@@ -47,16 +50,13 @@ class MyTestController implements Controller
      */
     private $response;
 
-    public function doTest(){
-	    $ds = new MysqliDataSource("localhost","phpMVC","Pj42MPNADDb99auF","phpMVC");
-	    $result = $ds->queryForObject("TestAccountModel","SELECT * FROM `accounts` WHERE `username`=:username AND `id`=:id", array("username" => "Caiyern", "id" => 1));
-	    $result = $ds->query("SELECT * FROM `accounts` WHERE `id`=1");
-	    print_r($result);
-	    $myArr = array("username" => "Test");
-	    $ds->insert("accounts", $myArr);
+    public function doTest(DataSource $ds){
+	    $result = $ds->queryForObject("TestAccountModel","SELECT * FROM `accounts` WHERE `username`=:username AND `id`=:id", array("username" => "Apropos", "id" => 1));
+	    return new JsonView($result);
+
     }
 
-    public function doOtherTest(){
+    public function doOtherTest(User $user){
 //        $query = SimpleQueryFactory::getInstance()->createQuery();
 //        $query->select("*")->from("myTable")->where("myColumn")->equals("blah")->also("myOtherColumn")->equals("test");
     }

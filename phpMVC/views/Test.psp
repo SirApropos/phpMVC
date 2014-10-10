@@ -1,4 +1,4 @@
-<%@import prefix="c" schema="http://www.caiyern.net/psp/taglibs/core">
+<%@import prefix="c" schema="http://www.example.com/psp/taglibs/core">
 <html>
     <head>
         <title>${title}</title>

@@ -8,9 +8,12 @@ set_error_handler(function($errno , $errstr, $errfile, $errline){
     }
 });
 try{
+  //TODO: this class could use some cleanup.
 	$config = array();
 	include("./mvcconfig.inc.php");
+	//Set up timers for profiling code
 	include $config['classes_dir']."utils/Timer.php";
+	//Load the configuration class and instantiate it.
 	include $config['config_path'];
 	$clazz = new ReflectionClass($config['config_class']);
 	/**
@@ -19,8 +22,9 @@ try{
 	$config = $clazz->newInstanceArgs([$config]);
 	$timer = Timer::create("Main","main");
 	$initTimer = Timer::create("Initialization", "initialization");
+	//Initialize the ClassLoader and IOCContainer
+	//ClassLoader has to be loaded after Timer, since classloading
 	include $config->classes_dir."utils/ClassLoader.php";
-	include $config->classes_dir."utils/IOCContainer.php";
 
 	$config->initialize();
 
@@ -30,18 +34,19 @@ try{
 	 * @var ControllerMethodInvoker $invoker
 	 */
 	$invoker = $container->resolve("ControllerMethodInvoker");
+	//Set up HttpRequest object for autowiring and load it into container
 	$request = new HttpRequest($_SERVER);
 	$container->register($request);
 	$initTimer->stop();
-    /**
-     * @var FilterManager $filterManager
-     */
-    $filterManager = $container->resolve("FilterManager");
-    $grantedAuthority = $filterManager->doFilter($request);
-    /**
-     * @var ControllerFactory controllerFactory
-     */
-    $controllerFactory = $container->resolve("ControllerFactory");
+  /**
+   * @var FilterManager $filterManager
+   */
+  $filterManager = $container->resolve("FilterManager");
+  $grantedAuthority = $filterManager->doFilter($request);
+  /**
+   * @var ControllerFactory controllerFactory
+   */
+  $controllerFactory = $container->resolve("ControllerFactory");
 
 	try{
 		$cmethod = $controllerFactory->getController($request);
