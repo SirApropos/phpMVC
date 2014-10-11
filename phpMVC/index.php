@@ -8,7 +8,7 @@ set_error_handler(function($errno , $errstr, $errfile, $errline){
 	}
 });
 try{
-  //TODO: this class could use some cleanup.
+	//TODO: this class could use some cleanup.
 	$config = array();
 	include("./mvcconfig.inc.php");
 	//Set up timers for profiling code
@@ -38,15 +38,15 @@ try{
 	$request = new HttpRequest($_SERVER);
 	$container->register($request);
 	$initTimer->stop();
-  /**
-   * @var FilterManager $filterManager
-   */
-  $filterManager = $container->resolve("FilterManager");
-  $grantedAuthority = $filterManager->doFilter($request);
-  /**
-   * @var ControllerFactory controllerFactory
-   */
-  $controllerFactory = $container->resolve("ControllerFactory");
+	/**
+	* @var FilterManager $filterManager
+	*/
+	$filterManager = $container->resolve("FilterManager");
+	$grantedAuthority = $filterManager->doFilter($request);
+	/**
+	* @var ControllerFactory controllerFactory
+	*/
+	$controllerFactory = $container->resolve("ControllerFactory");
 
 	try{
 		$cmethod = $controllerFactory->getController($request);
