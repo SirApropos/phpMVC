@@ -7,9 +7,9 @@
 
 class NotImplementedException extends HttpException{
 
-    function __construct()
-    {
-        $this->setResponseCode(501);
-        $this->message = "501 - Not Implemented";
-    }
+	function __construct()
+	{
+		$this->setResponseCode(501);
+		$this->message = "501 - Not Implemented";
+	}
 }

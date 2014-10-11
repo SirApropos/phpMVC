@@ -6,8 +6,8 @@
  */
 class HttpBadRequestException extends HttpException
 {
-    function __construct()
-    {
-        $this->setResponseCode(400);
-        $this->message = "Bad Request";
-    }}
+	function __construct()
+	{
+		$this->setResponseCode(400);
+		$this->message = "Bad Request";
+	}}

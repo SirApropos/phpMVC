@@ -7,11 +7,11 @@
 include "MVCException.php";
 class AutoloadingException extends MVCException
 {
-    public function AutoloadingException($className, $path=null){
-        $message = "Could not load class: $className";;
-        if($path){
-            $message.=" in: $path";
-        }
-        $this->message = $message;
-    }
+	public function AutoloadingException($className, $path=null){
+		$message = "Could not load class: $className";;
+		if($path){
+			$message.=" in: $path";
+		}
+		$this->message = $message;
+	}
 }

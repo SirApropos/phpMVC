@@ -7,9 +7,9 @@
 
 class ModelBindException extends HttpBadRequestException {
 
-    function __construct($message)
-    {
-        $this->setResponseCode(400);
-        $this->message = "Could not bind model: ".$message;
-    }
+	function __construct($message)
+	{
+		$this->setResponseCode(400);
+		$this->message = "Could not bind model: ".$message;
+	}
 }

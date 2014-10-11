@@ -1,11 +1,11 @@
 <?php
 set_error_handler(function($errno , $errstr, $errfile, $errline){
-    echo "$errstr in file $errfile on line: $errline\n\n";
-    $allowed = [E_NOTICE, E_STRICT];
-    if(!in_array($errno, $allowed)){
-        debug_print_backtrace();
-        die();
-    }
+	echo "$errstr in file $errfile on line: $errline\n\n";
+	$allowed = [E_NOTICE, E_STRICT];
+	if(!in_array($errno, $allowed)){
+		debug_print_backtrace();
+		die();
+	}
 });
 try{
   //TODO: this class could use some cleanup.
@@ -76,31 +76,31 @@ try{
 	}
 }catch(Exception $ex){
 	echo $ex->getMessage();
-    if($ex instanceof HttpException){
-        http_response_code($ex->getResponseCode());
-    }else{
-        http_response_code(500);
-	    $arr = [];
-	    foreach($ex->getTrace() as $key => $trace){
-		    $message = "#$key ";
-		    $message .= $trace['class'].$trace['type'].$trace['function'];
-		    $message .= "(";
-		    $first = true;
-		    foreach($trace['args'] as $arg){
-			    if(!$first){
-				    $message.=", ";
-			    }else{
-				    $first = false;
-			    }
-			    if(is_object($arg)){
-				    $message .= get_class($arg)." ".JsonUtils::toJson($arg);
-			    }else{
-				    $message .= $arg;
-			    }
-		    }
-		    $message .=") called at [".$trace['file'].":".$trace['line']."]";
-		    array_push($arr, $message);
-	    }
-    }
+	if($ex instanceof HttpException){
+		http_response_code($ex->getResponseCode());
+	}else{
+		http_response_code(500);
+		$arr = [];
+		foreach($ex->getTrace() as $key => $trace){
+			$message = "#$key ";
+			$message .= $trace['class'].$trace['type'].$trace['function'];
+			$message .= "(";
+			$first = true;
+			foreach($trace['args'] as $arg){
+				if(!$first){
+					$message.=", ";
+				}else{
+					$first = false;
+				}
+				if(is_object($arg)){
+					$message .= get_class($arg)." ".JsonUtils::toJson($arg);
+				}else{
+					$message .= $arg;
+				}
+			}
+			$message .=") called at [".$trace['file'].":".$trace['line']."]";
+			array_push($arr, $message);
+		}
+	}
 }
 ?>

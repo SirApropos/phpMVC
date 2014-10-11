@@ -7,79 +7,79 @@
 
 class TagLibraryProcessor {
 
-    /**
-     * @var array
-     */
-    private $vars;
+	/**
+	 * @var array
+	 */
+	private $vars;
 
-    /**
-     * @var SimpleXMLElement[]
-     */
-    private $imports;
+	/**
+	 * @var SimpleXMLElement[]
+	 */
+	private $imports;
 
-    /**
-     * @var TagLibrary[]
-     */
-    private $taglibs = [];
+	/**
+	 * @var TagLibrary[]
+	 */
+	private $taglibs = [];
 
-    /**
-     * @var string
-     */
-    private $xml;
+	/**
+	 * @var string
+	 */
+	private $xml;
 
-    /**
-     * @var string
-     */
-    private $path;
+	/**
+	 * @var string
+	 */
+	private $path;
 
-    /**
-     * @param string $xml
-     * @param array $vars
-     * @param string path;
-     */
-    function __construct($xml, array $vars, $path)
-    {
-        $this->path = dirname($path);
-        libxml_use_internal_errors();
-        $matches = [];
-        preg_match_all("`<%@ *import([^>]+)@%>`", $xml, $matches, PREG_SET_ORDER);
-        $str = preg_replace("`<%@ *import[^>]+@%>`","",$xml);
-        $this->imports = [];
-        foreach($matches as $match){
-            $this->imports[] = simplexml_load_string("<import ".$match[1]." />");
-        }
-        $this->vars = $vars;
-        $this->xml = $str;
-    }
+	/**
+	 * @param string $xml
+	 * @param array $vars
+	 * @param string path;
+	 */
+	function __construct($xml, array $vars, $path)
+	{
+		$this->path = dirname($path);
+		libxml_use_internal_errors();
+		$matches = [];
+		preg_match_all("`<%@ *import([^>]+)@%>`", $xml, $matches, PREG_SET_ORDER);
+		$str = preg_replace("`<%@ *import[^>]+@%>`","",$xml);
+		$this->imports = [];
+		foreach($matches as $match){
+			$this->imports[] = simplexml_load_string("<import ".$match[1]." />");
+		}
+		$this->vars = $vars;
+		$this->xml = $str;
+	}
 
-    function process(){
-        $manager = IOCContainer::getInstance()->resolve("TagLibraryManager");
-        /**
-         * @var TagLibraryManager $manager
-         */
-        foreach($this->imports as $import){
-            if(!isset($import['prefix']) || !isset($import['schema'])){
-                throw new IllegalArgumentException("All imports must specify both prefix and schema.");
-            }
-            $this->taglibs[(string)$import['prefix']] = $manager->resolve((string)$import['schema']);
-        }
-        $event = new TagLibraryEvent($this, $this->xml, $this->vars);
-        $event->process();
-    }
+	function process(){
+		$manager = IOCContainer::getInstance()->resolve("TagLibraryManager");
+		/**
+		 * @var TagLibraryManager $manager
+		 */
+		foreach($this->imports as $import){
+			if(!isset($import['prefix']) || !isset($import['schema'])){
+				throw new IllegalArgumentException("All imports must specify both prefix and schema.");
+			}
+			$this->taglibs[(string)$import['prefix']] = $manager->resolve((string)$import['schema']);
+		}
+		$event = new TagLibraryEvent($this, $this->xml, $this->vars);
+		$event->process();
+	}
 
-    /**
-     * @param $prefix
-     * @return null|TagLibrary
-     */
-    function getTagLibrary($prefix){
-        return isset($this->taglibs[$prefix]) ? $this->taglibs[$prefix] : null;
-    }
+	/**
+	 * @param $prefix
+	 * @return null|TagLibrary
+	 */
+	function getTagLibrary($prefix){
+		return isset($this->taglibs[$prefix]) ? $this->taglibs[$prefix] : null;
+	}
 
-    /**
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->path;
-    }
+	/**
+	 * @return string
+	 */
+	public function getPath()
+	{
+		return $this->path;
+	}
 }

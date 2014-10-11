@@ -7,30 +7,30 @@
 
 class XmlView implements View{
 
-    private $obj;
+	private $obj;
 
-    function __construct($obj)
-    {
-        $this->obj = $obj;
-    }
+	function __construct($obj)
+	{
+		$this->obj = $obj;
+	}
 
 
-    /**
-     * @return mixed
-     */
-    public function render()
-    {
-        echo XmlUtils::toXml($this->obj);
-    }
+	/**
+	 * @return mixed
+	 */
+	public function render()
+	{
+		echo XmlUtils::toXml($this->obj);
+	}
 
-    /**
-     * @param HttpResponse $response
-     * @return mixed
-     */
-    public function prepareResponse(HttpResponse $response)
-    {
-        if(is_null($response->getHeaders()->getContentType())){
-            $response->getHeaders()->setContentType(ContentType::TEXT_XML);
-        }
-    }
+	/**
+	 * @param HttpResponse $response
+	 * @return mixed
+	 */
+	public function prepareResponse(HttpResponse $response)
+	{
+		if(is_null($response->getHeaders()->getContentType())){
+			$response->getHeaders()->setContentType(ContentType::TEXT_XML);
+		}
+	}
 }

@@ -6,28 +6,28 @@
  */
 
 interface Mapper {
-    /**
-     * @param string $contentType
-     * @return bool
-     */
-    public function canRead($contentType);
+	/**
+	 * @param string $contentType
+	 * @return bool
+	 */
+	public function canRead($contentType);
 
-    /**
-     * @param string $contentType
-     * @return bool
-     */
-    public function canWrite($contentType);
+	/**
+	 * @param string $contentType
+	 * @return bool
+	 */
+	public function canWrite($contentType);
 
-    /**
-     * @param object $obj
-     * @return string
-     */
-    public function write($obj);
+	/**
+	 * @param object $obj
+	 * @return string
+	 */
+	public function write($obj);
 
-    /**
-     * @param $str
-     * @param ReflectionClass $clazz
-     * @return mixed
-     */
-    public function read($str, ReflectionClass $clazz);
+	/**
+	 * @param $str
+	 * @param ReflectionClass $clazz
+	 * @return mixed
+	 */
+	public function read($str, ReflectionClass $clazz);
 }

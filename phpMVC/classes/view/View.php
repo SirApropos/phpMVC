@@ -6,14 +6,14 @@
  */
 interface View
 {
-    /**
-     * @param HttpResponse $response
-     * @return mixed
-     */
-    public function prepareResponse(HttpResponse $response);
+	/**
+	 * @param HttpResponse $response
+	 * @return mixed
+	 */
+	public function prepareResponse(HttpResponse $response);
 
-    /**
-     * @return mixed
-     */
-    public function render();
+	/**
+	 * @return mixed
+	 */
+	public function render();
 }

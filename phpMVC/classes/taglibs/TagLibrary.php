@@ -7,25 +7,25 @@
 
 abstract class TagLibrary {
 
-    function __construct()
-    {
-        TagLibraryManager::register($this);
-    }
+	function __construct()
+	{
+		TagLibraryManager::register($this);
+	}
 
-    private static $mapping;
+	private static $mapping;
 
-    /**
-     * @return Mapping
-     */
-    public function getMapping(){
-        if(!isset(self::$mapping)){
-            self::$mapping = ReflectionUtils::getMapping($this, "TagLibraryMapping");
-        }
-        return self::$mapping;
-    }
+	/**
+	 * @return Mapping
+	 */
+	public function getMapping(){
+		if(!isset(self::$mapping)){
+			self::$mapping = ReflectionUtils::getMapping($this, "TagLibraryMapping");
+		}
+		return self::$mapping;
+	}
 
-    /**
-     * @return string
-     */
-    public abstract function getNamespace();
+	/**
+	 * @return string
+	 */
+	public abstract function getNamespace();
 }

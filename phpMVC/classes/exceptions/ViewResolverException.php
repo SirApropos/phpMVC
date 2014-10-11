@@ -6,10 +6,10 @@
  */
 class ViewResolverException extends MVCException
 {
-    /**
-     * @param string $message
-     */
-    public function __construct($message){
-        $this->message = $message;
-    }
+	/**
+	 * @param string $message
+	 */
+	public function __construct($message){
+		$this->message = $message;
+	}
 }

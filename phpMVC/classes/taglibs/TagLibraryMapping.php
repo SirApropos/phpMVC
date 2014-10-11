@@ -6,24 +6,24 @@
  */
 
 class TagLibraryMapping implements Mapping{
-    private $mappings = [];
-    /**
-     * @param $obj
-     * @return mixed
-     */
-    function bind($obj)
-    {
-        if(isset($obj["methods"])){
-            $this->mappings = $obj["methods"];
-        }
-    }
+	private $mappings = [];
+	/**
+	 * @param $obj
+	 * @return mixed
+	 */
+	function bind($obj)
+	{
+		if(isset($obj["methods"])){
+			$this->mappings = $obj["methods"];
+		}
+	}
 
-    /**
-     * @return array
-     */
-    function getMappings()
-    {
-        return $this->mappings;
-    }
+	/**
+	 * @return array
+	 */
+	function getMappings()
+	{
+		return $this->mappings;
+	}
 
 }

@@ -5,6 +5,6 @@
  * Time: 1:56 AM
  */
 class TestModel implements Model{
-    private $test;
-    private $blah;
+	private $test;
+	private $blah;
 }

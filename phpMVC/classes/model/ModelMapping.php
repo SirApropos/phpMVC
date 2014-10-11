@@ -7,31 +7,31 @@
 
 class ModelMapping implements Mapping {
 
-    /**
-     * @var FieldMapping[]
-     */
-    private $mappings = [];
-    /**
-     * @param $obj
-     * @return mixed
-     */
-    function bind($obj)
-    {
-        if(isset($obj['fields'])){
-            foreach($obj['fields'] as $name => $mapping){
-                $mapping = MappingUtils::bindObject($mapping, "FieldMapping");
-                $this->mappings[$name] = $mapping;
-            }
-        }
-    }
+	/**
+	 * @var FieldMapping[]
+	 */
+	private $mappings = [];
+	/**
+	 * @param $obj
+	 * @return mixed
+	 */
+	function bind($obj)
+	{
+		if(isset($obj['fields'])){
+			foreach($obj['fields'] as $name => $mapping){
+				$mapping = MappingUtils::bindObject($mapping, "FieldMapping");
+				$this->mappings[$name] = $mapping;
+			}
+		}
+	}
 
-    /**
-     * @return FieldMapping[]
-     */
-    public function getMappings()
-    {
-        return $this->mappings;
-    }
+	/**
+	 * @return FieldMapping[]
+	 */
+	public function getMappings()
+	{
+		return $this->mappings;
+	}
 
 
 }

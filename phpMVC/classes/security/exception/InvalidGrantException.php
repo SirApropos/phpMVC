@@ -6,8 +6,8 @@
  */
 
 class InvalidGrantException extends HttpException{
-    public function __construct($message){
-        parent::__construct($message);
-        $this->setResponseCode(403);
-    }
+	public function __construct($message){
+		parent::__construct($message);
+		$this->setResponseCode(403);
+	}
 }

@@ -6,39 +6,39 @@
  */
 
 class FilterManager {
-    /**
-     * @var AuthenticationFilter[]
-     */
-    private $filters = array();
+	/**
+	 * @var AuthenticationFilter[]
+	 */
+	private $filters = array();
 
-    public function FilterManager(){
-    }
+	public function FilterManager(){
+	}
 
-    /**
-     * @param AuthenticationFilter $filter
-     */
-    public function addFilter(AuthenticationFilter $filter){
-        array_push($this->filters, $filter);
-    }
+	/**
+	 * @param AuthenticationFilter $filter
+	 */
+	public function addFilter(AuthenticationFilter $filter){
+		array_push($this->filters, $filter);
+	}
 
-    /**
-     * @return array|AuthenticationFilter[]
-     */
-    public function getFilters(){
-        return $this->filters;
-    }
+	/**
+	 * @return array|AuthenticationFilter[]
+	 */
+	public function getFilters(){
+		return $this->filters;
+	}
 
-    /**
-     * @param HttpRequest $request
-     * @return GrantedAuthority;
-     */
-    public function doFilter(HttpRequest $request){
-        $authority = new GrantedAuthority();
-        foreach($this->filters as $filter){
-            if($filter->doFilter($request, $authority)){
-                break;
-            }
-        }
-        return $authority;
-    }
+	/**
+	 * @param HttpRequest $request
+	 * @return GrantedAuthority;
+	 */
+	public function doFilter(HttpRequest $request){
+		$authority = new GrantedAuthority();
+		foreach($this->filters as $filter){
+			if($filter->doFilter($request, $authority)){
+				break;
+			}
+		}
+		return $authority;
+	}
 }

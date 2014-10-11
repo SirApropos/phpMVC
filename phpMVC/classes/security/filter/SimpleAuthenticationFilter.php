@@ -6,18 +6,18 @@
  */
 
 class SimpleAuthenticationFilter implements AuthenticationFilter{
-    /**
-     * @param HttpRequest $request
-     * @param GrantedAuthority $authority
-     * @return bool stopFiltering
-     */
-    public function doFilter(HttpRequest $request, GrantedAuthority $authority)
-    {
-        if(session_status() != PHP_SESSION_ACTIVE){
-            session_start();
-        }
-        if(isset($_SESSION['phpMVC_roles']) && is_array($_SESSION['phpMVC_roles'])){
-              $authority->setRoles($_SESSION['phpMVC_roles']);
-        }
-    }
+	/**
+	 * @param HttpRequest $request
+	 * @param GrantedAuthority $authority
+	 * @return bool stopFiltering
+	 */
+	public function doFilter(HttpRequest $request, GrantedAuthority $authority)
+	{
+		if(session_status() != PHP_SESSION_ACTIVE){
+			session_start();
+		}
+		if(isset($_SESSION['phpMVC_roles']) && is_array($_SESSION['phpMVC_roles'])){
+			  $authority->setRoles($_SESSION['phpMVC_roles']);
+		}
+	}
 }

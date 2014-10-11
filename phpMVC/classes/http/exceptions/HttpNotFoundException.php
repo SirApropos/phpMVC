@@ -6,8 +6,8 @@
  */
 class HttpNotFoundException extends HttpException
 {
-    public function HttpNotFoundException(){
-        $this->setResponseCode(404);
-        $this->message = "404 - Not Found";
-    }
+	public function HttpNotFoundException(){
+		$this->setResponseCode(404);
+		$this->message = "404 - Not Found";
+	}
 }

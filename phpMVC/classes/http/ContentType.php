@@ -6,9 +6,9 @@
  */
 
 class ContentType {
-    const TEXT_PLAIN = "text/plain";
-    const TEXT_HTML = "text/html";
-    const TEXT_XML = "text/xml";
-    const APPLICATION_JSON = "application/json";
-    const APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
+	const TEXT_PLAIN = "text/plain";
+	const TEXT_HTML = "text/html";
+	const TEXT_XML = "text/xml";
+	const APPLICATION_JSON = "application/json";
+	const APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
 }

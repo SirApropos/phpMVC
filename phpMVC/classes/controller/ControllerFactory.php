@@ -8,5 +8,5 @@
  */
 interface ControllerFactory
 {
-    function getController(HttpRequest $request);
+	function getController(HttpRequest $request);
 }

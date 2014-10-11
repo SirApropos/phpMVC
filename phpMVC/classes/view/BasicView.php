@@ -6,29 +6,29 @@
  */
 class BasicView implements View
 {
-    private $obj;
+	private $obj;
 
-    function __construct($obj)
-    {
-        $this->obj = $obj;
-    }
+	function __construct($obj)
+	{
+		$this->obj = $obj;
+	}
 
-    /**
-     * @return mixed
-     */
-    public function render()
-    {
-        echo "".$this->obj;
-    }
+	/**
+	 * @return mixed
+	 */
+	public function render()
+	{
+		echo "".$this->obj;
+	}
 
-    /**
-     * @param HttpResponse $response
-     * @return mixed
-     */
-    public function prepareResponse(HttpResponse $response)
-    {
-        // TODO: Implement prepareResponse() method.
-    }
+	/**
+	 * @param HttpResponse $response
+	 * @return mixed
+	 */
+	public function prepareResponse(HttpResponse $response)
+	{
+		// TODO: Implement prepareResponse() method.
+	}
 
 
 }

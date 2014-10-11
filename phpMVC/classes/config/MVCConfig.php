@@ -13,10 +13,10 @@
  * @property-read string $base_dir
  */
 class MVCConfig {
-    /**
-     * @var IOCContainer
-     */
-    private $container;
+	/**
+	 * @var IOCContainer
+	 */
+	private $container;
 
 	private $conf;
 
@@ -28,27 +28,27 @@ class MVCConfig {
 	}
 
 	public function initialize(){
-	    $classLoader = $this->createClassLoader();
-        $this->container = IOCContainer::getInstance();
-	    $this->container->register($classLoader);
-        $filterManager = $this->createFilterManager();
-        $this->container->register($filterManager);
-        $this->configureFilters($filterManager);
-        $this->container->register($this->createControllerFactory());
-	    $this->container->register($this->createControllerMethodInvoker());
-    }
+		$classLoader = $this->createClassLoader();
+		$this->container = IOCContainer::getInstance();
+		$this->container->register($classLoader);
+		$filterManager = $this->createFilterManager();
+		$this->container->register($filterManager);
+		$this->configureFilters($filterManager);
+		$this->container->register($this->createControllerFactory());
+		$this->container->register($this->createControllerMethodInvoker());
+	}
 
-    public function createFilterManager(){
-        return new FilterManager();
-    }
+	public function createFilterManager(){
+		return new FilterManager();
+	}
 
 	public function configureFilters(FilterManager $filterManager){
-        $filterManager->addFilter(new SimpleAuthenticationFilter());
-    }
+		$filterManager->addFilter(new SimpleAuthenticationFilter());
+	}
 
 	public function createControllerFactory(){
-        return new SimpleControllerFactory();
-    }
+		return new SimpleControllerFactory();
+	}
 
 	public function createControllerMethodInvoker(){
 		return new ControllerMethodInvoker();

@@ -6,31 +6,31 @@
  */
 
 class GrantedAuthority {
-    /**
-     * @var array
-     */
-    private $roles = array();
+	/**
+	 * @var array
+	 */
+	private $roles = array();
 
-    public function GrantedAuthority(){
-    }
+	public function GrantedAuthority(){
+	}
 
-    /**
-     * @param array $roles
-     */
-    public function setRoles($roles)
-    {
-        $this->roles = $roles;
-    }
+	/**
+	 * @param array $roles
+	 */
+	public function setRoles($roles)
+	{
+		$this->roles = $roles;
+	}
 
-    /**
-     * @return array
-     */
-    public function getRoles()
-    {
-        return $this->roles;
-    }
-    public function addRole($role){
-        array_push($this->roles, $role);
-    }
+	/**
+	 * @return array
+	 */
+	public function getRoles()
+	{
+		return $this->roles;
+	}
+	public function addRole($role){
+		array_push($this->roles, $role);
+	}
 
 }

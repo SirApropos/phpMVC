@@ -6,17 +6,17 @@
  */
 class MyOtherController implements Controller
 {
-    private static $mapping = [
-        "methods" => [
-            "doTest" => [
-                "path" => "/blah**",
-                "allowed_methods" => [HttpMethod::GET, HttpMethod::POST]
-            ]
-        ]
-    ];
+	private static $mapping = [
+		"methods" => [
+			"doTest" => [
+				"path" => "/blah**",
+				"allowed_methods" => [HttpMethod::GET, HttpMethod::POST]
+			]
+		]
+	];
 
-    public function doTest(TestAccountModel $model){
+	public function doTest(TestAccountModel $model){
 	   return new JsonView($model);
-    }
+	}
 
 }

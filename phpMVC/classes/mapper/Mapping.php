@@ -6,14 +6,14 @@
  */
 
 interface Mapping {
-    /**
-     * @param $obj
-     * @return mixed
-     */
-    function bind($obj);
+	/**
+	 * @param $obj
+	 * @return mixed
+	 */
+	function bind($obj);
 
-    /**
-     * @return array
-     */
-    function getMappings();
+	/**
+	 * @return array
+	 */
+	function getMappings();
 }

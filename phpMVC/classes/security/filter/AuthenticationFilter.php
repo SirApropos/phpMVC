@@ -6,10 +6,10 @@
  */
 
 interface AuthenticationFilter {
-    /**
-     * @param HttpRequest $request
-     * @param GrantedAuthority $authority
-     * @return bool stopFiltering
-     */
-    public function doFilter(HttpRequest $request, GrantedAuthority $authority);
+	/**
+	 * @param HttpRequest $request
+	 * @param GrantedAuthority $authority
+	 * @return bool stopFiltering
+	 */
+	public function doFilter(HttpRequest $request, GrantedAuthority $authority);
 }

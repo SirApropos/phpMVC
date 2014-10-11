@@ -6,15 +6,15 @@
  */
 class HttpException extends MVCException
 {
-    private $responseCode = 500;
+	private $responseCode = 500;
 
-    protected  function setResponseCode($responseCode)
-    {
-        $this->responseCode = $responseCode;
-    }
+	protected  function setResponseCode($responseCode)
+	{
+		$this->responseCode = $responseCode;
+	}
 
-    public function getResponseCode()
-    {
-        return $this->responseCode;
-    }
+	public function getResponseCode()
+	{
+		return $this->responseCode;
+	}
 }
