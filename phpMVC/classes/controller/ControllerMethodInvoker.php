@@ -213,26 +213,7 @@ class ControllerMethodInvoker{
 		$clazz = $param->getClass();
 		if ($clazz) {
 			if ($clazz->implementsInterface("Model") && !$this->container->contains($clazz->getName())) {
-				if ($request->getBody()) {
-					$contentType = $request->getHeaders()->getContentType();
-					foreach ($this->mappers as $mapper) {
-						if ($mapper->canRead($contentType)) {
-							$value = $mapper->read($request->getBody(), $clazz);
-							break;
-						}
-					}
-					if (is_null($value)) {
-						throw new ModelBindException("No object mapper available to read type: " . $contentType);
-					}
-					return $value;
-				} else {
-					if ($param->isOptional()) {
-						$value = $param->getDefaultValue();
-						return $value;
-					} else {
-						throw new ModelBindException("No request body provided.");
-					}
-				}
+				return $this->bindRequestModel($param, $request, $clazz);
 			} else {
 				$value = $this->container->resolve($clazz->getName());
 				return $value;
@@ -259,7 +240,7 @@ class ControllerMethodInvoker{
 	 * @param $request
 	 * @return array
 	 */
-	private function getRequestVars(ControllerMethod $cmethod, $request) {
+	private function getRequestVars(ControllerMethod $cmethod, HttpRequest $request) {
 		$pathParts = preg_split("`/`", $request->getPath());
 		$mappingParts = preg_split("`/`", $cmethod->getPath());
 		$urlvars = [];
@@ -275,6 +256,35 @@ class ControllerMethodInvoker{
 			}
 		}
 		return array_merge($urlvars);
+	}
+
+	/**
+	 * @param ReflectionParameter $param
+	 * @param $request
+	 * @param $clazz
+	 * @throws ModelBindException
+	 */
+	protected function bindRequestModel(ReflectionParameter $param, $request, $clazz) {
+		if ($request->getBody()) {
+			$contentType = $request->getHeaders()->getContentType();
+			foreach ($this->mappers as $mapper) {
+				if ($mapper->canRead($contentType)) {
+					$value = $mapper->read($request->getBody(), $clazz);
+					break;
+				}
+			}
+			if (is_null($value)) {
+				throw new ModelBindException("No object mapper available to read type: " . $contentType);
+			}
+			return $value;
+		} else {
+			if ($param->isOptional()) {
+				$value = $param->getDefaultValue();
+				return $value;
+			} else {
+				throw new ModelBindException("No request body provided.");
+			}
+		}
 	}
 
 }
