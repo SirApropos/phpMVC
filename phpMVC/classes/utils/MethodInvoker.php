@@ -21,6 +21,13 @@ class MethodInvoker {
 	 */
 	private $container;
 
+	/**
+	 * @param $obj
+	 * @param $method
+	 * @return mixed
+	 * @throws InvocationException
+	 * @throws NotImplementedException
+	 */
 	public function invoke($obj, $method){
 		$clazz = ReflectionUtils::getReflectionClass($obj);
 		if(!$method instanceof ReflectionMethod){
@@ -31,7 +38,7 @@ class MethodInvoker {
 		foreach($method->getParameters() as $param) {
 			$args[] = $this->satisfy($clazz, $method, $param);
 		}
-		$method->invokeArgs($obj, $args);
+		return $method->invokeArgs($obj, $args);
 	}
 
 	protected function satisfy(ReflectionClass $clazz, ReflectionMethod $method, ReflectionParameter $param){

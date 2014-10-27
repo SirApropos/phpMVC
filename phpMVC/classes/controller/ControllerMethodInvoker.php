@@ -34,76 +34,7 @@ class ControllerMethodInvoker{
 	public function invoke(ControllerMethod $cmethod){
 		$timer = Timer::create("Invoker", "invoking");
 		try {
-			if(!$this->canInvoke($cmethod)){
-				throw new InvalidGrantException("Access Denied");
-			}
-			$method = $cmethod->getMethod();
-			$args = [];
-			$params = $method->getParameters();
-			$request = $this->container->resolve("HttpRequest");
-			$pathParts = preg_split("`/`", $request->getPath());
-			$mappingParts = preg_split("`/`", $cmethod->getMapping()->getPath());
-			$urlvars = [];
-			foreach ($mappingParts as $key => $part) {
-				//Should always be the case, but let's make sure.
-				if (isset($pathParts[$key])) {
-					$matches = [];
-					if (preg_match('`\{(.+)\}`', $part, $matches)) {
-						$replacer = str_replace($matches[0], "", $part);
-						$urlvars[$matches[1]] = preg_replace("`^" . $replacer . "`", "", $pathParts[$key]);
-					}
-				}
-			}
-			foreach ($params as $param) {
-				$clazz = $param->getClass();
-				$value = null;
-				if ($clazz) {
-					if ($clazz->implementsInterface("Model") && !$this->container->contains($clazz->getName())) {
-						if ($request->getBody()) {
-							$contentType = $request->getHeaders()->getContentType();
-							foreach ($this->mappers as $mapper) {
-								if ($mapper->canRead($contentType)) {
-									$value = $mapper->read($request->getBody(), $clazz);
-									break;
-								}
-							}
-							if (is_null($value)) {
-								throw new ModelBindException("No object mapper available to read type: " . $contentType);
-							}
-						} else {
-							if ($param->isOptional()) {
-								$value = $param->getDefaultValue();
-							} else {
-								throw new ModelBindException("No request body provided.");
-							}
-						}
-					} else {
-						$value = $this->container->resolve($clazz->getName());
-					}
-				} else {
-					$name = $param->getName();
-					if (isset($urlvars[$name])) {
-						$value = $urlvars[$name];
-					} else {
-						if ($param->isDefaultValueAvailable()) {
-							$value = $param->getDefaultValue();
-						} else {
-							throw new ModelBindException("Could not satisfy dependency: " . $method->getDeclaringClass()->getName(). "::" .
-								$method->getName() . '::$' . $name);
-						}
-					}
-				}
-				array_push($args, $value);
-			}
-			$response = $this->container->resolve("HttpResponse");
-			$value = $method->invokeArgs($cmethod->getController(), $args);
-			if ($value instanceof View) {
-				$response->setView($value);
-			} else {
-				$response->setView(new BasicView($value));
-			}
-			$timer->stop();
-			$response->send();
+			$this->_invokeInternal($cmethod, $timer);
 		}catch(Exception $ex){
 			$timer->stop();
 			$this->handleException($cmethod->getController(), $ex);
@@ -124,7 +55,8 @@ class ControllerMethodInvoker{
 			}
 		}
 		if(!is_null($handler)) {
-			$handler->handle($controller, $ex);
+			$result = $handler->handle($controller, $ex);
+			$this->_prepareResponse($result)->send();
 		}else{
 			throw $ex;
 		}
@@ -223,6 +155,95 @@ class ControllerMethodInvoker{
 			$result = true;
 		}
 		return $result;
+	}
+
+	/**
+	 * @param ControllerMethod $cmethod
+	 * @param $timer
+	 * @throws InvalidGrantException
+	 * @throws InvocationException
+	 * @throws ModelBindException
+	 */
+	private function _invokeInternal(ControllerMethod $cmethod, $timer) {
+		if (!$this->canInvoke($cmethod)) {
+			throw new InvalidGrantException("Access Denied");
+		}
+		$method = $cmethod->getMethod();
+		$args = [];
+		$params = $method->getParameters();
+		$request = $this->container->resolve("HttpRequest");
+		$pathParts = preg_split("`/`", $request->getPath());
+		$mappingParts = preg_split("`/`", $cmethod->getMapping()->getPath());
+		$urlvars = [];
+		foreach ($mappingParts as $key => $part) {
+			//Should always be the case, but let's make sure.
+			if (isset($pathParts[$key])) {
+				$matches = [];
+				if (preg_match('`\{(.+)\}`', $part, $matches)) {
+					$replacer = str_replace($matches[0], "", $part);
+					$urlvars[$matches[1]] = preg_replace("`^" . $replacer . "`", "", $pathParts[$key]);
+				}
+			}
+		}
+		foreach ($params as $param) {
+			$clazz = $param->getClass();
+			$value = null;
+			if ($clazz) {
+				if ($clazz->implementsInterface("Model") && !$this->container->contains($clazz->getName())) {
+					if ($request->getBody()) {
+						$contentType = $request->getHeaders()->getContentType();
+						foreach ($this->mappers as $mapper) {
+							if ($mapper->canRead($contentType)) {
+								$value = $mapper->read($request->getBody(), $clazz);
+								break;
+							}
+						}
+						if (is_null($value)) {
+							throw new ModelBindException("No object mapper available to read type: " . $contentType);
+						}
+					} else {
+						if ($param->isOptional()) {
+							$value = $param->getDefaultValue();
+						} else {
+							throw new ModelBindException("No request body provided.");
+						}
+					}
+				} else {
+					$value = $this->container->resolve($clazz->getName());
+				}
+			} else {
+				$name = $param->getName();
+				if (isset($urlvars[$name])) {
+					$value = $urlvars[$name];
+				} else {
+					if ($param->isDefaultValueAvailable()) {
+						$value = $param->getDefaultValue();
+					} else {
+						throw new ModelBindException("Could not satisfy dependency: " . $method->getDeclaringClass()->getName() . "::" .
+							$method->getName() . '::$' . $name);
+					}
+				}
+			}
+			array_push($args, $value);
+		}
+		$value = $method->invokeArgs($cmethod->getController(), $args);
+		$response = $this->_prepareResponse($value);
+		$timer->stop();
+		$response->send();
+	}
+
+	/**
+	 * @param $value
+	 * @return HttpResponse
+	 */
+	private function _prepareResponse($value) {
+		$response = $this->container->resolve("HttpResponse");
+		if ($value instanceof View) {
+			$response->setView($value);
+		} else {
+			$response->setView(new BasicView($value));
+		}
+		return $response;
 	}
 
 }

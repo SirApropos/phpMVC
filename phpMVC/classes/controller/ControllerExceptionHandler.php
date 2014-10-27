@@ -34,6 +34,11 @@ class ControllerExceptionHandler {
 		return $result;
 	}
 
+	/**
+	 * @param Controller $controller
+	 * @param Exception $ex
+	 * @return mixed
+	 */
 	public function handle(Controller &$controller, Exception $ex){
 		$container = IOCContainer::getInstance();
 		/**
@@ -41,6 +46,6 @@ class ControllerExceptionHandler {
 		 */
 		$invoker = $container->resolve("MethodInvoker");
 		$container->register($ex);
-		$invoker->invoke($controller, $this->method);
+		return $invoker->invoke($controller, $this->method);
 	}
 } 

@@ -24,7 +24,7 @@ class HttpHeaders
 	 * @param string $value
 	 */
 	public function addValue($key, $value){
-		setupKey($key);
+		$this->setupKey($key);
 		array_push($this->headers[$key], $value);
 	}
 
