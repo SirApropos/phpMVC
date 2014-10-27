@@ -42,7 +42,7 @@ class SimpleControllerFactory implements ControllerFactory
 	function getController(HttpRequest $request)
 	{
 		$this->request = $request;
-		$method = $this->findController($this->config->controller_dir);
+		$method = $this->findController($this->config->getControllerDir());
 		if(!$method){
 			throw new HttpNotFoundException();
 		}
@@ -70,59 +70,69 @@ class SimpleControllerFactory implements ControllerFactory
 		return $result;
 	}
 
-	private function getControllerMethod($name){
+	private function getControllerMethod($name) {
 		$timer = Timer::create("Controller $name", "controller");
 		$clazz = new ReflectionClass($name);
-		$mappings = ReflectionUtils::getMapping($name,"ControllerMapping")->getMappings();
 		$method = null;
-		$pathFound = false;
-		foreach($mappings as $mapping){
-			/**
-			 * @var RequestMapping $mapping
-			 */
-			$regex = str_replace("`","",$mapping->getPath());
-			$regex = preg_replace("`\{[^\}]+\}`", "*", $regex);
-			$regex = preg_replace("`([\[\]\{\}\.\(\)\?\*])`","\\\\$1",$regex);
-			$regex = str_replace("\\*\\*",".*",$regex);
-			$regex = str_replace("\\*","[^/]*", $regex);
-			$regex = "`^".$regex."$`";
-			if(preg_match($regex, $this->request->getPath())){
-				$pathFound = true;
-				$allowed_methods = $mapping->getAllowedMethods();
-				if(is_array($allowed_methods)){
-					if(!in_array($this->request->getMethod(), $allowed_methods)){
-						continue;
-					}
-				}
-				$required_attributes = $mapping->getRequiredAttributes();
-				if(is_array($required_attributes)){
-					$params = $_REQUEST;
-					foreach($required_attributes as $key => $attribute){
-						if(is_numeric($key)){
-							if(!isset($params[$attribute])){
-								$pathFound = false;
-								break;
-							}
-						}else{
-							if(!isset($params[$key]) || !preg_match("`".$attribute."`", $params[$key])){
-								$pathFound = false;
-								break;
-							}
-						}
-					}
-				}
-				if($pathFound){
+		if ($clazz->isInstantiable()) {
+			$mappings = ReflectionUtils::getMapping($name, "ControllerMapping")->getMappings();
+			$method = $this->_findControllerMethod($mappings, $clazz);
+		}
+		$timer->stop();
+		if(!is_null($method)){
+			if(!$this->_isMethodAllowed($method)) {
+				throw new HttpMethodNotAllowedException();
+			}
+		}
+		return $method;
+	}
+
+	/**
+	 * @param $mappings
+	 * @param $clazz
+	 * @return ControllerMethod
+	 * @throws ModelBindException
+	 */
+	private function _findControllerMethod($mappings, $clazz) {
+		$method = null;
+		foreach ($mappings as $mapping) {
+			$paths = $mapping->getPath();
+			if (!is_array($paths)) {
+				$paths = [$paths];
+			}
+			foreach ($paths as $path) {
+				/**
+				 * @var RequestMapping $mapping
+				 */
+				$regex = str_replace("`", "", $path);
+				$regex = preg_replace("`\{[^\}]+\}`", "*", $regex);
+				$regex = preg_replace("`([\[\]\{\}\.\(\)\?\*])`", "\\\\$1", $regex);
+				$regex = str_replace("\\*\\*", ".*", $regex);
+				$regex = str_replace("\\*", "[^/]*", $regex);
+				$regex = "`^" . $regex . "$`";
+				if (preg_match($regex, $this->request->getPath())) {
 					$method = new ControllerMethod();
 					$method->setController($this->container->newInstance($clazz));
 					$method->setMapping($mapping);
 				}
 			}
 		}
-		$timer->stop();
-		if($pathFound && !$method){
-			throw new HttpMethodNotAllowedException();
-		}
 		return $method;
 	}
 
+	/**
+	 * @param ControllerMethod $method
+	 * @return bool
+	 */
+	private function  _isMethodAllowed($method){
+		$result = false;
+		$allowed_methods = $method->getMapping()->getAllowedMethods();
+		if (is_array($allowed_methods)) {
+			if (!in_array($this->request->getMethod(), $allowed_methods)) {
+				$result = true;
+			}
+		}
+
+		return $result;
+	}
 }

@@ -8,54 +8,47 @@ set_error_handler(function($errno , $errstr, $errfile, $errline){
 	}
 });
 try{
-	//TODO: this class could use some cleanup.
 	$config = array();
 	include("./mvcconfig.inc.php");
-	//Set up timers for profiling code
 	include $config['classes_dir']."utils/Timer.php";
-	//Load the configuration class and instantiate it.
 	include $config['config_path'];
 	$clazz = new ReflectionClass($config['config_class']);
 	/**
 	 * @var MVCConfig $config
 	 */
+
 	$config = $clazz->newInstanceArgs([$config]);
 	$timer = Timer::create("Main","main");
 	$initTimer = Timer::create("Initialization", "initialization");
-	//Initialize the ClassLoader and IOCContainer
-	//ClassLoader has to be loaded after Timer, since classloading
-	include $config->classes_dir."utils/ClassLoader.php";
+	include $config->getClassesDir()."utils/ClassLoader.php";
+	include $config->getClassesDir()."utils/IOCContainer.php";
 
 	$config->initialize();
-
 	$container = IOCContainer::getInstance();
+
+	include("./datasource.php");
 
 	/**
 	 * @var ControllerMethodInvoker $invoker
 	 */
 	$invoker = $container->resolve("ControllerMethodInvoker");
-	//Set up HttpRequest object for autowiring and load it into container
 	$request = new HttpRequest($_SERVER);
 	$container->register($request);
 	$initTimer->stop();
 	/**
-	* @var FilterManager $filterManager
-	*/
+	 * @var FilterManager $filterManager
+	 */
 	$filterManager = $container->resolve("FilterManager");
 	$grantedAuthority = $filterManager->doFilter($request);
+	$container->register($grantedAuthority);
 	/**
-	* @var ControllerFactory controllerFactory
-	*/
+	 * @var ControllerFactory controllerFactory
+	 */
 	$controllerFactory = $container->resolve("ControllerFactory");
 
 	try{
 		$cmethod = $controllerFactory->getController($request);
-
-		if($invoker->canInvoke($cmethod, $grantedAuthority)){
-			$invoker->invoke($cmethod);
-		}else{
-			throw new InvalidGrantException("Access Denied");
-		}
+		$invoker->invoke($cmethod);
 	}catch(HttpException $ex){
 		if(($ex instanceof HttpNotFoundException) || $request->getMethod() != HttpMethod::OPTIONS){
 			throw $ex;
@@ -94,6 +87,8 @@ try{
 				}
 				if(is_object($arg)){
 					$message .= get_class($arg)." ".JsonUtils::toJson($arg);
+				}else if(is_array($arg)){
+					$message .= JsonUtils::toJson($arg);
 				}else{
 					$message .= $arg;
 				}

@@ -15,7 +15,7 @@ class ModelMapping implements Mapping {
 	 * @param $obj
 	 * @return mixed
 	 */
-	function bind($obj)
+	function bind($clazz, $obj)
 	{
 		if(isset($obj['fields'])){
 			foreach($obj['fields'] as $name => $mapping){

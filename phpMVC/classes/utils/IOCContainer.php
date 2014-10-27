@@ -18,6 +18,7 @@ class IOCContainer
 	private function __construct(){
 		$this->classloader = ClassLoader::getInstance();
 		$this->register($this->classloader);
+		$this->register($this);
 	}
 
 	/**
@@ -40,6 +41,9 @@ class IOCContainer
 
 	private function _findObject($clazz){
 		$result = null;
+		if($clazz instanceof ReflectionClass){
+			$clazz = $clazz->getName();
+		}
 		if(!$this->classloader->classExists($clazz)){
 			$this->classloader->loadClass($clazz);
 		}else{

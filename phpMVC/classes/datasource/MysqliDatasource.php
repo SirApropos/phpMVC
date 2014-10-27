@@ -62,7 +62,7 @@ class MysqliDataSource implements DataSource{
 	 */
 	public function fetchRow($query, array $params = null)
 	{
-		return $this->query($query, $params)->fetch_row();
+		return $this->_failOnNoResult($this->query($query, $params))->fetch_row();
 	}
 
 	/**
@@ -72,7 +72,19 @@ class MysqliDataSource implements DataSource{
 	 */
 	public function fetchAssoc($query, array $params = null)
 	{
-		return $this->query($query, $params)->fetch_assoc();
+		return $this->_failOnNoResult($this->query($query, $params))->fetch_assoc();
+	}
+
+	/**
+	 * @param mysqli_result $resource
+	 * @return mysqli_result
+	 * @throws NoResultException
+	 */
+	private function _failOnNoResult($resource){
+		if(!$resource->num_rows > 0){
+			throw new NoResultException();
+		}
+		return $resource;
 	}
 
 	public function insert($table, $obj)
@@ -113,7 +125,7 @@ class MysqliDataSource implements DataSource{
 
 	private function _executePreparedStatement($query, array $params){
 		$replacers = array();
-		$split = preg_split("/:([a-zA-Z0-9]+)/", $query, -1, PREG_SPLIT_DELIM_CAPTURE);
+		$split = preg_split("/:((?:[a-zA-Z0-9]+[a-zA-Z0-9_]+?)?[a-zA-Z0-9]+)/", $query, -1, PREG_SPLIT_DELIM_CAPTURE);
 		$types = "";
 		for($i=1;$i<sizeof($split);$i=$i+2){
 			$var =  $params[$split[$i]];
@@ -123,13 +135,20 @@ class MysqliDataSource implements DataSource{
 		}
 		$query = implode("",$split);
 		$ps = $this->_prepareQuery($query);
+		if(!$ps){
+			die($this->mysqli->error);
+		}
 		array_unshift($replacers, $types);
-		$args = array();
 		foreach($replacers as $key => $value){
 			$args[$key] = &$replacers[$key];
 		}
+
 		call_user_func_array(array($ps, "bind_param"), $args);
-		$ps->execute();
+		try {
+			$ps->execute();
+		}catch(Exception $ex){
+			throw new DBException("An error occured when executing prepared statement: ".$ex->getMessage());
+		}
 		return $ps->get_result();
 	}
 
@@ -155,7 +174,11 @@ class MysqliDataSource implements DataSource{
 	 * @return mysqli_stmt
 	 */
 	private function _prepareQuery($query){
-		return $this->mysqli->prepare($query);
+		$result = $this->mysqli->prepare($query);
+		if(!$result){
+			throw new DBException($this->mysqli->error);
+		}
+		return $result;
 	}
 
 	private function _logQuery($query, array $params = null){

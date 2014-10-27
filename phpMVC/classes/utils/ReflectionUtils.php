@@ -13,7 +13,11 @@ class ReflectionUtils
 	 * @return ReflectionProperty
 	 */
 	public static function getProperty($obj, $name){
-		$field = self::getReflectionClass($obj)->getProperty($name);
+		$clazz = self::getReflectionClass($obj);
+		if(!$clazz->hasProperty($name)){
+			throw new ModelBindException("No such property '".$name."' exists in class '".$clazz->getName()."'.");
+		}
+		$field = $clazz->getProperty($name);
 		$field->setAccessible(true);
 		return $field;
 	}
@@ -34,7 +38,7 @@ class ReflectionUtils
 			$result = $mappingClazz->newInstance();
 			$clazz = self::getReflectionClass($obj);
 			if($clazz->hasProperty("mapping")){
-				$result->bind(self::getPropertyValue($obj,"mapping"));
+				$result->bind($clazz, self::getPropertyValue($obj,"mapping"));
 			}
 			return $result;
 		}else{
@@ -51,9 +55,27 @@ class ReflectionUtils
 	 * @param $obj
 	 * @return ReflectionClass
 	 */
-	private static function getReflectionClass($obj){
+	public static function getReflectionClass($obj){
 		$clazz = is_object($obj) ? get_class($obj) : $obj;
 		$clazz = new ReflectionClass($clazz);
 		return $clazz;
+	}
+
+	/**
+	 * @param $obj
+	 * @param $name
+	 * @return bool
+	 */
+	public static function hasProperty($obj, $name){
+		return self::getReflectionClass($obj)->hasProperty($name);
+	}
+
+	public static function getRecursiveClasses($clazz){
+		$clazz = self::getReflectionClass($clazz);
+		$classes = [];
+		do{
+			array_unshift($classes, $clazz);
+		}while($clazz = $clazz->getParentClass());
+		return $classes;
 	}
 }

@@ -23,49 +23,46 @@ class MappingUtils {
 		 */
 		$fields = $mapping->getMappings();
 		$obj = IOCContainer::getInstance()->newInstance($clazz);
-		foreach($arr as $key => $value){
+		foreach($arr as $key => $value) {
+			$failOnUnknown = true;
 			$val = null;
-			if(isset($fields[$key])){
-				if($fields[$key]->getIsArray()){
+			if (isset($fields[$key])) {
+				if ($fields[$key]->getIsArray()) {
 					$val = [];
-					foreach($value as $vKey => $vValue){
+					foreach ($value as $vKey => $vValue) {
 						$val[$vKey] = self::bindObject($vValue, $fields[$key]->getType());
 					}
-				}else{
+				} else {
 					$val = self::bindObject($value, $fields[$key]->getType());
 				}
-			}else{
+			} else {
+				$failOnUnknown = false;
 				$val = $value;
 			}
-			ReflectionUtils::setProperty($obj, $key, $val);
+			if ($failOnUnknown || ReflectionUtils::hasProperty($obj, $key)) {
+				ReflectionUtils::setProperty($obj, $key, $val);
+			}
 		}
 		$timer->stop();
 		return $obj;
 	}
 
 	public static function getObjectVars($obj, array &$hasMapped = array()){
+		$result = $obj;
 		if(is_object($obj)){
+			$result = [];
 			$clazz = new ReflectionClass(get_class($obj));
-			if(!in_array($obj, $hasMapped)){
-				$hasMapped[] = $obj;
-				$result = [];
-				foreach($clazz->getProperties() as $property){
+			foreach($clazz->getProperties() as $property){
+				if(!in_array($obj, $hasMapped)){
 					$property->setAccessible(true);
 					$value = self::getObjectVars($property->getValue($obj), $hasMapped);
-					$result[$property->getName()] = $value;
+					$hasMapped[] = $obj;
+				}else{
+					$value = "[".$clazz->getName()." Recursion]";
 				}
-			}else{
-				$result = "[".$clazz->getName()." Recursion]";
+				$result[$property->getName()] = $value;
 			}
-		}else if(is_array($obj)){
-			$result = [];
-			foreach($obj as $key => $value){
-				$result[$key] = self::getObjectVars($value, $hasMapped);
-			}
-		}else{
-			$result = $obj;
 		}
 		return $result;
 	}
 }
-?>

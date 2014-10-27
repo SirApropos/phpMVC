@@ -7,10 +7,11 @@
 
 interface Mapping {
 	/**
+	 * @param $clazz
 	 * @param $obj
 	 * @return mixed
 	 */
-	function bind($obj);
+	function bind($clazz, $obj);
 
 	/**
 	 * @return array

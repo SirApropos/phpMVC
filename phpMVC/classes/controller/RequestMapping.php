@@ -20,21 +20,6 @@ class RequestMapping {
 	private $path;
 
 	/**
-	 * @var string[]
-	 */
-	private $allowed_roles;
-
-	/**
-	 * @var string[]
-	 */
-	private $denied_roles;
-
-	/**
-	 * @var string[]
-	 */
-	private $required_attributes;
-
-	/**
 	 * @var SecurityMapping
 	 */
 	private $security;
@@ -145,22 +130,4 @@ class RequestMapping {
 	{
 		return $this->security;
 	}
-
-	/**
-	 * @param $required_attributes
-	 */
-	public function setRequiredAttributes($required_attributes)
-	{
-		$this->required_attributes = $required_attributes;
-	}
-
-	/**
-	 * @return string[]
-	 */
-	public function getRequiredAttributes()
-	{
-		return $this->required_attributes;
-	}
-
-
 }

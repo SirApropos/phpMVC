@@ -38,7 +38,7 @@ class HttpRequest
 	private function buildPath($path){
 		$path = str_replace("`","",$path);
 		$path = preg_replace("`^(.+?)\?.*`","$1",$path);
-		$path = preg_replace("`^".rtrim($this->config->base_path, "/")."(.*)`","$1",$path);
+		$path = preg_replace("`^".rtrim($this->config->getBasePath(), "/")."(.*)`","$1",$path);
 		return $path;
 	}
 

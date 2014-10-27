@@ -11,6 +11,8 @@ class ControllerMapping implements Mapping {
 	 */
 	private $mappings = [];
 
+	private $exceptionHandlers = [];
+
 	/**
 	 * @var IOCContainer $container
 	 */
@@ -40,20 +42,67 @@ class ControllerMapping implements Mapping {
 	 * @param $obj
 	 * @return mixed
 	 */
-	function bind($obj)
+	public function bind($clazz, $obj)
 	{
-		if(isset($obj['methods'])){
-			foreach($obj['methods'] as $name => $mapping){
-				$requestMapping = MappingUtils::bindObject($mapping, "RequestMapping");
+		$this->_bindRequestMappings($obj);
+		$this->_bindExceptionHandlers($clazz, $obj);
+	}
+
+	/**
+	 * @param ReflectionClass $clazz
+	 * @param array $mapping
+	 */
+	private function _bindExceptionHandlers(ReflectionClass $clazz, array $mapping) {
+		if($parentClass = $clazz->getParentClass()){
+			/**
+			 * @var $parent ControllerMapping
+			 */
+			$parent = ReflectionUtils::getMapping($parentClass, "ControllerMapping");
+			$this->exceptionHandlers = array_merge($this->exceptionHandlers, $parent->getExceptionHandlers());
+		}
+		if(isset($mapping['exceptionHandlers'])){
+			$handlers = [];
+			foreach($mapping['exceptionHandlers'] as $handlerMethod => $exceptions){
+				if(!is_array($exceptions)){
+					$exceptions = [$exceptions];
+				}
+				$handlers[] = new ControllerExceptionHandler($handlerMethod, $exceptions);
+			}
+			$this->exceptionHandlers = array_merge($this->exceptionHandlers, $handlers);
+		}
+	}
+
+	/**
+	 * @param $mapping
+	 * @throws ModelBindException
+	 */
+	private function _bindRequestMappings(array $mapping) {
+		if (isset($mapping['methods'])) {
+			foreach ($mapping['methods'] as $name => $method) {
+				$requestMapping = MappingUtils::bindObject($method, "RequestMapping");
 				/**
 				 * @var RequestMapping $requestMapping
 				 */
-				if(is_null($requestMapping->getMethod())){
+				if (is_null($requestMapping->getMethod())) {
 					$requestMapping->setMethod($this->container->newInstance("RequestMethod"));
 				}
 				$requestMapping->getMethod()->setName($name);
 				$this->addMapping($requestMapping);
 			}
 		}
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getExceptionHandlers() {
+		return $this->exceptionHandlers;
+	}
+
+	/**
+	 * @param array $exceptionHandlers
+	 */
+	public function setExceptionHandlers($exceptionHandlers) {
+		$this->exceptionHandlers = $exceptionHandlers;
 	}
 }
