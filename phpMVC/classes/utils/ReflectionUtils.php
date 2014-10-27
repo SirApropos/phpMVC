@@ -55,10 +55,13 @@ class ReflectionUtils
 	 * @param $obj
 	 * @return ReflectionClass
 	 */
-	public static function getReflectionClass($obj){
-		$clazz = is_object($obj) ? get_class($obj) : $obj;
-		$clazz = new ReflectionClass($clazz);
-		return $clazz;
+	public static function getReflectionClass($obj) {
+        $result = $obj;
+        if (!$result instanceof ReflectionClass) {
+            $result = is_object($obj) ? get_class($obj) : $obj;
+            $result = new ReflectionClass($result);
+        }
+   		return $result;
 	}
 
 	/**

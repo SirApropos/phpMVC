@@ -42,7 +42,7 @@ class ControllerMapping implements Mapping {
 	 * @param $obj
 	 * @return mixed
 	 */
-	public function bind($clazz, $obj)
+	public function bind(ReflectionClass $clazz, $obj)
 	{
 		$this->_bindRequestMappings($obj);
 		$this->_bindExceptionHandlers($clazz, $obj);

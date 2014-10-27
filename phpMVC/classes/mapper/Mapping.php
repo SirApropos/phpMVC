@@ -11,7 +11,7 @@ interface Mapping {
 	 * @param $obj
 	 * @return mixed
 	 */
-	function bind($clazz, $obj);
+	function bind(ReflectionClass $clazz, $obj);
 
 	/**
 	 * @return array

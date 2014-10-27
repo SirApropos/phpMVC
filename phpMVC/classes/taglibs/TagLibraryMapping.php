@@ -11,7 +11,7 @@ class TagLibraryMapping implements Mapping{
 	 * @param $obj
 	 * @return mixed
 	 */
-	function bind($obj)
+	function bind(ReflectionClass $class, $obj)
 	{
 		if(isset($obj["methods"])){
 			$this->mappings = $obj["methods"];
