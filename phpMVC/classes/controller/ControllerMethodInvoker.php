@@ -63,16 +63,13 @@ class ControllerMethodInvoker{
 	}
 
 	/**
-	 * @param ReflectionClass $class
+	 * @param ControllerMapping $mapping
+	 * @param ReflectionClass $exceptionClass
 	 * @return null|ControllerExceptionHandler
-	 * @throws IllegalArgumentException
+	 * @throws MVCException
 	 */
 	private function _findExceptionHandler(ControllerMapping $mapping, ReflectionClass $exceptionClass) {
 		$result = [];
-		/**
-		 * @var $exceptionClasses ReflectionClass[]
-		 */
-		$exceptionClasses = array_reverse(ReflectionUtils::getRecursiveClasses($exceptionClass));
 		$handlers = $mapping->getExceptionHandlers();
 		$handlers = $this->_findHandlers($handlers, $exceptionClass);
 		if(sizeof($handlers > 1)){
@@ -133,7 +130,6 @@ class ControllerMethodInvoker{
 		if(is_null($authority)){
 			$authority = $this->container->resolve("GrantedAuthority");
 		}
-		$result = false;
 		$security = $method->getMapping()->getSecurity();
 		if(!is_null($security)){
 			$allowed_roles = $security->getAllowedRoles();
@@ -163,7 +159,7 @@ class ControllerMethodInvoker{
 	 * @throws InvocationException
 	 * @throws ModelBindException
 	 */
-	private function _invokeInternal(ControllerMethod $cmethod, $timer) {
+	private function _invokeInternal(ControllerMethod $cmethod, Timer &$timer) {
 		if (!$this->canInvoke($cmethod)) {
 			throw new InvalidGrantException("Access Denied");
 		}
@@ -216,17 +212,14 @@ class ControllerMethodInvoker{
 				return $this->bindRequestModel($param, $request, $clazz);
 			} else {
 				$value = $this->container->resolve($clazz->getName());
-				return $value;
 			}
 		} else {
 			$name = $param->getName();
 			if (isset($urlvars[$name])) {
 				$value = $urlvars[$name];
-				return $value;
 			} else {
 				if ($param->isDefaultValueAvailable()) {
 					$value = $param->getDefaultValue();
-					return $value;
 				} else {
 					throw new ModelBindException("");
 				}
@@ -262,9 +255,11 @@ class ControllerMethodInvoker{
 	 * @param ReflectionParameter $param
 	 * @param $request
 	 * @param $clazz
+	 * @return mixed|null
 	 * @throws ModelBindException
 	 */
-	protected function bindRequestModel(ReflectionParameter $param, $request, $clazz) {
+	protected function bindRequestModel(ReflectionParameter $param, HttpRequest $request, $clazz) {
+		$value = null;
 		if ($request->getBody()) {
 			$contentType = $request->getHeaders()->getContentType();
 			foreach ($this->mappers as $mapper) {
@@ -276,15 +271,14 @@ class ControllerMethodInvoker{
 			if (is_null($value)) {
 				throw new ModelBindException("No object mapper available to read type: " . $contentType);
 			}
-			return $value;
 		} else {
 			if ($param->isOptional()) {
 				$value = $param->getDefaultValue();
-				return $value;
 			} else {
 				throw new ModelBindException("No request body provided.");
 			}
 		}
+		return $value;
 	}
 
 }
