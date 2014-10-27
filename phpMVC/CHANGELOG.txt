@@ -1,4 +1,4 @@
-v0.0.3 (Unreleased)
+v0.0.3 (10/26/2014)
 -Adding Filters
 -Adding SimpleAuthenticationFilter
 -Adding ability to add security field to request mapping.
@@ -10,6 +10,8 @@ v0.0.3 (Unreleased)
 -Adding SimpleCachingClassLoader (much more optimized than previous autoloading)
 -Added Timer class, creating timers throughout the code for debugging.
 -Adding Exception handling, added exception handler mapping to controllers.
+-Adding Redirect view.
+-Fixing bug with adding headers to the response.
 
 v0.0.2 (07/18/2013)
 -Automatic model binding (plain/text, application/x-www-form-urlencoded, application/json, text/html, text/xml)
