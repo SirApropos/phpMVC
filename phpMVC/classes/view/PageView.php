@@ -6,6 +6,8 @@
  */
 class PageView implements View
 {
+	private static $extensions = [".psp", ".php", ".xhtml", ".html"];
+
 	/**
 	 * @var string
 	 */
@@ -31,15 +33,24 @@ class PageView implements View
 	 */
 	public function render()
 	{
-		$path = MVCConfig::getInstance()->view_dir.$this->page;
-		if(!preg_match("`^.+\\.psp$`", $path)){
-			$path.=".psp";
+		$path = MVCConfig::getInstance()->getViewDir().$this->page;
+		if(!file_exists($path)){
+			foreach($this->getDefaultExtensions() as $extension){
+				if(file_exists($path.$extension)){
+					$path .= $extension;
+					break;
+				}
+			}
 		}
 		if(!file_exists($path)){
 			throw new ViewResolverException("Could not locate page: ".$path);
 		}
-		$processor = new TagLibraryProcessor(file_get_contents($path), $this->vars, $path);
-		$processor->process();
+		if(!preg_match("`^.+\\.psp$`", $path)) {
+			$processor = new TagLibraryProcessor(file_get_contents($path), $this->vars, $path);
+			$processor->process();
+		}else{
+			echo file_get_contents($path);
+		}
 	}
 
 	/**
@@ -50,4 +61,7 @@ class PageView implements View
 	{
 	}
 
+	protected function getDefaultExtensions(){
+
+	}
 }

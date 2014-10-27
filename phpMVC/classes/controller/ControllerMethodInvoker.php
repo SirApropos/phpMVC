@@ -76,8 +76,7 @@ class ControllerMethodInvoker{
 		$handlers = $mapping->getExceptionHandlers();
 		$handlers = $this->_findHandlers($handlers, $exceptionClass);
 		if(sizeof($handlers > 1)){
-			while(sizeof($result) == 0){
-				$exceptionClass = $exceptionClass->getParentClass();
+			while(sizeof($result) == 0 && $exceptionClass = $exceptionClass->getParentClass()){
 				foreach($handlers as $handler){
 					if(!$handler->canHandle($exceptionClass)){
 						$result[] = $handler;
@@ -173,7 +172,7 @@ class ControllerMethodInvoker{
 		$params = $method->getParameters();
 		$request = $this->container->resolve("HttpRequest");
 		$pathParts = preg_split("`/`", $request->getPath());
-		$mappingParts = preg_split("`/`", $cmethod->getMapping()->getPath());
+		$mappingParts = preg_split("`/`", $cmethod->getPath());
 		$urlvars = [];
 		foreach ($mappingParts as $key => $part) {
 			//Should always be the case, but let's make sure.

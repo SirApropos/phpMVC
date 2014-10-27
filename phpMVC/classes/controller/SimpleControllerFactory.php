@@ -114,6 +114,7 @@ class SimpleControllerFactory implements ControllerFactory
 					$method = new ControllerMethod();
 					$method->setController($this->container->newInstance($clazz));
 					$method->setMapping($mapping);
+					$method->setPath($path);
 				}
 			}
 		}

@@ -21,6 +21,8 @@ class ControllerMethod
 	 */
 	private $mapping;
 
+	private $path;
+
 	/**
 	 * @param \Controller $controller
 	 */
@@ -65,4 +67,20 @@ class ControllerMethod
 			throw new InvocationException("No such method: ".$methodName." in controller ".$this->clazz->getName());
 		}
 	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getPath() {
+		return $this->path;
+	}
+
+	/**
+	 * @param mixed $path
+	 */
+	public function setPath($path) {
+		$this->path = $path;
+	}
+
+
 }

@@ -25,10 +25,7 @@ class BasicView implements View
 	 * @param HttpResponse $response
 	 * @return mixed
 	 */
-	public function prepareResponse(HttpResponse $response)
-	{
-		// TODO: Implement prepareResponse() method.
-	}
+	public function prepareResponse(HttpResponse $response) {}
 
 
 }

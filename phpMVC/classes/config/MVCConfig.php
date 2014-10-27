@@ -52,7 +52,7 @@ class MVCConfig {
 	 */
 	public function createClassLoader(){
 		include_once($this->getClassesDir()."utils/SimpleCachingClassLoader.php");
-		return new SimpleCachingClassLoader(null);
+		return new SimpleCachingClassLoader($this->getCacheDir());
 	}
 
 	public function getClassesDir()

@@ -20,7 +20,7 @@ class TagLibraryManager {
 	function __construct()
 	{
 		if(!self::$loaded){
-			$this->loadTagLibs(MVCConfig::getInstance()->taglib_dir);
+			$this->loadTagLibs(MVCConfig::getInstance()->getTaglibDir());
 			self::$loaded = true;
 		}
 	}
