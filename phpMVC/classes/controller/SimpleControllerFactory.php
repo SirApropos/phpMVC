@@ -125,14 +125,13 @@ class SimpleControllerFactory implements ControllerFactory
 	 * @return bool
 	 */
 	private function  _isMethodAllowed($method){
-		$result = false;
+		$result = true;
 		$allowed_methods = $method->getMapping()->getAllowedMethods();
 		if (is_array($allowed_methods)) {
 			if (!in_array($this->request->getMethod(), $allowed_methods)) {
-				$result = true;
+				$result = false;
 			}
 		}
-
 		return $result;
 	}
 }
