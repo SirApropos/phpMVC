@@ -8,6 +8,5 @@ class HttpException extends MVCException
 {
 	function __construct($message, $responseCode=500) {
 		parent::__construct($message, $responseCode);
-		$this->responseCode = $responseCode;
 	}
 }

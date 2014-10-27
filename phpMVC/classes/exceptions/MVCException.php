@@ -6,5 +6,24 @@
  */
 class MVCException extends Exception
 {
+	private $responseCode;
 
+	function __construct($message="", $responseCode=500) {
+		parent::__construct($message);
+		$this->responseCode = $responseCode;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getResponseCode() {
+		return $this->responseCode;
+	}
+
+	/**
+	 * @param int $responseCode
+	 */
+	public function setResponseCode($responseCode) {
+		$this->responseCode = $responseCode;
+	}
 }
