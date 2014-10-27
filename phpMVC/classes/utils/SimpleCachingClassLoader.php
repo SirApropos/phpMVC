@@ -42,8 +42,13 @@ class SimpleCachingClassLoader extends ClassLoader{
 		$result = false;
 		foreach($this->cache as $subcache){
 			if(isset($subcache[$name])){
+				$file = $subcache[$name];
 				$result = true;
-				include_once($subcache[$name]);
+				if(file_exists($file)){
+					include_once($file);
+				}else{
+					$this->_buildCache();
+				}
 			}
 		}
 		return $result;
