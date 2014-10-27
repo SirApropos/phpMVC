@@ -15,11 +15,7 @@ class SimpleCachingClassLoader extends ClassLoader{
 		parent::__construct();
 
 		$this->cachefile = $cachefile;
-		if(is_null($cachefile) || !file_exists($cachefile)){
-			$this->_buildCache();
-		}else{
-			$this->_loadCache();
-		}
+		$this->_loadCache();
 	}
 
 	function loadClass($name)
@@ -78,7 +74,9 @@ class SimpleCachingClassLoader extends ClassLoader{
 	}
 
 	private function _loadCache(){
-		$this->cache = unserialize(file_get_contents($this->cachefile));
+		if(is_null($this->cachefile) || !file_exists($this->cachefile) || !$this->cache = unserialize(file_get_contents($this->cachefile))){
+			$this->_buildCache();
+		}
 	}
 
 	/**
