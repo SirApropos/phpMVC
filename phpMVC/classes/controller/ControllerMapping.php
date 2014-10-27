@@ -53,13 +53,6 @@ class ControllerMapping implements Mapping {
 	 * @param array $mapping
 	 */
 	private function _bindExceptionHandlers(ReflectionClass $clazz, array $mapping) {
-		if($parentClass = $clazz->getParentClass()){
-			/**
-			 * @var $parent ControllerMapping
-			 */
-			$parent = ReflectionUtils::getMapping($parentClass, "ControllerMapping");
-			$this->exceptionHandlers = array_merge($this->exceptionHandlers, $parent->getExceptionHandlers());
-		}
 		if(isset($mapping['exceptionHandlers'])){
 			$handlers = [];
 			foreach($mapping['exceptionHandlers'] as $handlerMethod => $exceptions){
@@ -70,6 +63,14 @@ class ControllerMapping implements Mapping {
 			}
 			$this->exceptionHandlers = array_merge($this->exceptionHandlers, $handlers);
 		}
+        if($parentClass = $clazz->getParentClass()){
+            /**
+             * @var $parent ControllerMapping
+             */
+            $parent = ReflectionUtils::getMapping($parentClass, "ControllerMapping");
+            $this->exceptionHandlers = array_merge($this->exceptionHandlers, $parent->getExceptionHandlers());
+        }
+
 	}
 
 	/**

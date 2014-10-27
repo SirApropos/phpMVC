@@ -111,7 +111,7 @@ class ControllerMethodInvoker{
 	}
 
 	protected function handleException(Controller $controller, Exception $ex){
-		$exceptionClasses = ReflectionUtils::getRecursiveClasses($ex);
+		$exceptionClasses = array_reverse(ReflectionUtils::getRecursiveClasses($ex));
 		$handler = null;
 		/**
 		 * @var $mapping ControllerMapping
@@ -135,19 +135,47 @@ class ControllerMethodInvoker{
 	 * @return null|ControllerExceptionHandler
 	 * @throws IllegalArgumentException
 	 */
-	private function _findExceptionHandler(ControllerMapping $mapping, ReflectionClass $exceptionClass){
-		$result = null;
+	private function _findExceptionHandler(ControllerMapping $mapping, ReflectionClass $exceptionClass) {
+		$result = [];
 		/**
-		 * @var $handler ControllerExceptionHandler
+		 * @var $exceptionClasses ReflectionClass[]
 		 */
-		foreach($mapping->getExceptionHandlers() as $handler){
-			if($handler->canHandle($exceptionClass)){
-				$result = $handler;
-				break;
+		$exceptionClasses = array_reverse(ReflectionUtils::getRecursiveClasses($exceptionClass));
+		$handlers = $mapping->getExceptionHandlers();
+		$handlers = $this->_findHandlers($handlers, $exceptionClass);
+		if(sizeof($handlers > 1)){
+			while(sizeof($result) == 0){
+				$exceptionClass = $exceptionClass->getParentClass();
+				foreach($handlers as $handler){
+					if(!$handler->canHandle($exceptionClass)){
+						$result[] = $handler;
+					}
+				}
+			}
+			if(sizeof($result) > 1){
+				throw new MVCException("Ambiguous mapping found for exception: ".$exceptionClass->getName());
 			}
 		}
-		return $result;
+		return sizeof($result) > 0 ? $result[0] : null;
 	}
+
+    /**
+     * @param array $handlers
+     * @param ReflectionClass $exceptionClass
+     * @return ControllerExceptionHandler[]
+     */
+    private function _findHandlers(array &$handlers,ReflectionClass $exceptionClass ){
+        $result = [];
+        /**
+         * @var $handler ControllerExceptionHandler
+         */
+        foreach($handlers as $handler){
+            if($handler->canHandle($exceptionClass)){
+                $result[] = $handler;
+            }
+        }
+        return $result;
+    }
 
 	private function _containsRole(GrantedAuthority $authority, $roles=null){
 		$result = false;
