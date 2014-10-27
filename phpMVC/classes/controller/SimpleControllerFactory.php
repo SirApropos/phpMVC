@@ -79,11 +79,7 @@ class SimpleControllerFactory implements ControllerFactory
 			$method = $this->_findControllerMethod($mappings, $clazz);
 		}
 		$timer->stop();
-		if(!is_null($method)){
-			if(!$this->_isMethodAllowed($method)) {
-				throw new HttpMethodNotAllowedException();
-			}
-		}
+
 		return $method;
 	}
 
@@ -95,6 +91,7 @@ class SimpleControllerFactory implements ControllerFactory
 	 */
 	private function _findControllerMethod($mappings, $clazz) {
 		$method = null;
+		$methodNotAllowed = false;
 		foreach ($mappings as $mapping) {
 			$paths = $mapping->getPath();
 			if (!is_array($paths)) {
@@ -111,12 +108,25 @@ class SimpleControllerFactory implements ControllerFactory
 				$regex = str_replace("\\*", "[^/]*", $regex);
 				$regex = "`^" . $regex . "$`";
 				if (preg_match($regex, $this->request->getPath())) {
-					$method = new ControllerMethod();
-					$method->setController($this->container->newInstance($clazz));
-					$method->setMapping($mapping);
-					$method->setPath($path);
+					$temp = new ControllerMethod();
+					$temp->setController($this->container->newInstance($clazz));
+					$temp->setMapping($mapping);
+					$temp->setPath($path);
+					if ($this->_isMethodAllowed($temp)) {
+						$method = $temp;
+						$methodNotAllowed = false; //Reset this in case it was previously set.
+						break;
+					} else {
+						$methodNotAllowed = true;
+					}
 				}
 			}
+			if(!is_null($method)){
+				break;
+			}
+		}
+		if($methodNotAllowed){
+			throw new HttpMethodNotAllowedException();
 		}
 		return $method;
 	}

@@ -171,57 +171,13 @@ class ControllerMethodInvoker{
 		$args = [];
 		$params = $method->getParameters();
 		$request = $this->container->resolve("HttpRequest");
-		$pathParts = preg_split("`/`", $request->getPath());
-		$mappingParts = preg_split("`/`", $cmethod->getPath());
-		$urlvars = [];
-		foreach ($mappingParts as $key => $part) {
-			//Should always be the case, but let's make sure.
-			if (isset($pathParts[$key])) {
-				$matches = [];
-				if (preg_match('`\{(.+)\}`', $part, $matches)) {
-					$replacer = str_replace($matches[0], "", $part);
-					$urlvars[$matches[1]] = preg_replace("`^" . $replacer . "`", "", $pathParts[$key]);
-				}
-			}
-		}
+		$vars = $this->getRequestVars($cmethod, $request);
 		foreach ($params as $param) {
-			$clazz = $param->getClass();
-			$value = null;
-			if ($clazz) {
-				if ($clazz->implementsInterface("Model") && !$this->container->contains($clazz->getName())) {
-					if ($request->getBody()) {
-						$contentType = $request->getHeaders()->getContentType();
-						foreach ($this->mappers as $mapper) {
-							if ($mapper->canRead($contentType)) {
-								$value = $mapper->read($request->getBody(), $clazz);
-								break;
-							}
-						}
-						if (is_null($value)) {
-							throw new ModelBindException("No object mapper available to read type: " . $contentType);
-						}
-					} else {
-						if ($param->isOptional()) {
-							$value = $param->getDefaultValue();
-						} else {
-							throw new ModelBindException("No request body provided.");
-						}
-					}
-				} else {
-					$value = $this->container->resolve($clazz->getName());
-				}
-			} else {
-				$name = $param->getName();
-				if (isset($urlvars[$name])) {
-					$value = $urlvars[$name];
-				} else {
-					if ($param->isDefaultValueAvailable()) {
-						$value = $param->getDefaultValue();
-					} else {
-						throw new ModelBindException("Could not satisfy dependency: " . $method->getDeclaringClass()->getName() . "::" .
-							$method->getName() . '::$' . $name);
-					}
-				}
+			try {
+				$value = $this->satisfy($param, $request, $vars);
+			}catch(ModelBindException $ex){
+				throw new ModelBindException("Could not satisfy dependency: " . $method->getDeclaringClass()->getName() . "::" .
+					$method->getName() . '::$' . $param->getName());
 			}
 			array_push($args, $value);
 		}
@@ -243,6 +199,80 @@ class ControllerMethodInvoker{
 			$response->setView(new BasicView($value));
 		}
 		return $response;
+	}
+
+	/**
+	 * @param $param
+	 * @param $request
+	 * @param $urlvars
+	 * @param $method
+	 * @throws ModelBindException
+	 */
+	protected function satisfy(ReflectionParameter $param, $request, $urlvars) {
+		$value = null;
+		$clazz = $param->getClass();
+		if ($clazz) {
+			if ($clazz->implementsInterface("Model") && !$this->container->contains($clazz->getName())) {
+				if ($request->getBody()) {
+					$contentType = $request->getHeaders()->getContentType();
+					foreach ($this->mappers as $mapper) {
+						if ($mapper->canRead($contentType)) {
+							$value = $mapper->read($request->getBody(), $clazz);
+							break;
+						}
+					}
+					if (is_null($value)) {
+						throw new ModelBindException("No object mapper available to read type: " . $contentType);
+					}
+					return $value;
+				} else {
+					if ($param->isOptional()) {
+						$value = $param->getDefaultValue();
+						return $value;
+					} else {
+						throw new ModelBindException("No request body provided.");
+					}
+				}
+			} else {
+				$value = $this->container->resolve($clazz->getName());
+				return $value;
+			}
+		} else {
+			$name = $param->getName();
+			if (isset($urlvars[$name])) {
+				$value = $urlvars[$name];
+				return $value;
+			} else {
+				if ($param->isDefaultValueAvailable()) {
+					$value = $param->getDefaultValue();
+					return $value;
+				} else {
+					throw new ModelBindException("");
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param ControllerMethod $cmethod
+	 * @param $request
+	 * @return array
+	 */
+	private function getRequestVars(ControllerMethod $cmethod, $request) {
+		$pathParts = preg_split("`/`", $request->getPath());
+		$mappingParts = preg_split("`/`", $cmethod->getPath());
+		$urlvars = [];
+		foreach ($mappingParts as $key => $part) {
+			//Should always be the case, but let's make sure.
+			if (isset($pathParts[$key])) {
+				$matches = [];
+				if (preg_match('`\{(.+)\}`', $part, $matches)) {
+					$replacer = str_replace($matches[0], "", $part);
+					$urlvars[$matches[1]] = preg_replace("`^" . $replacer . "`", "", $pathParts[$key]);
+				}
+			}
+		}
+		return array_merge($urlvars);
 	}
 
 }
