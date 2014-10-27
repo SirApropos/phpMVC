@@ -102,11 +102,12 @@ class SimpleControllerFactory implements ControllerFactory
 				 * @var RequestMapping $mapping
 				 */
 				$regex = str_replace("`", "", $path);
-				$regex = preg_replace("`\{[^\}]+\}`", "*", $regex);
+				$regex = preg_replace("`/?\{[^\}]+\}`", "*", $regex);
 				$regex = preg_replace("`([\[\]\{\}\.\(\)\?\*])`", "\\\\$1", $regex);
 				$regex = str_replace("\\*\\*", ".*", $regex);
-				$regex = str_replace("\\*", "[^/]*", $regex);
-				$regex = "`^" . $regex . "$`";
+				$regex = str_replace("\\*", "/?([^/]*)", $regex);
+				$regex = str_replace("^(.*)/$", "$1", $regex);
+				$regex = '`^' . $regex . '$`';
 				if (preg_match($regex, $this->request->getPath())) {
 					$temp = new ControllerMethod();
 					$temp->setController($this->container->newInstance($clazz));

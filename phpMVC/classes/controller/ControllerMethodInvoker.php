@@ -202,10 +202,10 @@ class ControllerMethodInvoker{
 	}
 
 	/**
-	 * @param $param
+	 * @param ReflectionParameter $param
 	 * @param $request
 	 * @param $urlvars
-	 * @param $method
+	 * @return mixed|null|object
 	 * @throws ModelBindException
 	 */
 	protected function satisfy(ReflectionParameter $param, $request, $urlvars) {
@@ -251,6 +251,7 @@ class ControllerMethodInvoker{
 				}
 			}
 		}
+		return $value;
 	}
 
 	/**
@@ -264,7 +265,8 @@ class ControllerMethodInvoker{
 		$urlvars = [];
 		foreach ($mappingParts as $key => $part) {
 			//Should always be the case, but let's make sure.
-			if (isset($pathParts[$key])) {
+			//If they've left on a trailing slash, the length will be zero, so check for that.
+			if (isset($pathParts[$key]) && strlen($pathParts[$key]) > 0) {
 				$matches = [];
 				if (preg_match('`\{(.+)\}`', $part, $matches)) {
 					$replacer = str_replace($matches[0], "", $part);
