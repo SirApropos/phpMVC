@@ -106,7 +106,7 @@ class SimpleControllerFactory implements ControllerFactory
 				$regex = preg_replace("`([\[\]\{\}\.\(\)\?\*])`", "\\\\$1", $regex);
 				$regex = str_replace("\\*\\*", ".*", $regex);
 				$regex = str_replace("\\*", "/?([^/]*)", $regex);
-				$regex = str_replace("^(.*)/$", "$1", $regex);
+				$regex = preg_replace("`^(.*/)$`", "$1?", $regex);
 				$regex = '`^' . $regex . '$`';
 				if (preg_match($regex, $this->request->getPath())) {
 					$temp = new ControllerMethod();
