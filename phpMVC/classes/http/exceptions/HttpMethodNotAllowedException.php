@@ -8,6 +8,6 @@ class HttpMethodNotAllowedException extends HttpException
 {
 	function __construct()
 	{
-		$this->setResponseCode(405);
-		$this->message = "Method Not Allowed";
-	}}
+		parent::__construct("Method Not Allowed", 405);
+	}
+}

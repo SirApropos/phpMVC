@@ -7,7 +7,6 @@
 class HttpNotFoundException extends HttpException
 {
 	public function HttpNotFoundException(){
-		$this->setResponseCode(404);
-		$this->message = "404 - Not Found";
+		parent::__construct("Not Found", 404);
 	}
 }
