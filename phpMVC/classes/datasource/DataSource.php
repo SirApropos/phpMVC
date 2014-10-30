@@ -6,10 +6,34 @@
  */
 
 interface DataSource {
+	/**
+	 * @param $clazz
+	 * @param $query
+	 * @param array $params
+	 * @return object
+	 */
 	public function queryForObject($clazz, $query, array $params = null);
+
+	/**
+	 * @param $clazz
+	 * @param $query
+	 * @param array $params
+	 * @return object[]
+	 */
+	public function queryForList($clazz, $query, array $params = null);
 	public function query($query, array $params = null);
-	public function fetchRow($query, array $params = null);
-	public function fetchAssoc($query, array $params = null);
+	/**
+	 * @param $query
+	 * @param array $params
+	 * @return array
+	 */
+	public function fetchSingleRow($query, array $params = null);
+	/**
+	 * @param $query
+	 * @param array $params
+	 * @return array
+	 */
+	public function fetchSingleAssoc($query, array $params = null);
 	public function insert($table, $obj);
 	public function getLog();
 	public function selectDb($db);

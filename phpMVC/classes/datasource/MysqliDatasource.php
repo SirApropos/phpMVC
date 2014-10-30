@@ -42,7 +42,16 @@ class MysqliDataSource implements DataSource{
 	 */
 	public function queryForObject($clazz, $query, array $params = null)
 	{
-		return MappingUtils::bindObject($this->fetchAssoc($query, $params), $clazz);
+		return MappingUtils::bindObject($this->fetchSingleAssoc($query, $params), $clazz);
+	}
+
+	public function queryForList($clazz, $query, array $params = null) {
+		$result = [];
+		$mysqli_result = $this->query($query, $params);
+		while($row = $mysqli_result->fetch_assoc()){
+			$result[] = MappingUtils::bindObject($row, $clazz);
+		}
+		return $result;
 	}
 
 	/**
@@ -60,7 +69,7 @@ class MysqliDataSource implements DataSource{
 	 * @param array $params
 	 * @return array
 	 */
-	public function fetchRow($query, array $params = null)
+	public function fetchSingleRow($query, array $params = null)
 	{
 		return $this->_failOnNoResult($this->query($query, $params))->fetch_row();
 	}
@@ -70,7 +79,7 @@ class MysqliDataSource implements DataSource{
 	 * @param array $params
 	 * @return array
 	 */
-	public function fetchAssoc($query, array $params = null)
+	public function fetchSingleAssoc($query, array $params = null)
 	{
 		return $this->_failOnNoResult($this->query($query, $params))->fetch_assoc();
 	}
@@ -87,9 +96,14 @@ class MysqliDataSource implements DataSource{
 		return $resource;
 	}
 
+	/**
+	 * @param $table
+	 * @param $obj
+	 * @return mysqli_result
+	 */
 	public function insert($table, $obj)
 	{
-		$query = "INSERT INTO `".$table."` (`";
+		$query = "INSERT INTO `".$table.'` (`';
 		$arr = is_array($obj) ? $obj : MappingUtils::getObjectVars($obj);
 		$query .= implode("`,`",array_keys($arr));
 		$query .= "`) VALUES(:".implode(",:",array_keys($arr));
@@ -127,8 +141,12 @@ class MysqliDataSource implements DataSource{
 		$replacers = array();
 		$split = preg_split("/:((?:[a-zA-Z0-9]+[a-zA-Z0-9_]+?)?[a-zA-Z0-9]+)/", $query, -1, PREG_SPLIT_DELIM_CAPTURE);
 		$types = "";
-		for($i=1;$i<sizeof($split);$i=$i+2){
-			$var =  $params[$split[$i]];
+		for($i=1;$i<sizeof($split);$i=$i+2) {
+			$key = $split[$i];
+			if (!isset($params[$key])) {
+				continue;
+			}
+			$var = $params[$key];
 			$types .= $this->_getType($var);
 			array_push($replacers, $var);
 			$split[$i] = "?";
@@ -172,11 +190,12 @@ class MysqliDataSource implements DataSource{
 	/**
 	 * @param $query
 	 * @return mysqli_stmt
+	 * @throws DBException
 	 */
 	private function _prepareQuery($query){
 		$result = $this->mysqli->prepare($query);
 		if(!$result){
-			throw new DBException($this->mysqli->error);
+			throw new DBException("An error occurred with the query: ".$query."\nError:".$this->mysqli->error);
 		}
 		return $result;
 	}
@@ -194,8 +213,7 @@ class MysqliDataSource implements DataSource{
 		return $this->queries;
 	}
 
-	public function selectDb($db)
-	{
+	public function selectDb($db){
 	}
 
 
