@@ -9,7 +9,7 @@ class GrantedAuthority {
 	/**
 	 * @var array
 	 */
-	private $roles = array();
+	private $roles = [];
 
 	public function GrantedAuthority(){
 	}
@@ -31,6 +31,10 @@ class GrantedAuthority {
 	}
 	public function addRole($role){
 		array_push($this->roles, $role);
+	}
+
+	public function hasRole($role){
+		return in_array($role, $this->getRoles());
 	}
 
 }
