@@ -6,5 +6,7 @@
  */
 
 class IllegalArgumentException extends MVCException{
-
+	function __construct($msg) {
+		parent::__construct($msg);
+	}
 }
