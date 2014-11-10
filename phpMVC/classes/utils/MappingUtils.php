@@ -47,32 +47,40 @@ class MappingUtils {
 		return $obj;
 	}
 
-	public static function getObjectVars($obj, array &$hasMapped = array()){
-		$result = $obj;
+	public static function getObjectVars($obj, MappingConfiguration $config=null, array &$hasMapped = array()){
+		if(is_null($config)){
+			$config = new MappingConfiguration();
+		}
 		if(is_object($obj)){
-			$result = [];
 			$clazz = new ReflectionClass(get_class($obj));
-			foreach($clazz->getProperties() as $property){
-				if(!$property->isStatic()) {
-					$property->setAccessible(true);
-					$value = $property->getValue($obj);
-					if (in_array($value, $hasMapped)) {
-						$value = "[" . $clazz->getName() . " Recursion]";
-					} else {
-						if (is_object($value)) {
-							$hasMapped[] = $value;
-						}
-						$value = self::getObjectVars($value);
+			if (in_array($obj, $hasMapped)) {
+				$result = "[" . $clazz->getName() . " Recursion]";
+			} else {
+				$result = [];
+				$hasMapped[] = $obj;
+				foreach ($clazz->getProperties() as $property) {
+					if (!$property->isStatic()) {
+						$property->setAccessible(true);
+						$value = self::getObjectVars($property->getValue($obj), $config, $hasMapped);
+						self::_addToResult($config, $result, $property->getName(), $value);
 					}
-					$result[$property->getName()] = $value;
 				}
 			}
 		}else if(is_array($obj)) {
 			$result = [];
 			foreach ($obj as $key => $value) {
-				$result[$key] = self::getObjectVars($value, $hasMapped);
+				$value = self::getObjectVars($value, $config, $hasMapped);
+				self::_addToResult($config, $result, $key, $value);
 			}
+		}else{
+			$result = $obj;
 		}
 		return $result;
+	}
+
+	private static function _addToResult(MappingConfiguration $config, &$result, $key, $value){
+		if(!is_null($value) || $config->getInclusion() == MappingConfiguration::INCLUSION_NULL ) {
+			$result[$key] = $value;
+		}
 	}
 }

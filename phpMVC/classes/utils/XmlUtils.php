@@ -32,11 +32,12 @@ class XmlUtils {
 
 	/**
 	 * @param $obj
-	 * @return string
+	 * @param MappingConfiguration $config
+	 * @return mixed
 	 */
-	public static function toXml($obj){
+	public static function toXml($obj, MappingConfiguration $config=null){
 		$xml = new SimpleXMLElement("<object/>");
-		self::bindToElement($xml, MappingUtils::getObjectVars($obj),"object");
+		self::bindToElement($xml, MappingUtils::getObjectVars($obj,$config),"object");
 		return $xml->asXML();
 	}
 

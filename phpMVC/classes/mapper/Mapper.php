@@ -19,10 +19,11 @@ interface Mapper {
 	public function canWrite($contentType);
 
 	/**
-	 * @param object $obj
-	 * @return string
+	 * @param $obj
+	 * @param MappingConfiguration $config
+	 * @return mixed
 	 */
-	public function write($obj);
+	public function write($obj, MappingConfiguration $config=null);
 
 	/**
 	 * @param $str

@@ -26,13 +26,9 @@ class BasicMapper implements Mapper{
 		return $this->canRead($contentType);
 	}
 
-	/**
-	 * @param object $obj
-	 * @return string
-	 */
-	public function write($obj)
+	public function write($obj, MappingConfiguration $config=null)
 	{
-		return http_build_query($obj);
+		return http_build_query(MappingUtils::getObjectVars($obj, $config));
 	}
 
 	/**

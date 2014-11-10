@@ -26,11 +26,12 @@ class JsonMapper implements Mapper {
 
 	/**
 	 * @param object $obj
+	 * @param MappingConfiguration $config
 	 * @return string
 	 */
-	public function write($obj)
+	public function write($obj, MappingConfiguration $config=null)
 	{
-		return JsonUtils::toJson($obj);
+		return JsonUtils::toJson($obj, $config);
 	}
 
 	/**
@@ -42,6 +43,4 @@ class JsonMapper implements Mapper {
 	{
 		return JsonUtils::bindJson($str, $clazz);
 	}
-
-
 }

@@ -29,9 +29,9 @@ class XmlMapper implements Mapper {
 	 * @param object $obj
 	 * @return string
 	 */
-	public function write($obj)
+	public function write($obj, MappingConfiguration $config=null)
 	{
-		return XmlUtils::toXml($obj);
+		return XmlUtils::toXml($obj, $config);
 	}
 
 	/**
@@ -41,6 +41,6 @@ class XmlMapper implements Mapper {
 	 */
 	public function read($str, ReflectionClass $clazz)
 	{
-		return XmlUtils::bindToElement($str, $clazz);
+		return XmlUtils::toXml($str, $clazz);
 	}
 }

@@ -6,8 +6,8 @@
  */
 class JsonUtils
 {
-	public static function toJson($obj){
-		return json_encode(MappingUtils::getObjectVars($obj));
+	public static function toJson($obj, MappingConfiguration $config=null){
+		return json_encode(MappingUtils::getObjectVars($obj, $config));
 	}
 
 	public static function bindJson($json, $clazz){

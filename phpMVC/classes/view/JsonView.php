@@ -6,13 +6,16 @@
  */
 class JsonView implements View
 {
-	private $obj;
+	private $response;
+
+	private $config;
 
 	/**
-	 * @param $obj
+	 * @param $response
 	 */
-	function __construct($obj){
-		$this->obj = $obj;
+	function __construct($response, MappingConfiguration $config=null){
+		$this->response = $response;
+		$this->config = $config;
 	}
 
 	/**
@@ -20,7 +23,11 @@ class JsonView implements View
 	 */
 	public function render()
 	{
-		echo JsonUtils::toJson($this->obj);
+		/**
+		 * @var JsonMapper $mapper;
+		 */
+		$mapper = IOCContainer::getInstance()->resolve("JsonMapper");
+		echo $mapper->write($this->response, $this->config);
 	}
 
 	/**
