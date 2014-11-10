@@ -55,8 +55,12 @@ class ControllerMethodInvoker{
 			}
 		}
 		if(!is_null($handler)) {
-			$result = $handler->handle($controller, $ex);
-			$this->_prepareResponse($result)->send();
+			try {
+				$result = $handler->handle($controller, $ex);
+				$this->_prepareResponse($result)->send();
+			}catch(Exception $e){
+				throw new Exception("Error occurred when invoking error handler: ".$e->getMessage(), $e->getCode(), $e);
+			}
 		}else{
 			throw $ex;
 		}
@@ -75,7 +79,7 @@ class ControllerMethodInvoker{
 		if(sizeof($handlers > 1)){
 			while(sizeof($result) == 0 && $exceptionClass = $exceptionClass->getParentClass()){
 				foreach($handlers as $handler){
-					if(!$handler->canHandle($exceptionClass)){
+					if($handler->canHandle($exceptionClass)){
 						$result[] = $handler;
 					}
 				}
