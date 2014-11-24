@@ -1,3 +1,13 @@
+v0.0.4 (11/24/2014)
+-Fixing issue where ambiguous controller mappings were not being resolved properly.
+-Fixing issue where exception handler throwing exception was not properly handled.
+-Fixing issue where MappingUtils::getObjectVars would not properly retrieve vars of objects acting as arrays.
+-Fixing issue where prepared statements were not picking up the placeholders properly when using underscores.
+-Restructured object mappers and added in MappingConfig for configuring object mappers
+-Added in convenience method hasRole to GrantedAuthority
+-Improved Header management in HttpRequest and HttpResponse
+-Adding in MysqliDatasource::getInsertId()
+
 v0.0.3 (10/26/2014)
 -Adding Filters
 -Adding SimpleAuthenticationFilter
