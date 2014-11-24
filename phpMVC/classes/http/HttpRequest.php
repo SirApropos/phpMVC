@@ -27,11 +27,7 @@ class HttpRequest
 		$this->method = constant("HttpMethod::".$server['REQUEST_METHOD']);
 		$this->path = $this->buildPath($_SERVER['REQUEST_URI']);
 		$this->headers = new HttpHeaders();
-		if(isset($server['CONTENT_TYPE'])){
-			$this->headers->setContentType(preg_replace("`;.*$`","",$_SERVER['CONTENT_TYPE']));
-		}else{
-			$this->headers->setContentType("text/plain");
-		}
+		$this->populateHeaders();
 		$this->body = file_get_contents('php://input');
 	}
 
@@ -83,5 +79,11 @@ class HttpRequest
 
 	public function getBody(){
 		return $this->body;
+	}
+	
+	protected function populateHeaders(){
+	  foreach(getallheaders() as $name => $value){
+      $this->headers->addValue($name, $value);  
+	  }
 	}
 }
