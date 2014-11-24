@@ -76,17 +76,29 @@ class ControllerMethodInvoker{
 		$result = [];
 		$handlers = $mapping->getExceptionHandlers();
 		$handlers = $this->_findHandlers($handlers, $exceptionClass);
-		if(sizeof($handlers > 1)){
-			while(sizeof($result) == 0 && $exceptionClass = $exceptionClass->getParentClass()){
-				foreach($handlers as $handler){
-					if($handler->canHandle($exceptionClass)){
+		$classes = [];
+		if(sizeof($handlers) > 1){
+			do{
+				$classes[] = $exceptionClass;
+			}while($exceptionClass = $exceptionClass->getParentClass());
+			$classes = array_reverse($classes);
+			foreach($classes as $class){
+				$result = [];
+				foreach($handlers as $handler)
+				{
+					if (!$handler->canHandle($class)) {
 						$result[] = $handler;
 					}
 				}
+				if(sizeof($result) < 2){
+					break;
+				}
 			}
-			if(sizeof($result) > 1){
-				throw new MVCException("Ambiguous mapping found for exception: ".$exceptionClass->getName());
+			if(sizeof($result) != 1){
+				throw new MVCException("Ambiguous mapping found for exception: ".(is_object($exceptionClass) ? $exceptionClass->getName() : "Exception"));
 			}
+		}else{
+			$result = $handlers;
 		}
 		return sizeof($result) > 0 ? $result[0] : null;
 	}
@@ -225,7 +237,8 @@ class ControllerMethodInvoker{
 				if ($param->isDefaultValueAvailable()) {
 					$value = $param->getDefaultValue();
 				} else {
-					throw new ModelBindException("");
+					throw new ModelBindException("Parameter ".$clazz->getName()."::".$param->getName().
+						" could not be satisfied and no default value was available.");
 				}
 			}
 		}
