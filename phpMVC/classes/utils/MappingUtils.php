@@ -65,6 +65,12 @@ class MappingUtils {
 						self::_addToResult($config, $result, $property->getName(), $value);
 					}
 				}
+				foreach (get_object_vars($obj) as $key => $value) {
+					if (!$clazz->hasProperty($key) || $clazz->getProperty($key)->isStatic()) {
+						$value = self::getObjectVars($value, $config, $hasMapped);
+						self::_addToResult($config, $result, $key, $value);
+					}
+				}
 			}
 		}else if(is_array($obj)) {
 			$result = [];
