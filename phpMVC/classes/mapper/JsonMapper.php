@@ -5,25 +5,7 @@
  * Time: 11:21 PM
  */
 
-class JsonMapper implements Mapper {
-	/**
-	 * @param string $contentType
-	 * @return bool
-	 */
-	public function canRead($contentType)
-	{
-		return $contentType == ContentType::APPLICATION_JSON;
-	}
-
-	/**
-	 * @param string $contentType
-	 * @return bool
-	 */
-	public function canWrite($contentType)
-	{
-		return $this->canRead($contentType);
-	}
-
+class JsonMapper extends ObjectMapper {
 	/**
 	 * @param object $obj
 	 * @param MappingConfiguration $config
@@ -42,5 +24,9 @@ class JsonMapper implements Mapper {
 	public function read($str, ReflectionClass $clazz)
 	{
 		return JsonUtils::bindJson($str, $clazz);
+	}
+
+	protected function getAllowedContentTypes() {
+		return [ContentType::APPLICATION_JSON];
 	}
 }

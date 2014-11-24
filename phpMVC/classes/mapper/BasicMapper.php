@@ -5,26 +5,10 @@
  * Time: 11:22 PM
  */
 
-class BasicMapper implements Mapper{
+class BasicMapper extends ObjectMapper{
 	private static $allowed_types = [ContentType::TEXT_HTML, ContentType::TEXT_PLAIN,
-									 ContentType::APPLICATION_X_WWW_FORM_URLENCODED, null, ""];
-	/**
-	 * @param string $contentType
-	 * @return bool
-	 */
-	public function canRead($contentType)
-	{
-		return $contentType == ContentType::TEXT_PLAIN;
-	}
+									 ContentType::APPLICATION_X_WWW_FORM_URLENCODED, ""];
 
-	/**
-	 * @param string $contentType
-	 * @return bool
-	 */
-	public function canWrite($contentType)
-	{
-		return $this->canRead($contentType);
-	}
 
 	public function write($obj, MappingConfiguration $config=null)
 	{
@@ -43,5 +27,7 @@ class BasicMapper implements Mapper{
 		return MappingUtils::bindObject($vars, $clazz);
 	}
 
-
+	protected function getAllowedContentTypes() {
+		return self::$allowed_types;
+	}
 }

@@ -5,26 +5,7 @@
  * Time: 11:22 PM
  */
 
-class XmlMapper implements Mapper {
-
-	/**
-	 * @param string $contentType
-	 * @return bool
-	 */
-	public function canRead($contentType)
-	{
-		return $contentType == ContentType::TEXT_HTML || $contentType == ContentType::TEXT_XML;
-	}
-
-	/**
-	 * @param string $contentType
-	 * @return bool
-	 */
-	public function canWrite($contentType)
-	{
-		return canRead($contentType);
-	}
-
+class XmlMapper extends ObjectMapper {
 	/**
 	 * @param object $obj
 	 * @return string
@@ -42,5 +23,9 @@ class XmlMapper implements Mapper {
 	public function read($str, ReflectionClass $clazz)
 	{
 		return XmlUtils::toXml($str, $clazz);
+	}
+
+	protected function getAllowedContentTypes() {
+		return [ContentType::TEXT_HTML, ContentType::TEXT_XML];
 	}
 }
