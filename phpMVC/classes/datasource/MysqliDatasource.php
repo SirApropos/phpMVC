@@ -139,7 +139,7 @@ class MysqliDataSource implements DataSource{
 
 	private function _executePreparedStatement($query, array $params){
 		$replacers = array();
-		$split = preg_split("/:((?:[a-zA-Z0-9]+[a-zA-Z0-9_]+?)?[a-zA-Z0-9]+)/", $query, -1, PREG_SPLIT_DELIM_CAPTURE);
+		$split = preg_split("/:((?:[a-zA-Z0-9]+[a-zA-Z0-9_]+)?[a-zA-Z0-9]+)/", $query, -1, PREG_SPLIT_DELIM_CAPTURE);
 		$types = "";
 		for($i=1;$i<sizeof($split);$i=$i+2) {
 			$key = $split[$i];
@@ -203,7 +203,8 @@ class MysqliDataSource implements DataSource{
 	private function _logQuery($query, array $params = null){
 		$log = $query;
 		if(!is_null($params)){
-			$log .= " [".implode(", ",$params)."]";
+			$paramString = @implode(", ",$params);
+			$log .= " [".$paramString."]";
 		}
 		$this->queries[] = $log;
 	}
@@ -214,7 +215,11 @@ class MysqliDataSource implements DataSource{
 	}
 
 	public function selectDb($db){
+		return $this->mysqli->select_db($db);
 	}
 
+	public function getInsertId(){
+		return $this->mysqli->insert_id;
+	}
 
 }
