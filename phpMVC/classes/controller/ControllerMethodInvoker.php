@@ -168,6 +168,38 @@ class ControllerMethodInvoker{
 		return $result;
 	}
 
+	protected function collectFilters(ControllerMethod $controllerMethod){
+		$result = [];
+		$controllerFilters = $controllerMethod->getController();
+		foreach(ReflectionUtils::getRecursiveProperties($controllerFilters, "mapping") as $mapping){
+			if(isset($mapping['filters'])){
+				$this->addFilters($result, $mapping['filters']);
+			}
+		}
+		$this->addFilters($result, $controllerMethod->getMapping()->getFilters());
+		return $result;
+	}
+
+	private function addFilters(array &$filters, $toAdd){
+		if(is_array($toAdd)){
+			foreach($toAdd as $filter => $config) {
+				$filters[$filter] = $config;
+			}
+		}
+	}
+
+	protected function invokeFilters(ControllerMethod $controllerMethod) {
+		$filters = $this->collectFilters($controllerMethod);
+		$controller = $controllerMethod->getController();
+		/**
+		 * @var MethodInvoker $invoker ;
+		 */
+		$invoker = $this->container->resolve("MethodInvoker");
+		foreach($filters as $filter => $config) {
+			$invoker->invoke($controller, $filter);
+		}
+	}
+
 	/**
 	 * @param ControllerMethod $cmethod
 	 * @param $timer
@@ -179,6 +211,7 @@ class ControllerMethodInvoker{
 		if (!$this->canInvoke($cmethod)) {
 			throw new InvalidGrantException("Access Denied");
 		}
+		$this->invokeFilters($cmethod);
 		$method = $cmethod->getMethod();
 		$args = [];
 		$params = $method->getParameters();

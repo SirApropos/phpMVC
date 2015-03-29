@@ -11,6 +11,7 @@ class ReflectionUtils
 	 * @param $obj
 	 * @param $name
 	 * @return ReflectionProperty
+	 * @throws ModelBindException
 	 */
 	public static function getProperty($obj, $name){
 		$clazz = self::getReflectionClass($obj);
@@ -28,7 +29,9 @@ class ReflectionUtils
 
 	/**
 	 * @param $obj
-	 * @return Mapping
+	 * @param $mappingClazz
+	 * @return object
+	 * @throws IllegalArgumentException
 	 */
 	public static function getMapping($obj, $mappingClazz){
 		if(!$mappingClazz instanceof ReflectionClass){
@@ -80,5 +83,15 @@ class ReflectionUtils
 			array_unshift($classes, $clazz);
 		}while($clazz = $clazz->getParentClass());
 		return $classes;
+	}
+
+	public static function getRecursiveProperties($obj, $name){
+		$result = [];
+		foreach(self::getRecursiveClasses($obj) as $clazz){
+			if(self::hasProperty($clazz, $name)){
+				$result[] = self::getPropertyValue($clazz, $name);
+			}
+		}
+		return $result;
 	}
 }

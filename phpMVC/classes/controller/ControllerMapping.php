@@ -11,7 +11,15 @@ class ControllerMapping implements Mapping {
 	 */
 	private $mappings = [];
 
+	/**
+	 * @var array
+	 */
 	private $exceptionHandlers = [];
+
+	/**
+	 * @var array
+	 */
+	private $filters = [];
 
 	/**
 	 * @var IOCContainer $container
@@ -105,5 +113,19 @@ class ControllerMapping implements Mapping {
 	 */
 	public function setExceptionHandlers($exceptionHandlers) {
 		$this->exceptionHandlers = $exceptionHandlers;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getFilters() {
+		return $this->filters;
+	}
+
+	/**
+	 * @param array $filters
+	 */
+	public function setFilters($filters) {
+		$this->filters = $filters;
 	}
 }

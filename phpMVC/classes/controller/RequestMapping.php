@@ -29,6 +29,11 @@ class RequestMapping {
      */
     private $security;
 
+	/**
+	 * @var FilterMapping
+	 */
+	private $filters;
+
     public static $mapping = [
         "fields" => [
             "method" => [
@@ -148,5 +153,19 @@ class RequestMapping {
 	 */
 	public function setHttps($https) {
 		$this->https = $https;
+	}
+
+	/**
+	 * @return FilterMapping
+	 */
+	public function getFilters() {
+		return $this->filters;
+	}
+
+	/**
+	 * @param FilterMapping $filters
+	 */
+	public function setFilters($filters) {
+		$this->filters = $filters;
 	}
 }
