@@ -83,7 +83,7 @@ class HttpRequest
 	
 	protected function populateHeaders(){
 	  foreach(getallheaders() as $name => $value){
-      $this->headers->addValue($name, $value);  
+      $this->headers->addHeader($name, $value);
 	  }
 	}
 }

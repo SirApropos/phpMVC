@@ -18,7 +18,7 @@ class Redirect implements  View{
 	 */
 	public function prepareResponse(HttpResponse $response) {
 		$response->setResponseCode(302);
-		$response->getHeaders()->addValue("Location", $this->location);
+		$response->getHeaders()->addHeader("Location", $this->location);
 	}
 
 	/**
