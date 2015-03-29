@@ -6,7 +6,11 @@
  * Time: 11:41 PM
  * To change this template use File | Settings | File Templates.
  */
-interface ControllerFactory
+interface ControllerMethodFactory
 {
-	function getController(HttpRequest $request);
+	/**
+	 * @param HttpRequest $request
+	 * @return ControllerMethod
+	 */
+	function getControllerMethod(HttpRequest $request);
 }

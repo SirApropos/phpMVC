@@ -40,8 +40,11 @@ class ReflectionUtils
 		if($mappingClazz->implementsInterface("Mapping")){
 			$result = $mappingClazz->newInstance();
 			$clazz = self::getReflectionClass($obj);
-			if($clazz->hasProperty("mapping")){
-				$result->bind($clazz, self::getPropertyValue($obj,"mapping"));
+			while($clazz instanceof ReflectionClass) {
+				if($clazz->hasProperty("mapping")) {
+					$result->bind($clazz, self::getPropertyValue($clazz, "mapping"));
+				}
+				$clazz = $clazz->getParentClass();
 			}
 			return $result;
 		}else{

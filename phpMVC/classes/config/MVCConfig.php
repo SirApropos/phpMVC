@@ -27,7 +27,7 @@ class MVCConfig {
 		$filterManager = $this->createFilterManager();
 		$this->container->register($filterManager);
 		$this->configureFilters($filterManager);
-		$this->container->register($this->createControllerFactory());
+		$this->container->register($this->createControllerMethodFactory());
 		$this->container->register($this->createControllerMethodInvoker());
 	}
 
@@ -39,8 +39,8 @@ class MVCConfig {
 		$filterManager->addFilter($this->container->newInstance("SimpleAuthenticationFilter"));
 	}
 
-	public function createControllerFactory(){
-		return  $this->container->newInstance("SimpleControllerFactory");
+	public function createControllerMethodFactory(){
+		return  $this->container->newInstance("SimpleControllerMethodFactory");
 	}
 
 	public function createControllerMethodInvoker(){

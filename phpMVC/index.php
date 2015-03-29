@@ -39,34 +39,28 @@ try{
     $filterManager = $container->resolve("FilterManager");
     $grantedAuthority = $filterManager->doFilter($request);
     /**
-     * @var ControllerFactory $controllerFactory
+     * @var ControllerMethodFactory $controllerFactory
      */
-    $controllerFactory = $container->resolve("ControllerFactory");
+    $controllerFactory = $container->resolve("ControllerMethodFactory");
 
-	try{
+	/**
+	 * @var ControllerMethod $cmethod
+	 */
+	$cmethod = $controllerFactory->getControllerMethod($request);
+
+	if(is_null($cmethod)){
+		throw new HttpNotFoundException();
+	}
+
+	if(isset($_SERVER['HTTPS']) || !$cmethod->getMapping()->isHttps()) {
+		$invoker->invoke($cmethod, $request, $grantedAuthority);
+	}else{
 		/**
-		 * @var ControllerMethod $cmethod
+		 * @var HttpResponse $response
 		 */
-		$cmethod = $controllerFactory->getController($request);
-
-		if($invoker->canInvoke($cmethod, $grantedAuthority)){
-			if(isset($_SERVER['HTTPS']) || !$cmethod->getMapping()->isHttps()) {
-				$invoker->invoke($cmethod);
-			}else{
-				/**
-				 * @var HttpResponse $response
-				 */
-				$response = $container->resolve("HttpResponse");
-				$response->setView(new RedirectView("https://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']));
-				$response->send();
-			}
-		}else{
-			throw new InvalidGrantException("Access Denied");
-		}
-	}catch(HttpException $ex){
-		if(($ex instanceof HttpNotFoundException) || $request->getMethod() != HttpMethod::OPTIONS){
-			throw $ex;
-		}
+		$response = $container->resolve("HttpResponse");
+		$response->setView(new RedirectView("https://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']));
+		$response->send();
 	}
 
 	$timer->stop();

@@ -11,6 +11,10 @@ class ControllerMethodInvoker{
 			"container" => [
 				"autowired" => true,
 				"type" => "IOCContainer"
+			],
+			"invoker" => [
+				"autowired" => true,
+				"type" => "MethodInvoker"
 			]
 		]
 	];
@@ -24,6 +28,11 @@ class ControllerMethodInvoker{
 	 */
 	private $container;
 
+	/**
+	 * @var MethodInvoker
+	 */
+	private $invoker;
+
 	function __construct()
 	{
 		array_push($this->mappers,new BasicMapper());
@@ -31,10 +40,10 @@ class ControllerMethodInvoker{
 		array_push($this->mappers,new XmlMapper());
 	}
 
-	public function invoke(ControllerMethod $cmethod){
+	public function invoke(ControllerMethod $cmethod, HttpRequest $request, GrantedAuthority $authority){
 		$timer = Timer::create("Invoker", "invoking");
 		try {
-			$this->_invokeInternal($cmethod, $timer);
+			$this->_tryInvoke($cmethod, $request, $authority, $timer);
 		}catch(Exception $ex){
 			$timer->stop();
 			$this->handleException($cmethod->getController(), $ex);
@@ -142,28 +151,35 @@ class ControllerMethodInvoker{
 	 * @param GrantedAuthority $authority
 	 * @return bool
 	 */
-	public function canInvoke(ControllerMethod $method, GrantedAuthority $authority=null){
-		if(is_null($authority)){
-			$authority = $this->container->resolve("GrantedAuthority");
-		}
+	protected function checkSecurity(ControllerMethod $method, GrantedAuthority $authority){
 		$security = $method->getMapping()->getSecurity();
-		if(!is_null($security)){
+		if (!is_null($security)) {
 			$allowed_roles = $security->getAllowedRoles();
-			if(!is_null($allowed_roles)){
+			if (!is_null($allowed_roles)) {
 				//If allowed roles is defined, make sure the user has
 				//a role that is allowed.
 				$result = $this->_containsRole($authority, $allowed_roles);
-			}else{
+			} else {
 				//If allowed_roles is not defined, allow all.
 				$result = true;
 			}
-			if($result){
+			if ($result) {
 				//Now, deny the request if user contains a role that is denied.
 				$result = !$this->_containsRole($authority, $security->getDeniedRoles());
+				return $result;
 			}
-		}else{
+		} else {
 			//No security mapping defined. Allow the request.
 			$result = true;
+		}
+		return $result;
+	}
+
+	protected  function checkMethods(ControllerMethod $method, HttpRequest $request){
+		$result = true;
+		$methods = $method->getMapping()->getAllowedMethods();
+		if(is_array($methods) && !in_array($request->getMethod(), $methods)){
+			$result = false;
 		}
 		return $result;
 	}
@@ -191,45 +207,65 @@ class ControllerMethodInvoker{
 	protected function invokeFilters(ControllerMethod $controllerMethod) {
 		$filters = $this->collectFilters($controllerMethod);
 		$controller = $controllerMethod->getController();
-		/**
-		 * @var MethodInvoker $invoker ;
-		 */
-		$invoker = $this->container->resolve("MethodInvoker");
 		foreach($filters as $filter => $config) {
-			$invoker->invoke($controller, $filter);
+			$this->invoker->invoke($controller, $filter);
 		}
 	}
 
 	/**
 	 * @param ControllerMethod $cmethod
-	 * @param $timer
+	 * @param HttpRequest $request
+	 * @param GrantedAuthority $authority
+	 * @param Timer $timer
+	 * @throws HttpMethodNotAllowedException
 	 * @throws InvalidGrantException
 	 * @throws InvocationException
 	 * @throws ModelBindException
 	 */
-	private function _invokeInternal(ControllerMethod $cmethod, Timer &$timer) {
-		if (!$this->canInvoke($cmethod)) {
+	private function _tryInvoke(ControllerMethod $cmethod, HttpRequest $request, GrantedAuthority $authority, Timer &$timer) {
+		if (!$this->checkSecurity($cmethod, $authority)) {
 			throw new InvalidGrantException("Access Denied");
 		}
-		$this->invokeFilters($cmethod);
-		$method = $cmethod->getMethod();
-		$args = [];
-		$params = $method->getParameters();
-		$request = $this->container->resolve("HttpRequest");
-		$vars = $this->getRequestVars($cmethod, $request);
-		foreach ($params as $param) {
-			try {
-				$value = $this->satisfy($param, $request, $vars);
-			}catch(ModelBindException $ex){
-				throw new ModelBindException("Could not satisfy dependency: " . $method->getDeclaringClass()->getName() . "::" .
-					$method->getName() . '::$' . $param->getName());
+		if(!$this->checkMethods($cmethod, $request)){
+			if($request->getMethod() == HttpMethod::OPTIONS){
+				$optionsMethod = $this->_getOptionsMethod($cmethod->getController());
+				if(!is_null($optionsMethod)){
+					$this->_invoke($optionsMethod, $request, $timer);
+				}
+				return;
+			}else {
+				throw new HttpMethodNotAllowedException();
 			}
-			array_push($args, $value);
 		}
-		$value = $method->invokeArgs($cmethod->getController(), $args);
-		$response = $this->_prepareResponse($value);
-		$timer->stop();
-		$response->send();
+		$this->_invoke($cmethod, $request, $timer);
+	}
+
+	/**
+	 * @param Controller $controller
+	 * @return ControllerMethod|null
+	 * @throws IllegalArgumentException
+	 * @throws MVCException
+	 */
+	private function _getOptionsMethod(Controller $controller){
+		$result = null;
+		/**
+		 * @var ControllerMapping $mapping
+		 */
+		$mapping = ReflectionUtils::getMapping($controller, "ControllerMapping");
+		$methodName = $mapping->getOptionsMethod();
+		if(!is_null($methodName)) {
+			$clazz = ReflectionUtils::getReflectionClass($controller);
+			if($clazz->hasMethod($methodName)){
+				$result = new ControllerMethod();
+				$result->setController($controller);
+				$result->setMapping(new RequestMapping());
+				$result->getMapping()->setMethod(new RequestMethod());
+				$result->getMapping()->getMethod()->setName($methodName);
+			}else{
+				throw new MVCException("Could not find options method: ".$clazz->getName()."::".$methodName);
+			}
+		}
+		return $result;
 	}
 
 	/**
@@ -329,6 +365,35 @@ class ControllerMethodInvoker{
 			}
 		}
 		return $value;
+	}
+
+	/**
+	 * @param ControllerMethod $cmethod
+	 * @param HttpRequest $request
+	 * @param Timer $timer
+	 * @throws InvocationException
+	 * @throws ModelBindException
+	 */
+	private function _invoke(ControllerMethod $cmethod, HttpRequest $request, Timer &$timer) {
+		$this->invokeFilters($cmethod);
+		$method = $cmethod->getMethod();
+		$args = [];
+		$params = $method->getParameters();
+		$request = $this->container->resolve("HttpRequest");
+		$vars = $this->getRequestVars($cmethod, $request);
+		foreach ($params as $param) {
+			try {
+				$value = $this->satisfy($param, $request, $vars);
+			} catch (ModelBindException $ex) {
+				throw new ModelBindException("Could not satisfy dependency: " . $method->getDeclaringClass()->getName() . "::" .
+					$method->getName() . '::$' . $param->getName());
+			}
+			array_push($args, $value);
+		}
+		$value = $method->invokeArgs($cmethod->getController(), $args);
+		$response = $this->_prepareResponse($value);
+		$timer->stop();
+		$response->send();
 	}
 
 }

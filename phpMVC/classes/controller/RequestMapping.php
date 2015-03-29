@@ -29,6 +29,10 @@ class RequestMapping {
      */
     private $security;
 
+	private $allowed_roles = [];
+
+	private $denied_roles = [];
+
 	/**
 	 * @var FilterMapping
 	 */

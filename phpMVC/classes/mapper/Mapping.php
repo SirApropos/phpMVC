@@ -8,10 +8,10 @@
 interface Mapping {
 	/**
 	 * @param $clazz
-	 * @param $obj
+	 * @param array $obj
 	 * @return mixed
 	 */
-	function bind(ReflectionClass $clazz, $obj);
+	function bind(ReflectionClass $clazz, array $obj);
 
 	/**
 	 * @return array

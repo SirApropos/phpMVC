@@ -29,7 +29,7 @@ class ControllerMethod
 	public function setController($controller)
 	{
 		$this->controller = $controller;
-		$this->clazz = new ReflectionClass($controller);
+		$this->clazz = new ReflectionClass(get_class($controller));
 	}
 
 	/**
@@ -58,6 +58,7 @@ class ControllerMethod
 
 	/**
 	 * @return ReflectionMethod
+	 * @throws InvocationException
 	 */
 	public function getMethod(){
 		$methodName = $this->mapping->getMethod()->getName();

@@ -22,6 +22,11 @@ class ControllerMapping implements Mapping {
 	private $filters = [];
 
 	/**
+	 * @var String
+	 */
+	private $optionsMethod;
+
+	/**
 	 * @var IOCContainer $container
 	 */
 	private $container;
@@ -47,13 +52,17 @@ class ControllerMapping implements Mapping {
 	}
 
 	/**
-	 * @param $obj
-	 * @return mixed
+	 * @param ReflectionClass $clazz
+	 * @param array $obj
+	 * @return mixed|void
 	 */
-	public function bind(ReflectionClass $clazz, $obj)
+	public function bind(ReflectionClass $clazz, array $obj)
 	{
 		$this->_bindRequestMappings($obj);
 		$this->_bindExceptionHandlers($clazz, $obj);
+		if(isset($obj['optionsMethod']) && is_null($this->optionsMethod)) {
+			$this->optionsMethod = $obj['optionsMethod'];
+		}
 	}
 
 	/**
@@ -127,5 +136,19 @@ class ControllerMapping implements Mapping {
 	 */
 	public function setFilters($filters) {
 		$this->filters = $filters;
+	}
+
+	/**
+	 * @return String
+	 */
+	public function getOptionsMethod() {
+		return $this->optionsMethod;
+	}
+
+	/**
+	 * @param String $optionsMethod
+	 */
+	public function setOptionsMethod($optionsMethod) {
+		$this->optionsMethod = $optionsMethod;
 	}
 }
