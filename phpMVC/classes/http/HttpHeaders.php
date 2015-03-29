@@ -29,7 +29,7 @@ class HttpHeaders
     }
 
     private function setupKey($key){
-        if(!$this->headers[$key]){
+        if(!isset($this->headers[$key])){
             $this->headers[$key] = [];
         }
     }

@@ -13,4 +13,5 @@
 	$config['taglib_dir'] = $config['classes_dir']."taglibs/impl/";
 	$config['config_class'] = "MVCConfig";
 	$config['config_path'] = $config['classes_dir']."config/".$config['config_class'].".php";
+	$config['cache_dir'] = $config['base_dir']."classes.cache";
 ?>
