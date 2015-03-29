@@ -1,11 +1,11 @@
 <?php
 set_error_handler(function($errno , $errstr, $errfile, $errline){
-	echo "$errstr in file $errfile on line: $errline\n\n";
-	$allowed = [E_NOTICE, E_STRICT];
-	if(!in_array($errno, $allowed)){
-		debug_print_backtrace();
-		die();
-	}
+    echo "$errstr in file $errfile on line: $errline\n\n";
+    $allowed = [E_NOTICE, E_STRICT];
+    if(!in_array($errno, $allowed)){
+        debug_print_backtrace();
+        die();
+    }
 });
 try{
 	$config = array();
@@ -16,7 +16,6 @@ try{
 	/**
 	 * @var MVCConfig $config
 	 */
-
 	$config = $clazz->newInstanceArgs([$config]);
 	$timer = Timer::create("Main","main");
 	$initTimer = Timer::create("Initialization", "initialization");
@@ -24,9 +23,8 @@ try{
 	include $config->getClassesDir()."utils/IOCContainer.php";
 
 	$config->initialize();
-	$container = IOCContainer::getInstance();
 
-	include("./datasource.php");
+	$container = IOCContainer::getInstance();
 
 	/**
 	 * @var ControllerMethodInvoker $invoker
@@ -35,20 +33,36 @@ try{
 	$request = new HttpRequest($_SERVER);
 	$container->register($request);
 	$initTimer->stop();
-	/**
-	 * @var FilterManager $filterManager
-	 */
-	$filterManager = $container->resolve("FilterManager");
-	$grantedAuthority = $filterManager->doFilter($request);
-	$container->register($grantedAuthority);
-	/**
-	 * @var ControllerFactory controllerFactory
-	 */
-	$controllerFactory = $container->resolve("ControllerFactory");
+    /**
+     * @var FilterManager $filterManager
+     */
+    $filterManager = $container->resolve("FilterManager");
+    $grantedAuthority = $filterManager->doFilter($request);
+    /**
+     * @var ControllerFactory $controllerFactory
+     */
+    $controllerFactory = $container->resolve("ControllerFactory");
 
 	try{
+		/**
+		 * @var ControllerMethod $cmethod
+		 */
 		$cmethod = $controllerFactory->getController($request);
-		$invoker->invoke($cmethod);
+
+		if($invoker->canInvoke($cmethod, $grantedAuthority)){
+			if(isset($_SERVER['HTTPS']) || !$cmethod->getMapping()->isHttps()) {
+				$invoker->invoke($cmethod);
+			}else{
+				/**
+				 * @var HttpResponse $response
+				 */
+				$response = $container->resolve("HttpResponse");
+				$response->setView(new RedirectView("https://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']));
+				$response->send();
+			}
+		}else{
+			throw new InvalidGrantException("Access Denied");
+		}
 	}catch(HttpException $ex){
 		if(($ex instanceof HttpNotFoundException) || $request->getMethod() != HttpMethod::OPTIONS){
 			throw $ex;
@@ -69,33 +83,31 @@ try{
 	}
 }catch(Exception $ex){
 	echo $ex->getMessage();
-	if($ex instanceof HttpException){
-		http_response_code($ex->getResponseCode());
-	}else{
-		http_response_code(500);
-		$arr = [];
-		foreach($ex->getTrace() as $key => $trace){
-			$message = "#$key ";
-			$message .= $trace['class'].$trace['type'].$trace['function'];
-			$message .= "(";
-			$first = true;
-			foreach($trace['args'] as $arg){
-				if(!$first){
-					$message.=", ";
-				}else{
-					$first = false;
-				}
-				if(is_object($arg)){
-					$message .= get_class($arg)." ".JsonUtils::toJson($arg);
-				}else if(is_array($arg)){
-					$message .= JsonUtils::toJson($arg);
-				}else{
-					$message .= $arg;
-				}
-			}
-			$message .=") called at [".$trace['file'].":".$trace['line']."]";
-			array_push($arr, $message);
-		}
-	}
+    if($ex instanceof HttpException){
+        http_response_code($ex->getResponseCode());
+    }else{
+        http_response_code(500);
+	    $arr = [];
+	    foreach($ex->getTrace() as $key => $trace){
+		    $message = "#$key ";
+		    $message .= $trace['class'].$trace['type'].$trace['function'];
+		    $message .= "(";
+		    $first = true;
+		    foreach($trace['args'] as $arg){
+			    if(!$first){
+				    $message.=", ";
+			    }else{
+				    $first = false;
+			    }
+			    if(is_object($arg)){
+				    $message .= get_class($arg)." ".JsonUtils::toJson($arg);
+			    }else{
+				    $message .= $arg;
+			    }
+		    }
+		    $message .=") called at [".$trace['file'].":".$trace['line']."]";
+		    array_push($arr, $message);
+	    }
+    }
 }
 ?>

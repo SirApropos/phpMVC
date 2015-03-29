@@ -6,95 +6,103 @@
  */
 class HttpResponse
 {
-	/**
-	 * @var View
-	 */
-	private $view;
+    /**
+     * @var View
+     */
+    private $view;
+
+    /**
+     * @var int
+     */
+    private $responseCode = 200;
+
+    /**
+     * @var HttpHeaders
+     */
+    private $headers;
+
+    function __construct(){
+        $this->headers = new HttpHeaders();
+    }
+
+    /**
+     * @param \HttpHeaders $headers
+     */
+    public function setHeaders(HttpHeaders $headers)
+    {
+        $this->headers = $headers;
+    }
 
 	/**
-	 * @var int
+	 * @param String $name
+	 * @param String $value
 	 */
-	private $responseCode = 200;
-
-	/**
-	 * @var HttpHeaders
-	 */
-	private $headers;
-
-	function __construct(){
-		$this->headers = new HttpHeaders();
+	public function setHeader($name, $value){
+		$this->headers->setHeader($name, $value);
 	}
 
-	/**
-	 * @param \HttpHeaders $headers
-	 */
-	public function setHeaders(HttpHeaders $headers)
-	{
-		$this->headers = $headers;
-	}
+    /**
+     * @return \HttpHeaders
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
 
-	/**
-	 * @return \HttpHeaders
-	 */
-	public function getHeaders()
-	{
-		return $this->headers;
-	}
+    /**
+     * @param int $responseCode
+     */
+    public function setResponseCode($responseCode)
+    {
+        $this->responseCode = $responseCode;
+    }
 
-	/**
-	 * @param int $responseCode
-	 */
-	public function setResponseCode($responseCode)
-	{
-		$this->responseCode = $responseCode;
-	}
+    /**
+     * @return int
+     */
+    public function getResponseCode()
+    {
+        return $this->responseCode;
+    }
 
-	/**
-	 * @return int
-	 */
-	public function getResponseCode()
-	{
-		return $this->responseCode;
-	}
+    /**
+     * @param View $view
+     */
+    public function setView(View $view)
+    {
+        $this->view = $view;
+    }
 
-	/**
-	 * @param View $view
-	 */
-	public function setView(View $view)
-	{
-		$this->view = $view;
-	}
+    /**
+     * @return View
+     */
+    public function getView()
+    {
+        return $this->view;
+    }
 
-	/**
-	 * @return View
-	 */
-	public function getView()
-	{
-		return $this->view;
-	}
+    /**
+     *  @return void
+     */
+    public function send(){
+        if($this->view){
+            $this->view->prepareResponse($this);
+            $this->sendHeaders();
+            $this->view->render();
+        }else{
+            $this->sendHeaders();
+        }
+    }
 
-	/**
-	 *  @return void
-	 */
-	public function send(){
-		if($this->view){
-			$this->view->prepareResponse($this);
-			$this->sendHeaders();
-			$this->view->render();
-		}else{
-			$this->sendHeaders();
-		}
-	}
-
-	protected function sendHeaders(){
-		http_response_code($this->responseCode);
-		foreach($this->headers->getAllHeaders() as $key => $headers){
-			if(!is_array($headers)){
-				$headers = [$headers];
-			}
-			foreach($headers as $header){
-				header($key.": ".$header);
-			}
-		}
-	}
+    protected function sendHeaders(){
+        http_response_code($this->responseCode);
+        foreach($this->headers->getAllHeaders() as $key => $headers){
+            if(!is_array($headers)){
+                $headers = [$headers];
+            }
+            foreach($headers as $header){
+                header($key.": ".$header);
+            }
+        }
+    }
 }
