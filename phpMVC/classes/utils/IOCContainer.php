@@ -67,7 +67,7 @@ class IOCContainer
 	 */
 	public function resolve($clazz){
 		$result = $this->_findObject($clazz);
-		if(is_null($result)){
+		if(is_null($result)) {
 			$result = $this->newInstance($clazz);
 			$this->register($result);
 		}

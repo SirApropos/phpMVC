@@ -21,6 +21,11 @@ class HttpResponse
      */
     private $headers;
 
+	/**
+	 * @var HttpCookie[]
+	 */
+	private $cookies = [];
+
     function __construct(){
         $this->headers = new HttpHeaders();
     }
@@ -104,5 +109,16 @@ class HttpResponse
                 header($key.": ".$header);
             }
         }
+		foreach($this->cookies as $cookie){
+			setcookie($cookie->getName(), $cookie->getValue(), $cookie->getExpire(), $cookie->getPath(),
+				$cookie->getDomain(), $cookie->isSecure(), $cookie->isHttpOnly());
+		}
     }
+
+	/**
+	 * @param HttpCookie $cookie
+	 */
+	public function addCookie(HttpCookie $cookie){
+		$this->cookies[] = $cookie;
+	}
 }

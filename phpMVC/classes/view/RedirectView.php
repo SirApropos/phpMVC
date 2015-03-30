@@ -11,8 +11,14 @@ class RedirectView implements View{
 	 */
 	private $location;
 
-	function __construct($location) {
+	/**
+	 * @var int
+	 */
+	private $status;
+
+	function __construct($location, $status=307) {
 		$this->location = $location;
+		$this->status = $status;
 	}
 
 	/**
@@ -21,7 +27,7 @@ class RedirectView implements View{
 	 */
 	public function prepareResponse(HttpResponse $response) {
 		$response->setHeader("Location",$this->location );
-		$response->setResponseCode(301);
+		$response->setResponseCode($this->status);
 	}
 
 	/**

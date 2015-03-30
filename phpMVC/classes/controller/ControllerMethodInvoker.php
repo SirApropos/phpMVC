@@ -217,15 +217,28 @@ class ControllerMethodInvoker{
 	 * @param HttpRequest $request
 	 * @param GrantedAuthority $authority
 	 * @param Timer $timer
-	 * @throws HttpMethodNotAllowedException
-	 * @throws InvalidGrantException
 	 * @throws InvocationException
 	 * @throws ModelBindException
 	 */
 	private function _tryInvoke(ControllerMethod $cmethod, HttpRequest $request, GrantedAuthority $authority, Timer &$timer) {
 		if (!$this->checkSecurity($cmethod, $authority)) {
-			throw new InvalidGrantException("Access Denied");
+			$this->handleException($cmethod->getController(), new InvalidGrantException("Access Denied"));
 		}
+
+		if($cmethod->getMapping()->isHttps() && !isset($_SERVER['HTTPS'])) {
+			if($request->getMethod() == HttpMethod::GET){
+				/**
+				 * @var HttpResponse $response
+				 */
+				$response = $this->container->resolve("HttpResponse");
+				$response->setView(new RedirectView("https://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']));
+				$response->send();
+			}else{
+				$this->handleException($cmethod->getController(), new HttpException("SSL is required.", 426));
+			}
+			return;
+		}
+
 		if(!$this->checkMethods($cmethod, $request)){
 			if($request->getMethod() == HttpMethod::OPTIONS){
 				$optionsMethod = $this->_getOptionsMethod($cmethod->getController());
@@ -234,7 +247,8 @@ class ControllerMethodInvoker{
 				}
 				return;
 			}else {
-				throw new HttpMethodNotAllowedException();
+				$this->handleException($cmethod->getController(), new HttpMethodNotAllowedException());
+				return;
 			}
 		}
 		$this->_invoke($cmethod, $request, $timer);
@@ -262,7 +276,7 @@ class ControllerMethodInvoker{
 				$result->getMapping()->setMethod(new RequestMethod());
 				$result->getMapping()->getMethod()->setName($methodName);
 			}else{
-				throw new MVCException("Could not find options method: ".$clazz->getName()."::".$methodName);
+				$this->handleException($controller, new MVCException("Could not find options method: ".$clazz->getName()."::".$methodName));
 			}
 		}
 		return $result;

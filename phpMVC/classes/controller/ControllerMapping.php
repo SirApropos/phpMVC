@@ -78,16 +78,25 @@ class ControllerMapping implements Mapping {
 				}
 				$handlers[] = new ControllerExceptionHandler($handlerMethod, $exceptions);
 			}
-			$this->exceptionHandlers = array_merge($this->exceptionHandlers, $handlers);
+			$this->exceptionHandlers = $this->mergeExceptionHandlers($this->exceptionHandlers, $handlers);
 		}
         if($parentClass = $clazz->getParentClass()){
             /**
              * @var $parent ControllerMapping
              */
             $parent = ReflectionUtils::getMapping($parentClass, "ControllerMapping");
-            $this->exceptionHandlers = array_merge($this->exceptionHandlers, $parent->getExceptionHandlers());
+            $this->exceptionHandlers = $this->mergeExceptionHandlers($parent->getExceptionHandlers(), $this->exceptionHandlers);
         }
 
+	}
+
+	private function mergeExceptionHandlers(array $parent, array $child){
+		foreach($parent as $handler){
+			if(!in_array($handler, $child)){
+				$child[] = $handler;
+			}
+		}
+		return $child;
 	}
 
 	/**

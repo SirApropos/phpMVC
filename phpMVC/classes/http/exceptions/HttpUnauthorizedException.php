@@ -5,10 +5,10 @@
  * Time: 9:28 PM
  */
 
-class HttpUnauthorizedException {
+class HttpUnauthorizedException extends HttpException{
 
-	function __construct() {
-		parent::__construct("Unauthorized", 401);
+	function __construct($message = "Unauthorized") {
+		parent::__construct($message, 401);
 	}
 
 } 

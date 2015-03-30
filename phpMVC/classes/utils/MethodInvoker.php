@@ -45,7 +45,7 @@ class MethodInvoker {
 		$result = null;
 		$satisfied = false;
 		if($paramClazz = $param->getClass()){
-			$result = $this->container->resolve($param->getClass());
+			$result = $this->container->resolve($param->getClass()->getName());
 			$satisfied = true;
 		}else if($param->isDefaultValueAvailable()){
 			$result = $param->getDefaultValue();

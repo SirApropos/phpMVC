@@ -84,31 +84,34 @@ class SimpleCachingClassLoader extends ClassLoader{
 	 * @return array
 	 */
 	private function _loadClasses($path){
-		$list_ignore = array(".","..");
 		$classes = array();
-		$dir = opendir($path);
-		while($file = readdir($dir)){
-			$filepath = $path.$file;
-			if(in_array($file, $list_ignore)){
-				continue;
-			}
-			if(is_dir($filepath)){
-				foreach($this->_loadClasses($filepath."/") as $key => $value){
-					$classes[$key] = $value;
+		if(is_dir($path)) {
+			$list_ignore = array(".","..");
+			$dir = opendir($path);
+			while ($file = readdir($dir)) {
+				$filepath = $path . $file;
+				if (in_array($file, $list_ignore)) {
+					continue;
 				}
-			}else{
-				try{
-					$contents = file_get_contents($filepath);
-					$matches = array();
-					preg_match_all("/(class|interface|trait) ([a-zA-Z0-9]+)/",
-						$contents, $matches, PREG_SET_ORDER);
-					foreach($matches as $match){
-						$classes[$match[2]] = $filepath;
+				if (is_dir($filepath)) {
+					foreach ($this->_loadClasses($filepath . "/") as $key => $value) {
+						$classes[$key] = $value;
 					}
-				}catch(Exception $ex){}
+				} else {
+					try {
+						$contents = file_get_contents($filepath);
+						$matches = array();
+						preg_match_all("/(class|interface|trait) ([a-zA-Z0-9]+)/",
+							$contents, $matches, PREG_SET_ORDER);
+						foreach ($matches as $match) {
+							$classes[$match[2]] = $filepath;
+						}
+					} catch (Exception $ex) {
+					}
+				}
 			}
+			closedir($dir);
 		}
-		closedir($dir);
 		return $classes;
 	}
 }

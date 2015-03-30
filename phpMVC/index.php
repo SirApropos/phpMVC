@@ -52,16 +52,7 @@ try{
 		throw new HttpNotFoundException();
 	}
 
-	if(isset($_SERVER['HTTPS']) || !$cmethod->getMapping()->isHttps()) {
-		$invoker->invoke($cmethod, $request, $grantedAuthority);
-	}else{
-		/**
-		 * @var HttpResponse $response
-		 */
-		$response = $container->resolve("HttpResponse");
-		$response->setView(new RedirectView("https://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']));
-		$response->send();
-	}
+	$invoker->invoke($cmethod, $request, $grantedAuthority);
 
 	$timer->stop();
 	if(isset($_GET['debug'])){
