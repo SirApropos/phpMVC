@@ -6,7 +6,8 @@
  */
 class HttpBadRequestException extends HttpException
 {
-	function __construct()
+	function __construct($message="Bad Request")
 	{
-		parent::__construct("Bad Request", 400);
-	}}
+		parent::__construct($message, 400);
+	}
+}

@@ -95,7 +95,9 @@ try{
 			    }
 			    if(is_object($arg)){
 				    $message .= get_class($arg)." ".JsonUtils::toJson($arg);
-			    }else{
+			    }else if(is_array($arg)) {
+					$message .= implode(", ", $arg);
+				}else{
 				    $message .= $arg;
 			    }
 		    }

@@ -22,7 +22,7 @@ class HttpRequest
 	 */
 	private $headers;
 
-	public function HttpRequest($server){
+	public function __construct($server){
 		$this->config = MVCConfig::getInstance();
 		$this->method = constant("HttpMethod::".$server['REQUEST_METHOD']);
 		$this->path = $this->buildPath($_SERVER['REQUEST_URI']);

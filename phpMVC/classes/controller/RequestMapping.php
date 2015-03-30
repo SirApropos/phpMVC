@@ -34,6 +34,16 @@ class RequestMapping {
 	private $denied_roles = [];
 
 	/**
+	 * @var string
+	 */
+	private $accepts;
+
+	/**
+	 * @var string
+	 */
+	private $produces;
+
+	/**
 	 * @var FilterMapping
 	 */
 	private $filters;
@@ -171,5 +181,33 @@ class RequestMapping {
 	 */
 	public function setFilters($filters) {
 		$this->filters = $filters;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAccepts() {
+		return $this->accepts;
+	}
+
+	/**
+	 * @param string $accepts
+	 */
+	public function setAccepts($accepts) {
+		$this->accepts = $accepts;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getProduces() {
+		return $this->produces;
+	}
+
+	/**
+	 * @param string $produces
+	 */
+	public function setProduces($produces) {
+		$this->produces = $produces;
 	}
 }

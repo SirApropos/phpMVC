@@ -289,12 +289,12 @@ class ControllerMethodInvoker{
 	 * @return mixed|null|object
 	 * @throws ModelBindException
 	 */
-	protected function satisfy(ReflectionParameter $param, $request, $urlvars) {
+	protected function satisfy(ControllerMethod $cmethod, ReflectionParameter $param, $request, $urlvars) {
 		$value = null;
 		$clazz = $param->getClass();
 		if ($clazz) {
 			if ($clazz->implementsInterface("Model") && !$this->container->contains($clazz->getName())) {
-				return $this->bindRequestModel($param, $request, $clazz);
+				return $this->bindRequestModel($cmethod, $param, $request, $clazz);
 			} else {
 				$value = $this->container->resolve($clazz->getName());
 			}
@@ -306,7 +306,7 @@ class ControllerMethodInvoker{
 				if ($param->isDefaultValueAvailable()) {
 					$value = $param->getDefaultValue();
 				} else {
-					throw new ModelBindException("Parameter ".$clazz->getName()."::".$param->getName().
+					throw new ModelBindException("Parameter ".$param->getName().
 						" could not be satisfied and no default value was available.");
 				}
 			}
@@ -344,15 +344,22 @@ class ControllerMethodInvoker{
 	 * @return mixed|null
 	 * @throws ModelBindException
 	 */
-	protected function bindRequestModel(ReflectionParameter $param, HttpRequest $request, $clazz) {
+	protected function bindRequestModel(ControllerMethod $cmethod, ReflectionParameter $param, HttpRequest $request, $clazz) {
 		$value = null;
 		if ($request->getBody()) {
-			$contentType = $request->getHeaders()->getContentType();
-			foreach ($this->mappers as $mapper) {
-				if ($mapper->canRead($contentType)) {
-					$value = $mapper->read($request->getBody(), $clazz);
-					break;
+			$contentType = $cmethod->getMapping()->getAccepts();
+			if(is_null($contentType)) {
+				$contentType = $request->getHeaders()->getContentType();
+			}
+			try {
+				foreach ($this->mappers as $mapper) {
+					if ($mapper->canRead($contentType)) {
+						$value = $mapper->read($request->getBody(), $clazz);
+						break;
+					}
 				}
+			}catch(Exception $ex){
+				throw new ModelBindException("An exception occurred while reading object: ".$ex->getMessage());
 			}
 			if (is_null($value)) {
 				throw new ModelBindException("No object mapper available to read type: " . $contentType);
@@ -383,10 +390,10 @@ class ControllerMethodInvoker{
 		$vars = $this->getRequestVars($cmethod, $request);
 		foreach ($params as $param) {
 			try {
-				$value = $this->satisfy($param, $request, $vars);
+				$value = $this->satisfy($cmethod, $param, $request, $vars);
 			} catch (ModelBindException $ex) {
 				throw new ModelBindException("Could not satisfy dependency: " . $method->getDeclaringClass()->getName() . "::" .
-					$method->getName() . '::$' . $param->getName());
+					$method->getName() . '::$' . $param->getName() . ", root cause: ".$ex->getMessage());
 			}
 			array_push($args, $value);
 		}
